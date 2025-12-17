@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physical: Tech - Wall Pushing Match</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=Black+Ops+One&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --team-red: #ff2d55;
+            --team-red-glow: rgba(255, 45, 85, 0.6);
+            --team-blue: #00d4ff;
+            --team-blue-glow: rgba(0, 212, 255, 0.6);
+            --gold: #ffd700;
+            --silver: #c0c0c0;
+            --bronze: #cd7f32;
+            --dark-bg: #0a0a12;
+            --arena-bg: #12121a;
+        }
+
+        body {
+            background: var(--dark-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, var(--team-red-glow) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, var(--team-blue-glow) 0%, transparent 50%);
+            opacity: 0.3;
+            pointer-events: none;
+            animation: bgPulse 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes bgPulse {
+            from { opacity: 0.2; }
+            to { opacity: 0.4; }
+        }
+
+        .game-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2.8rem;
+            background: linear-gradient(180deg, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 8px;
+        }
+
+        .subtitle {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: var(--gold);
+            text-shadow: 0 0 20px var(--gold);
+            margin-top: 5px;
+        }
+
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 20px;
+        }
+
+        .team-score {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 30px;
+            border-radius: 15px;
+            background: rgba(0,0,0,0.5);
+        }
+
+        .team-score.red {
+            border: 3px solid var(--team-red);
+            box-shadow: 0 0 30px var(--team-red-glow);
+        }
+
+        .team-score.blue {
+            border: 3px solid var(--team-blue);
+            box-shadow: 0 0 30px var(--team-blue-glow);
+        }
+
+        .team-name {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.8rem;
+        }
+
+        .team-score.red .team-name { color: var(--team-red); }
+        .team-score.blue .team-name { color: var(--team-blue); }
+
+        .score-value {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: white;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .timer-container {
+            text-align: center;
+            padding: 15px 40px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 15px;
+            border: 3px solid var(--gold);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .timer-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: #888;
+            margin-bottom: 5px;
+        }
+
+        .timer {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 20px var(--gold);
+        }
+
+        .timer.urgent {
+            color: var(--team-red);
+            text-shadow: 0 0 20px var(--team-red);
+            animation: timerPulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes timerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .arena {
+            background: var(--arena-bg);
+            border: 4px solid #333;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 
+                inset 0 0 100px rgba(0,0,0,0.8),
+                0 0 50px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        .arena-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 0 10px;
+        }
+
+        .zone-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            padding: 8px 20px;
+            border-radius: 5px;
+        }
+
+        .zone-label.red {
+            background: linear-gradient(90deg, var(--team-red), transparent);
+            color: white;
+        }
+
+        .zone-label.blue {
+            background: linear-gradient(270deg, var(--team-blue), transparent);
+            color: white;
+        }
+
+        .battlefield {
+            position: relative;
+            height: 450px;
+            background: linear-gradient(90deg, 
+                rgba(255, 45, 85, 0.15) 0%, 
+                rgba(255, 45, 85, 0.05) 20%,
+                transparent 45%,
+                transparent 55%,
+                rgba(0, 212, 255, 0.05) 80%,
+                rgba(0, 212, 255, 0.15) 100%
+            );
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .center-line {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 6px;
+            background: linear-gradient(180deg, 
+                var(--gold) 0%, 
+                #fff 50%, 
+                var(--gold) 100%);
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px var(--gold);
+            z-index: 10;
+        }
+
+        .center-line::before {
+            content: 'CENTER';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: var(--gold);
+            white-space: nowrap;
+            background: var(--arena-bg);
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 2px solid var(--gold);
+        }
+
+        .side-zone {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 2rem;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .side-zone.red {
+            left: 0;
+            color: var(--team-red);
+        }
+
+        .side-zone.blue {
+            right: 0;
+            color: var(--team-blue);
+        }
+
+        .block-lane {
+            position: relative;
+            height: 140px;
+            margin-bottom: 15px;
+            border-bottom: 2px dashed rgba(255,255,255,0.1);
+        }
+
+        .block-lane:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+        }
+
+        .weight-label {
+            position: absolute;
+            left: 50%;
+            top: 5px;
+            transform: translateX(-50%);
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: #555;
+            z-index: 5;
+            background: var(--arena-bg);
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .block {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-family: 'Black Ops One', cursive;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            transition: left 0.05s linear;
+            z-index: 20;
+        }
+
+        .block.light {
+            width: 100px;
+            height: 80px;
+            background: linear-gradient(180deg, #a0522d, #8B4513);
+            border: 4px solid var(--bronze);
+            box-shadow: 
+                0 0 25px rgba(205, 127, 50, 0.6),
+                inset 0 -10px 20px rgba(0,0,0,0.3);
+            font-size: 1.3rem;
+        }
+
+        .block.medium {
+            width: 120px;
+            height: 90px;
+            background: linear-gradient(180deg, #808080, #606060);
+            border: 4px solid var(--silver);
+            box-shadow: 
+                0 0 25px rgba(192, 192, 192, 0.6),
+                inset 0 -10px 20px rgba(0,0,0,0.3);
+            font-size: 1.5rem;
+        }
+
+        .block.heavy {
+            width: 140px;
+            height: 100px;
+            background: linear-gradient(180deg, #daa520, #b8860b);
+            border: 4px solid var(--gold);
+            box-shadow: 
+                0 0 30px rgba(255, 215, 0, 0.6),
+                inset 0 -10px 20px rgba(0,0,0,0.3);
+            font-size: 1.8rem;
+        }
+
+        .block-clicks {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.4rem;
+            opacity: 0.7;
+            margin-top: 3px;
+        }
+
+        .block.in-red-zone {
+            border-color: var(--team-red) !important;
+            box-shadow: 0 0 40px var(--team-red) !important;
+        }
+
+        .block.in-blue-zone {
+            border-color: var(--team-blue) !important;
+            box-shadow: 0 0 40px var(--team-blue) !important;
+        }
+
+        /* Heroes */
+        .heroes-container {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 3px;
+            z-index: 15;
+        }
+
+        .heroes-container.red { left: 20px; }
+        .heroes-container.blue { right: 20px; flex-direction: row-reverse; }
+
+        .hero {
+            width: 35px;
+            height: 55px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            position: relative;
+        }
+
+        .hero.red {
+            background: linear-gradient(180deg, var(--team-red), #aa1133);
+            border: 2px solid #ff6688;
+            box-shadow: 0 0 10px var(--team-red-glow);
+        }
+
+        .hero.blue {
+            background: linear-gradient(180deg, var(--team-blue), #0088aa);
+            border: 2px solid #66ddff;
+            box-shadow: 0 0 10px var(--team-blue-glow);
+        }
+
+        .hero.pushing {
+            animation: heroPush 0.08s ease-out;
+        }
+
+        @keyframes heroPush {
+            0% { transform: scaleX(1) scaleY(1); }
+            50% { transform: scaleX(1.2) scaleY(0.85); }
+            100% { transform: scaleX(1) scaleY(1); }
+        }
+
+        .hero-key {
+            position: absolute;
+            bottom: -16px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.35rem;
+            color: white;
+            background: rgba(0,0,0,0.8);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        /* Power meters */
+        .power-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 0 10px;
+        }
+
+        .power-meter {
+            width: 45%;
+            padding: 10px 15px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+        }
+
+        .power-meter.red { border: 2px solid var(--team-red); }
+        .power-meter.blue { border: 2px solid var(--team-blue); }
+
+        .power-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .power-meter.red .power-label { color: var(--team-red); }
+        .power-meter.blue .power-label { color: var(--team-blue); }
+
+        .power-bar-container {
+            height: 20px;
+            background: #1a1a1a;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .power-bar {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.1s ease;
+        }
+
+        .power-meter.red .power-bar {
+            background: linear-gradient(90deg, #ff2d55, #ff6688);
+            box-shadow: 0 0 10px var(--team-red);
+        }
+
+        .power-meter.blue .power-bar {
+            background: linear-gradient(90deg, #00d4ff, #66e5ff);
+            box-shadow: 0 0 10px var(--team-blue);
+        }
+
+        /* Controls */
+        .controls-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 20px;
+        }
+
+        .team-controls {
+            flex: 1;
+            padding: 15px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 15px;
+        }
+
+        .team-controls.red { border: 2px solid var(--team-red); }
+        .team-controls.blue { border: 2px solid var(--team-blue); }
+
+        .controls-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .team-controls.red .controls-title { color: var(--team-red); }
+        .team-controls.blue .controls-title { color: var(--team-blue); }
+
+        .player-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 10px;
+            margin-bottom: 5px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .team-controls.red .player-avatar { background: var(--team-red); }
+        .team-controls.blue .player-avatar { background: var(--team-blue); }
+
+        .player-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.45rem;
+            color: #ccc;
+        }
+
+        .player-keys {
+            display: flex;
+            gap: 5px;
+        }
+
+        .key {
+            min-width: 32px;
+            height: 32px;
+            background: linear-gradient(180deg, #444, #222);
+            border: 2px solid #666;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 3px 0 #111;
+            transition: all 0.05s ease;
+            padding: 0 6px;
+        }
+
+        .key.pressed {
+            transform: translateY(3px);
+            box-shadow: 0 0 0 #111;
+        }
+
+        .key.pressed.red {
+            background: var(--team-red);
+            border-color: #ff6688;
+        }
+
+        .key.pressed.blue {
+            background: var(--team-blue);
+            border-color: #66e5ff;
+        }
+
+        /* Settings */
+        .settings-row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+        }
+
+        .setting {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .setting label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: var(--gold);
+        }
+
+        .setting select {
+            font-family: 'Orbitron', sans-serif;
+            padding: 8px 15px;
+            background: #1a1a2e;
+            border: 2px solid var(--gold);
+            border-radius: 5px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* Overlay */
+        .game-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .game-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .overlay-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 3.5rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .overlay-subtitle {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: var(--gold);
+            margin-bottom: 40px;
+        }
+
+        .start-btn {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.8rem;
+            padding: 20px 60px;
+            background: linear-gradient(180deg, var(--gold), #b8860b);
+            border: none;
+            border-radius: 15px;
+            color: #1a1a1a;
+            cursor: pointer;
+            box-shadow: 
+                0 0 30px var(--gold),
+                0 8px 0 #8b6914;
+            transition: all 0.1s ease;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px var(--gold), 0 11px 0 #8b6914;
+        }
+
+        .start-btn:active {
+            transform: translateY(8px);
+            box-shadow: 0 0 30px var(--gold), 0 0 0 #8b6914;
+        }
+
+        .countdown {
+            font-family: 'Black Ops One', cursive;
+            font-size: 10rem;
+            color: var(--gold);
+            text-shadow: 0 0 50px var(--gold);
+            animation: countPulse 1s ease-in-out;
+        }
+
+        @keyframes countPulse {
+            0% { transform: scale(2); opacity: 0; }
+            50% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.8); opacity: 0; }
+        }
+
+        .winner-display {
+            text-align: center;
+        }
+
+        .winner-text {
+            font-family: 'Black Ops One', cursive;
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            animation: winnerPulse 0.5s ease-in-out infinite alternate;
+        }
+
+        .winner-text.red {
+            color: var(--team-red);
+            text-shadow: 0 0 50px var(--team-red);
+        }
+
+        .winner-text.blue {
+            color: var(--team-blue);
+            text-shadow: 0 0 50px var(--team-blue);
+        }
+
+        .winner-text.draw {
+            color: var(--gold);
+            text-shadow: 0 0 50px var(--gold);
+        }
+
+        @keyframes winnerPulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        .final-score {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .score-breakdown {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: #888;
+            margin-bottom: 30px;
+            line-height: 2;
+        }
+
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            animation: particleFall 2.5s linear forwards;
+        }
+
+        @keyframes particleFall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .instructions {
+            text-align: center;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--gold);
+            border-radius: 10px;
+        }
+
+        .instructions-text {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: var(--gold);
+            line-height: 2.2;
+        }
+
+        /* Push effect indicator */
+        .push-indicator {
+            position: absolute;
+            font-size: 0.8rem;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 100;
+            animation: pushIndicator 0.5s ease-out forwards;
+        }
+
+        @keyframes pushIndicator {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-30px) scale(1.5); }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-wrapper">
+        <div class="header">
+            <div class="title">PHYSICAL: TECH</div>
+            <div class="subtitle">⚔️ WALL PUSHING MATCH ⚔️</div>
+        </div>
+
+        <div class="scoreboard">
+            <div class="team-score red">
+                <div class="team-name">RED</div>
+                <div class="score-value" id="score-red">0</div>
+            </div>
+            <div class="timer-container">
+                <div class="timer-label">TIME REMAINING</div>
+                <div class="timer" id="timer">60</div>
+            </div>
+            <div class="team-score blue">
+                <div class="score-value" id="score-blue">0</div>
+                <div class="team-name">BLUE</div>
+            </div>
+        </div>
+
+        <div class="arena">
+            <div class="arena-header">
+                <div class="zone-label red">◀ BLUE SCORES HERE</div>
+                <div class="zone-label blue">RED SCORES HERE ▶</div>
+            </div>
+
+            <div class="battlefield" id="battlefield">
+                <div class="center-line"></div>
+                <div class="side-zone red">RED</div>
+                <div class="side-zone blue">BLUE</div>
+            </div>
+
+            <div class="power-display">
+                <div class="power-meter red">
+                    <div class="power-label">
+                        <span>TEAM RED POWER</span>
+                        <span id="clicks-red">0 clicks</span>
+                    </div>
+                    <div class="power-bar-container">
+                        <div class="power-bar" id="power-red" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="power-meter blue">
+                    <div class="power-label">
+                        <span>TEAM BLUE POWER</span>
+                        <span id="clicks-blue">0 clicks</span>
+                    </div>
+                    <div class="power-bar-container">
+                        <div class="power-bar" id="power-blue" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <div class="team-controls red">
+                <div class="controls-title">TEAM RED - 6 PLAYERS</div>
+                <div class="player-row">
+                    <div class="player-info">
+                        <div class="player-avatar">💪</div>
+                        <div class="player-name">P1-2 → 100KG</div>
+                    </div>
+                    <div class="player-keys">
+                        <div class="key" id="key-q">Q</div>
+                        <div class="key" id="key-w">W</div>
+                    </div>
+                </div>
+                <div class="player-row">
+                    <div class="player-info">
+                        <div class="player-avatar">💪</div>
+                        <div class="player-name">P3-4 → 200KG</div>
+                    </div>
+                    <div class="player-keys">
+                        <div class="key" id="key-a">A</div>
+                        <div class="key" id="key-s">S</div>
+                    </div>
+                </div>
+                <div class="player-row">
+                    <div class="player-info">
+                        <div class="player-avatar">💪</div>
+                        <div class="player-name">P5-6 → 300KG</div>
+                    </div>
+                    <div class="player-keys">
+                        <div class="key" id="key-z">Z</div>
+                        <div class="key" id="key-x">X</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="team-controls blue">
+                <div class="controls-title">TEAM BLUE - 6 PLAYERS</div>
+                <div class="player-row">
+                    <div class="player-info">
+                        <div class="player-avatar">💪</div>
+                        <div class="player-name">P1-2 → 100KG</div>
+                    </div>
+                    <div class="player-keys">
+                        <div class="key" id="key-p">P</div>
+                        <div class="key" id="key-o">O</div>
+                    </div>
+                </div>
+                <div class="player-row">
+                    <div class="player-info">
+                        <div class="player-avatar">💪</div>
+                        <div class="player-name">P3-4 → 200KG</div>
+                    </div>
+                    <div class="player-keys">
+                        <div class="key" id="key-l">L</div>
+                        <div class="key" id="key-k">K</div>
+                    </div>
+                </div>
+                <div class="player-row">
+                    <div class="player-info">
+                        <div class="player-avatar">💪</div>
+                        <div class="player-name">P5-6 → 300KG</div>
+                    </div>
+                    <div class="player-keys">
+                        <div class="key" id="key-m">M</div>
+                        <div class="key" id="key-n">N</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-row">
+            <div class="setting">
+                <label>TIME:</label>
+                <select id="time-select">
+                    <option value="30">30 sec</option>
+                    <option value="45">45 sec</option>
+                    <option value="60" selected>60 sec</option>
+                    <option value="90">90 sec</option>
+                    <option value="120">120 sec</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="instructions">
+            <div class="instructions-text">
+                🎮 ALTERNATE YOUR TWO KEYS AS FAST AS POSSIBLE! 🎮<br>
+                ⏱️ WHEN TIME ENDS: EACH BOX ON YOUR SIDE OF THE CENTER LINE = 1 POINT ⏱️<br>
+                🏆 PUSH THE BOXES TO THE OPPONENT'S SIDE TO WIN! 🏆
+            </div>
+        </div>
+    </div>
+
+    <div class="game-overlay" id="game-overlay">
+        <div class="overlay-title">WALL PUSHING MATCH</div>
+        <div class="overlay-subtitle">12 PLAYERS • 60 SECONDS • PUSH TO WIN</div>
+        <button class="start-btn" id="start-btn">START MATCH</button>
+    </div>
+
+    <script src="players.js"></script>
+    <script>
+        // Tournament integration - load match data
+        let matchData = null;
+        try {
+            const stored = localStorage.getItem('currentMatch');
+            if (stored) {
+                matchData = JSON.parse(stored);
+            }
+        } catch (e) {
+            console.log('No match data found, running standalone');
+        }
+
+        // Get player info helper
+        function getPlayerInfo(playerId) {
+            if (typeof PLAYERS !== 'undefined' && PLAYERS[playerId]) {
+                return PLAYERS[playerId];
+            }
+            return null;
+        }
+
+        // Game configuration
+        const config = {
+            blocks: [
+                { weight: 100, class: 'light', clicksToMove: 3, label: '100KG' },   // Need 3 net alternating clicks to move
+                { weight: 200, class: 'medium', clicksToMove: 6, label: '200KG' },  // Need 6 net alternating clicks
+                { weight: 300, class: 'heavy', clicksToMove: 10, label: '300KG' }   // Need 10 net alternating clicks
+            ],
+            keyMappings: {
+                red: [
+                    ['q', 'w'],
+                    ['a', 's'],
+                    ['z', 'x']
+                ],
+                blue: [
+                    ['p', 'o'],
+                    ['l', 'k'],
+                    ['m', 'n']
+                ]
+            },
+            moveAmount: 2,      // Percentage to move per successful push
+            defaultTime: 60
+        };
+
+        // Game state
+        const state = {
+            isRunning: false,
+            timeLeft: 60,
+            totalTime: 60,
+            blocks: [],
+            clicks: { red: 0, blue: 0 },
+            lastKeyPressed: { red: [{}, {}, {}], blue: [{}, {}, {}] },
+            pushProgress: { red: [0, 0, 0], blue: [0, 0, 0] },
+            keysPressed: {},
+            timerInterval: null
+        };
+
+        // DOM elements
+        const battlefield = document.getElementById('battlefield');
+        const gameOverlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-btn');
+        const timerEl = document.getElementById('timer');
+        const scoreRedEl = document.getElementById('score-red');
+        const scoreBlueEl = document.getElementById('score-blue');
+        const timeSelect = document.getElementById('time-select');
+
+        // Initialize arena
+        function initArena() {
+            battlefield.querySelectorAll('.block-lane').forEach(el => el.remove());
+            state.blocks = [];
+            state.clicks = { red: 0, blue: 0 };
+            state.pushProgress = { red: [0, 0, 0], blue: [0, 0, 0] };
+            state.lastKeyPressed = { red: [{}, {}, {}], blue: [{}, {}, {}] };
+
+            config.blocks.forEach((blockConfig, index) => {
+                const lane = document.createElement('div');
+                lane.className = 'block-lane';
+                lane.innerHTML = `<div class="weight-label">${blockConfig.label}</div>`;
+
+                // Red heroes (left side - pushing RIGHT toward blue)
+                const redHeroes = document.createElement('div');
+                redHeroes.className = 'heroes-container red';
+
+                // Get player sprites if match data exists
+                let redPlayer1 = '💪', redPlayer2 = '💪';
+                if (matchData && matchData.redPlayers) {
+                    const p1 = getPlayerInfo(matchData.redPlayers[index * 2]);
+                    const p2 = getPlayerInfo(matchData.redPlayers[index * 2 + 1]);
+                    if (p1) redPlayer1 = `<img src="assets/sprites/${p1.sprite}" onerror="this.parentElement.innerHTML='💪'" style="width:28px;height:28px;border-radius:4px;">`;
+                    if (p2) redPlayer2 = `<img src="assets/sprites/${p2.sprite}" onerror="this.parentElement.innerHTML='💪'" style="width:28px;height:28px;border-radius:4px;">`;
+                }
+
+                redHeroes.innerHTML = `
+                    <div class="hero red" id="hero-red-${index}-0">${redPlayer1}<span class="hero-key">${config.keyMappings.red[index][0].toUpperCase()}</span></div>
+                    <div class="hero red" id="hero-red-${index}-1">${redPlayer2}<span class="hero-key">${config.keyMappings.red[index][1].toUpperCase()}</span></div>
+                `;
+                lane.appendChild(redHeroes);
+
+                // Block
+                const block = document.createElement('div');
+                block.className = `block ${blockConfig.class}`;
+                block.id = `block-${index}`;
+                block.innerHTML = `${blockConfig.label}<span class="block-clicks" id="block-clicks-${index}">0</span>`;
+                lane.appendChild(block);
+
+                // Blue heroes (right side - pushing LEFT toward red)
+                const blueHeroes = document.createElement('div');
+                blueHeroes.className = 'heroes-container blue';
+
+                // Get player sprites if match data exists
+                let bluePlayer1 = '💪', bluePlayer2 = '💪';
+                if (matchData && matchData.bluePlayers) {
+                    const p1 = getPlayerInfo(matchData.bluePlayers[index * 2]);
+                    const p2 = getPlayerInfo(matchData.bluePlayers[index * 2 + 1]);
+                    if (p1) bluePlayer1 = `<img src="assets/sprites/${p1.sprite}" onerror="this.parentElement.innerHTML='💪'" style="width:28px;height:28px;border-radius:4px;">`;
+                    if (p2) bluePlayer2 = `<img src="assets/sprites/${p2.sprite}" onerror="this.parentElement.innerHTML='💪'" style="width:28px;height:28px;border-radius:4px;">`;
+                }
+
+                blueHeroes.innerHTML = `
+                    <div class="hero blue" id="hero-blue-${index}-0">${bluePlayer1}<span class="hero-key">${config.keyMappings.blue[index][0].toUpperCase()}</span></div>
+                    <div class="hero blue" id="hero-blue-${index}-1">${bluePlayer2}<span class="hero-key">${config.keyMappings.blue[index][1].toUpperCase()}</span></div>
+                `;
+                lane.appendChild(blueHeroes);
+
+                battlefield.appendChild(lane);
+
+                state.blocks.push({
+                    element: block,
+                    position: 50,
+                    netPush: 0,
+                    clicksToMove: blockConfig.clicksToMove
+                });
+            });
+
+            updateScoreDisplay();
+            document.getElementById('clicks-red').textContent = '0 clicks';
+            document.getElementById('clicks-blue').textContent = '0 clicks';
+        }
+
+        // Handle key press
+        function handleKeyDown(e) {
+            const key = e.key.toLowerCase();
+            
+            const keyEl = document.getElementById(`key-${key}`);
+            if (keyEl) {
+                keyEl.classList.add('pressed');
+                if (config.keyMappings.red.flat().includes(key)) {
+                    keyEl.classList.add('red');
+                } else if (config.keyMappings.blue.flat().includes(key)) {
+                    keyEl.classList.add('blue');
+                }
+            }
+
+            if (!state.isRunning) return;
+            if (state.keysPressed[key]) return;
+            state.keysPressed[key] = true;
+
+            ['red', 'blue'].forEach(team => {
+                config.keyMappings[team].forEach((keys, blockIndex) => {
+                    const keyIndex = keys.indexOf(key);
+                    if (keyIndex !== -1) {
+                        const lastKey = state.lastKeyPressed[team][blockIndex];
+                        
+                        // Check for alternating press
+                        if (lastKey.key !== undefined && lastKey.key !== keyIndex) {
+                            // Successful alternating press!
+                            state.clicks[team]++;
+                            
+                            // Add to push progress
+                            if (team === 'red') {
+                                state.pushProgress.red[blockIndex]++;
+                                state.pushProgress.blue[blockIndex] = Math.max(0, state.pushProgress.blue[blockIndex] - 0.5);
+                            } else {
+                                state.pushProgress.blue[blockIndex]++;
+                                state.pushProgress.red[blockIndex] = Math.max(0, state.pushProgress.red[blockIndex] - 0.5);
+                            }
+
+                            // Check if enough progress to move block
+                            const block = state.blocks[blockIndex];
+                            const netProgress = state.pushProgress.red[blockIndex] - state.pushProgress.blue[blockIndex];
+                            
+                            if (Math.abs(netProgress) >= block.clicksToMove) {
+                                if (netProgress > 0) {
+                                    // Red pushes block toward BLUE side (RIGHT = higher %)
+                                    block.position = Math.min(95, block.position + config.moveAmount);
+                                    state.pushProgress.red[blockIndex] -= block.clicksToMove;
+                                    createPushEffect(block.element, 'red');
+                                } else {
+                                    // Blue pushes block toward RED side (LEFT = lower %)
+                                    block.position = Math.max(5, block.position - config.moveAmount);
+                                    state.pushProgress.blue[blockIndex] -= block.clicksToMove;
+                                    createPushEffect(block.element, 'blue');
+                                }
+                                
+                                block.element.style.left = `${block.position}%`;
+                                updateBlockZone(block);
+                            }
+
+                            // Update block click display
+                            const displayNet = Math.round(state.pushProgress.red[blockIndex] - state.pushProgress.blue[blockIndex]);
+                            document.getElementById(`block-clicks-${blockIndex}`).textContent = 
+                                displayNet > 0 ? `+${displayNet}` : displayNet;
+                        }
+                        
+                        state.lastKeyPressed[team][blockIndex] = { key: keyIndex, time: Date.now() };
+
+                        // Animate hero
+                        const hero = document.getElementById(`hero-${team}-${blockIndex}-${keyIndex}`);
+                        if (hero) {
+                            hero.classList.remove('pushing');
+                            void hero.offsetWidth;
+                            hero.classList.add('pushing');
+                        }
+                    }
+                });
+            });
+
+            // Update click displays
+            document.getElementById('clicks-red').textContent = `${state.clicks.red} clicks`;
+            document.getElementById('clicks-blue').textContent = `${state.clicks.blue} clicks`;
+            updatePowerBars();
+        }
+
+        function handleKeyUp(e) {
+            const key = e.key.toLowerCase();
+            state.keysPressed[key] = false;
+            
+            const keyEl = document.getElementById(`key-${key}`);
+            if (keyEl) {
+                keyEl.classList.remove('pressed', 'red', 'blue');
+            }
+        }
+
+        // Create push effect
+        function createPushEffect(blockEl, team) {
+            const indicator = document.createElement('div');
+            indicator.className = 'push-indicator';
+            indicator.textContent = team === 'red' ? '→' : '←';
+            indicator.style.color = team === 'red' ? 'var(--team-red)' : 'var(--team-blue)';
+            indicator.style.left = '50%';
+            indicator.style.top = '20%';
+            blockEl.appendChild(indicator);
+            setTimeout(() => indicator.remove(), 500);
+        }
+
+        // Update block zone highlighting
+        function updateBlockZone(block) {
+            block.element.classList.remove('in-red-zone', 'in-blue-zone');
+            if (block.position < 50) {
+                block.element.classList.add('in-red-zone');
+            } else if (block.position > 50) {
+                block.element.classList.add('in-blue-zone');
+            }
+        }
+
+        // Update power bars
+        function updatePowerBars() {
+            const maxClicks = Math.max(state.clicks.red, state.clicks.blue, 1);
+            document.getElementById('power-red').style.width = `${(state.clicks.red / maxClicks) * 100}%`;
+            document.getElementById('power-blue').style.width = `${(state.clicks.blue / maxClicks) * 100}%`;
+        }
+
+        // Update score display
+        function updateScoreDisplay() {
+            let redScore = 0;
+            let blueScore = 0;
+
+            state.blocks.forEach(block => {
+                if (block.position < 50) {
+                    blueScore++;  // Block is on RED's side = BLUE scores
+                } else if (block.position > 50) {
+                    redScore++;  // Block is on BLUE's side = RED scores
+                }
+            });
+
+            scoreRedEl.textContent = redScore;
+            scoreBlueEl.textContent = blueScore;
+        }
+
+        // Start countdown
+        async function startCountdown() {
+            state.totalTime = parseInt(timeSelect.value);
+            state.timeLeft = state.totalTime;
+            timerEl.textContent = state.timeLeft;
+            
+            gameOverlay.innerHTML = '<div class="countdown" id="countdown">3</div>';
+            
+            for (let i = 3; i >= 1; i--) {
+                document.getElementById('countdown').textContent = i;
+                document.getElementById('countdown').style.animation = 'none';
+                void document.getElementById('countdown').offsetWidth;
+                document.getElementById('countdown').style.animation = 'countPulse 1s ease-in-out';
+                await sleep(1000);
+            }
+            
+            document.getElementById('countdown').textContent = 'PUSH!';
+            document.getElementById('countdown').style.color = 'var(--team-red)';
+            await sleep(500);
+            
+            gameOverlay.classList.add('hidden');
+            startMatch();
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Start match
+        function startMatch() {
+            state.isRunning = true;
+            
+            state.timerInterval = setInterval(() => {
+                state.timeLeft--;
+                timerEl.textContent = state.timeLeft;
+                
+                if (state.timeLeft <= 10) {
+                    timerEl.classList.add('urgent');
+                }
+                
+                updateScoreDisplay();
+                
+                if (state.timeLeft <= 0) {
+                    endMatch();
+                }
+            }, 1000);
+        }
+
+        // End match
+        function endMatch() {
+            state.isRunning = false;
+            clearInterval(state.timerInterval);
+            
+            // Calculate final scores
+            let redScore = 0;
+            let blueScore = 0;
+            let breakdown = [];
+
+            state.blocks.forEach((block, index) => {
+                const weight = config.blocks[index].label;
+                if (block.position < 50) {
+                    blueScore++;
+                    breakdown.push(`${weight}: BLUE SIDE (Blue +1)`);
+                } else if (block.position > 50) {
+                    redScore++;
+                    breakdown.push(`${weight}: RED SIDE (Red +1)`);
+                } else {
+                    breakdown.push(`${weight}: CENTER (No points)`);
+                }
+            });
+
+            let winner, winnerClass;
+            if (redScore > blueScore) {
+                winner = 'TEAM RED WINS!';
+                winnerClass = 'red';
+            } else if (blueScore > redScore) {
+                winner = 'TEAM BLUE WINS!';
+                winnerClass = 'blue';
+            } else {
+                winner = "IT'S A DRAW!";
+                winnerClass = 'draw';
+            }
+
+            // If in tournament mode, record result and return to game flow
+            if (matchData) {
+                const gameWinner = winnerClass === 'draw' ? 'red' : winnerClass; // In case of draw, red wins (or could be random)
+                localStorage.setItem('gameResult', JSON.stringify({ winner: gameWinner }));
+
+                gameOverlay.innerHTML = `
+                    <div class="winner-display">
+                        <div class="winner-text ${winnerClass}">${winner}</div>
+                        <div class="final-score">RED ${redScore} - ${blueScore} BLUE</div>
+                        <div class="score-breakdown">${breakdown.join('<br>')}</div>
+                        <button class="start-btn" onclick="returnToTournament()">CONTINUE →</button>
+                    </div>
+                `;
+            } else {
+                gameOverlay.innerHTML = `
+                    <div class="winner-display">
+                        <div class="winner-text ${winnerClass}">${winner}</div>
+                        <div class="final-score">RED ${redScore} - ${blueScore} BLUE</div>
+                        <div class="score-breakdown">${breakdown.join('<br>')}</div>
+                        <button class="start-btn" onclick="resetMatch()">PLAY AGAIN</button>
+                    </div>
+                `;
+            }
+            gameOverlay.classList.remove('hidden');
+
+            if (winnerClass !== 'draw') {
+                createVictoryParticles(winnerClass);
+            }
+        }
+
+        // Return to tournament flow
+        function returnToTournament() {
+            window.location.href = 'game-flow.html?game=' + (matchData ? matchData.game : 1);
+        }
+
+        // Create victory particles
+        function createVictoryParticles(team) {
+            const colors = team === 'red' 
+                ? ['#ff2d55', '#ff6688', '#ffaacc', '#ffd700'] 
+                : ['#00d4ff', '#66e5ff', '#aaeeff', '#ffd700'];
+            
+            for (let i = 0; i < 120; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = `${Math.random() * 100}vw`;
+                    particle.style.top = '-20px';
+                    particle.style.width = `${8 + Math.random() * 12}px`;
+                    particle.style.height = particle.style.width;
+                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(particle);
+                    setTimeout(() => particle.remove(), 3000);
+                }, i * 25);
+            }
+        }
+
+        // Reset match
+        function resetMatch() {
+            timerEl.classList.remove('urgent');
+            gameOverlay.innerHTML = `
+                <div class="overlay-title">WALL PUSHING MATCH</div>
+                <div class="overlay-subtitle">12 PLAYERS • ${timeSelect.value} SECONDS • PUSH TO WIN</div>
+                <button class="start-btn" id="start-btn">START MATCH</button>
+            `;
+            document.getElementById('start-btn').addEventListener('click', () => {
+                initArena();
+                startCountdown();
+            });
+            gameOverlay.classList.remove('hidden');
+        }
+
+        // Event listeners
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+        startBtn.addEventListener('click', () => {
+            initArena();
+            startCountdown();
+        });
+
+        timeSelect.addEventListener('change', () => {
+            document.querySelector('.overlay-subtitle').textContent = 
+                `12 PLAYERS • ${timeSelect.value} SECONDS • PUSH TO WIN`;
+        });
+
+        // Initialize
+        initArena();
+    </script>
+</body>
+</html>

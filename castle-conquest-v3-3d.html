@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physical: Tech - Castle Conquest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=Black+Ops+One&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --team-red: #ff2d55;
+            --team-red-glow: rgba(255, 45, 85, 0.6);
+            --team-blue: #00d4ff;
+            --team-blue-glow: rgba(0, 212, 255, 0.6);
+            --gold: #ffd700;
+            --gold-glow: rgba(255, 215, 0, 0.5);
+            --dark-bg: #0a0a12;
+            --arena-bg: #12121a;
+            
+            /* New Earthy Variables */
+            --soil-color: #5d4037;
+            --soil-dark: #3e2723;
+            --stone-wall: #424242;
+            --stone-top: #616161;
+            --sand-color: #e6c288;
+        }
+
+        body {
+            background: var(--dark-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, var(--team-red-glow) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, var(--team-blue-glow) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 100%, rgba(255, 215, 0, 0.15) 0%, transparent 50%);
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .game-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1800px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2.5rem;
+            background: linear-gradient(180deg, #fff 0%, var(--gold) 50%, #b8860b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 6px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .subtitle {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: var(--gold);
+            text-shadow: 0 0 15px var(--gold);
+            margin-top: 5px;
+        }
+
+        .game-area {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .team-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .team-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            background: linear-gradient(180deg, rgba(20,20,30,0.9), rgba(10,10,20,0.9));
+        }
+
+        .team-header.red {
+            border: 2px solid var(--team-red);
+            box-shadow: 0 0 20px var(--team-red-glow), inset 0 0 30px rgba(255,45,85,0.1);
+        }
+
+        .team-header.blue {
+            border: 2px solid var(--team-blue);
+            box-shadow: 0 0 20px var(--team-blue-glow), inset 0 0 30px rgba(0,212,255,0.1);
+        }
+
+        .team-name {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .team-header.red .team-name { 
+            color: var(--team-red); 
+            text-shadow: 0 0 20px var(--team-red);
+        }
+        .team-header.blue .team-name { 
+            color: var(--team-blue); 
+            text-shadow: 0 0 20px var(--team-blue);
+        }
+
+        .team-status {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            color: #aaa;
+        }
+
+        /* 3D Maze Container - BORDERS REMOVED FROM HERE */
+        .maze-container {
+            background: transparent;
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            perspective: 1000px;
+            /* Borders moved to .maze to align with 3D tilt */
+        }
+
+        /* 3D Maze with perspective */
+        .maze-3d-wrapper {
+            transform: rotateX(25deg) rotateZ(0deg);
+            transform-style: preserve-3d;
+            position: relative;
+        }
+
+        .maze {
+            display: grid;
+            grid-template-columns: repeat(20, 26px);
+            grid-template-rows: repeat(20, 26px);
+            gap: 2px;
+            background: #1a1a1a;
+            border-radius: 4px;
+            padding: 4px; /* Slightly thicker padding for the border look */
+            transform-style: preserve-3d;
+            /* 1. NEON BORDER MOVED HERE FOR ALIGNMENT */
+            border: 3px solid transparent; 
+        }
+
+        /* Specific border styles for teams applied to the rotated maze */
+        .team-section.red .maze {
+            border-color: var(--team-red);
+            box-shadow: 
+                0 0 40px var(--team-red-glow),
+                0 20px 60px rgba(0,0,0,0.8),
+                inset 0 0 40px rgba(255,45,85,0.1);
+        }
+
+        .team-section.blue .maze {
+            border-color: var(--team-blue);
+            box-shadow: 
+                0 0 40px var(--team-blue-glow),
+                0 20px 60px rgba(0,0,0,0.8),
+                inset 0 0 40px rgba(0,212,255,0.1);
+        }
+
+        .cell {
+            width: 26px;
+            height: 26px;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        /* 3. CLASSIC GROUND (SOIL) */
+        .cell.path {
+            background: var(--soil-color);
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.6);
+        }
+
+        .cell.path::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(rgba(0,0,0,0.2) 15%, transparent 16%),
+                radial-gradient(rgba(255,255,255,0.1) 15%, transparent 16%);
+            background-size: 4px 4px, 5px 5px;
+            background-position: 0 0, 2px 2px;
+            opacity: 0.6;
+            border-radius: 2px;
+        }
+
+        /* 2. TRADITIONAL KOREAN STONE WALL */
+        .cell.wall {
+            background: var(--stone-wall);
+            transform: translateZ(20px);
+            position: relative;
+            border-radius: 2px;
+            /* Rough stone texture pattern */
+            background-image: 
+                linear-gradient(335deg, rgba(0,0,0,0.3) 23px, transparent 23px),
+                linear-gradient(155deg, rgba(0,0,0,0.3) 23px, transparent 23px),
+                linear-gradient(335deg, rgba(0,0,0,0.3) 23px, transparent 23px),
+                linear-gradient(155deg, rgba(0,0,0,0.3) 23px, transparent 23px);
+            background-size: 13px 13px;
+            background-color: #444;
+            box-shadow: 
+                0 0 5px rgba(0,0,0,0.5),
+                inset 0 0 10px rgba(0,0,0,0.8);
+        }
+
+        /* Stone top surface */
+        .cell.wall::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--stone-top);
+            /* Subtle speckle for stone texture */
+            background-image: radial-gradient(rgba(0,0,0,0.2) 1px, transparent 1px);
+            background-size: 3px 3px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 2px;
+        }
+
+        /* Stone front face (3D depth) */
+        .cell.wall::after {
+            content: '';
+            position: absolute;
+            bottom: -18px;
+            left: 0;
+            right: 0;
+            height: 18px;
+            background: #2a2a2a; /* Darker mortar/stone shadow */
+            background-image: linear-gradient(90deg, transparent 50%, rgba(0,0,0,0.3) 50%);
+            background-size: 4px 4px;
+            transform: rotateX(-90deg);
+            transform-origin: top;
+            border-bottom: 1px solid #000;
+        }
+
+        /* 4. REALISTIC SAND TERRAIN */
+        .cell.sand {
+            background-color: var(--sand-color);
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px rgba(139, 69, 19, 0.4);
+        }
+
+        .cell.sand::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            /* Granular texture */
+            background-image: 
+                radial-gradient(circle, rgba(0,0,0,0.15) 1px, transparent 1.5px),
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 5px,
+                    rgba(255,255,255,0.2) 5px,
+                    rgba(255,255,255,0.2) 10px
+                ); /* Dune waves */
+            background-size: 4px 4px, 20px 20px;
+        }
+
+        .cell.sand::after {
+            content: ''; /* Removed text symbol for cleaner look */
+        }
+
+        /* 3D Wooden Crate */
+        .cell.crate {
+            transform: translateZ(16px);
+            position: relative;
+            border-radius: 3px;
+        }
+
+        /* Crate top */
+        .cell.crate .crate-top {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    #8B5A2B 0px,
+                    #7a4a1f 2px,
+                    #8B5A2B 4px,
+                    #9a6a35 6px,
+                    #8B5A2B 8px
+                ),
+                linear-gradient(180deg, #9a6a35 0%, #7a4a1f 50%, #5a3a15 100%);
+            border-radius: 3px;
+            box-shadow: 
+                inset 2px 2px 4px rgba(255,200,150,0.3),
+                inset -2px -2px 4px rgba(0,0,0,0.4);
+        }
+
+        /* Crate front face */
+        .cell.crate .crate-front {
+            position: absolute;
+            bottom: -14px;
+            left: 0;
+            right: 0;
+            height: 14px;
+            background: 
+                repeating-linear-gradient(
+                    90deg,
+                    #6a4420 0px,
+                    #5a3415 2px,
+                    #6a4420 4px,
+                    #7a5430 6px,
+                    #6a4420 8px
+                ),
+                linear-gradient(180deg, #7a4a25 0%, #5a3415 100%);
+            transform: rotateX(-90deg);
+            transform-origin: top;
+            border-radius: 0 0 3px 3px;
+        }
+
+        /* Crate metal bands */
+        .cell.crate .crate-band {
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(180deg, #666 0%, #444 50%, #333 100%);
+            box-shadow: 
+                inset 0 1px 0 rgba(255,255,255,0.3),
+                0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .cell.crate .crate-band.top { top: 3px; }
+        .cell.crate .crate-band.bottom { bottom: 3px; }
+
+        /* Crate icon */
+        .cell.crate .crate-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            z-index: 5;
+            filter: drop-shadow(1px 2px 2px rgba(0,0,0,0.5));
+        }
+
+        /* 3D Castle Gate */
+        .cell.gate {
+            transform: translateZ(22px);
+            position: relative;
+        }
+
+        .cell.gate .gate-structure {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.4) 0%, transparent 50%),
+                linear-gradient(180deg, 
+                    #ffd700 0%, 
+                    #ffcc00 20%,
+                    #daa520 40%,
+                    #b8860b 70%,
+                    #8b6914 100%);
+            border-radius: 4px;
+            box-shadow: 
+                inset 2px 2px 6px rgba(255,255,255,0.5),
+                inset -2px -2px 6px rgba(0,0,0,0.3),
+                0 0 20px var(--gold),
+                0 0 40px var(--gold-glow);
+            animation: gateGlow 1.5s ease-in-out infinite alternate;
+        }
+
+        .cell.gate .gate-front {
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(180deg, #b8860b 0%, #8b6914 50%, #6b4f0a 100%);
+            transform: rotateX(-90deg);
+            transform-origin: top;
+            border-radius: 0 0 4px 4px;
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        .cell.gate .gate-shine {
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: gateShine 2s linear infinite;
+            border-radius: 4px;
+        }
+
+        @keyframes gateShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .cell.gate .gate-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            z-index: 10;
+            filter: drop-shadow(0 0 8px var(--gold));
+            animation: gatePulse 1s ease-in-out infinite;
+        }
+
+        @keyframes gateGlow {
+            from { box-shadow: inset 2px 2px 6px rgba(255,255,255,0.5), inset -2px -2px 6px rgba(0,0,0,0.3), 0 0 20px var(--gold), 0 0 40px var(--gold-glow); }
+            to { box-shadow: inset 2px 2px 6px rgba(255,255,255,0.5), inset -2px -2px 6px rgba(0,0,0,0.3), 0 0 35px var(--gold), 0 0 70px var(--gold-glow); }
+        }
+
+        @keyframes gatePulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.15); }
+        }
+
+        .cell.start {
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(255,215,0,0.3) 0%, transparent 60%),
+                var(--soil-color); /* Match path color */
+        }
+        
+        .cell.start::before {
+             content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: 
+                radial-gradient(rgba(0,0,0,0.2) 15%, transparent 16%),
+                radial-gradient(rgba(255,255,255,0.1) 15%, transparent 16%);
+            background-size: 4px 4px, 5px 5px;
+            opacity: 0.6;
+        }
+
+        /* 3D Cart */
+        .cart {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            transform-style: preserve-3d;
+            transform: translateZ(8px);
+            z-index: 100;
+            transition: left 0.12s ease-out, top 0.12s ease-out;
+        }
+
+        .cart-body {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            background: linear-gradient(180deg, #3a3a4a 0%, #2a2a3a 50%, #1a1a2a 100%);
+            border-radius: 4px;
+            box-shadow: 
+                inset 1px 1px 2px rgba(255,255,255,0.2),
+                inset -1px -1px 2px rgba(0,0,0,0.3);
+        }
+
+        .cart.red .cart-body {
+            border: 2px solid var(--team-red);
+            box-shadow: 
+                0 0 15px var(--team-red),
+                inset 1px 1px 2px rgba(255,255,255,0.2);
+        }
+
+        .cart.blue .cart-body {
+            border: 2px solid var(--team-blue);
+            box-shadow: 
+                0 0 15px var(--team-blue),
+                inset 1px 1px 2px rgba(255,255,255,0.2);
+        }
+
+        /* Cart bottom (3D depth) */
+        .cart-bottom {
+            position: absolute;
+            bottom: -6px;
+            left: 1px;
+            right: 1px;
+            height: 6px;
+            background: linear-gradient(180deg, #2a2a3a 0%, #1a1a2a 100%);
+            transform: rotateX(-90deg);
+            transform-origin: top;
+            border-radius: 0 0 3px 3px;
+        }
+
+        .cart.red .cart-bottom {
+            background: linear-gradient(180deg, #aa1133 0%, #661122 100%);
+        }
+
+        .cart.blue .cart-bottom {
+            background: linear-gradient(180deg, #0088aa 0%, #004466 100%);
+        }
+
+        /* Cart wheels */
+        .cart-wheels {
+            position: absolute;
+            bottom: -8px;
+            left: 2px;
+            right: 2px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .cart-wheel {
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, #555 0%, #333 70%, #222 100%);
+            border-radius: 50%;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .cart-member {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5px;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .move-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: linear-gradient(180deg, rgba(20,20,30,0.9), rgba(10,10,20,0.9));
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+
+        .progress-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.45rem;
+            color: var(--gold);
+            min-width: 70px;
+            text-shadow: 0 0 10px var(--gold-glow);
+        }
+
+        .progress-bar-container {
+            flex: 1;
+            height: 18px;
+            background: linear-gradient(180deg, #0a0a15, #1a1a25);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #333;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .progress-bar {
+            height: 100%;
+            transition: width 0.1s ease;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.3), transparent);
+        }
+
+        .progress-bar.red {
+            background: linear-gradient(180deg, #ff4466, var(--team-red), #cc2244);
+            box-shadow: 0 0 10px var(--team-red);
+        }
+
+        .progress-bar.blue {
+            background: linear-gradient(180deg, #44ddff, var(--team-blue), #0099cc);
+            box-shadow: 0 0 10px var(--team-blue);
+        }
+
+        .progress-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: white;
+            min-width: 45px;
+            text-align: right;
+        }
+
+        .controls-section {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .key-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(180deg, #4a4a5a 0%, #3a3a4a 50%, #2a2a3a 100%);
+            border: 2px solid #555;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Black Ops One', cursive;
+            font-size: 1rem;
+            color: #999;
+            transition: all 0.1s ease;
+            box-shadow: 
+                0 4px 0 #222,
+                0 6px 10px rgba(0,0,0,0.4),
+                inset 0 1px 0 rgba(255,255,255,0.1);
+        }
+
+        .key-btn .direction {
+            font-size: 0.5rem;
+            color: #666;
+        }
+
+        .key-btn.pressed {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #222, 0 2px 5px rgba(0,0,0,0.4);
+        }
+
+        .key-btn.red.pressed {
+            background: linear-gradient(180deg, var(--team-red), #cc2244);
+            border-color: var(--team-red);
+            color: white;
+            box-shadow: 0 1px 0 #661122, 0 0 20px var(--team-red-glow);
+        }
+
+        .key-btn.blue.pressed {
+            background: linear-gradient(180deg, var(--team-blue), #0099cc);
+            border-color: var(--team-blue);
+            color: white;
+            box-shadow: 0 1px 0 #004466, 0 0 20px var(--team-blue-glow);
+        }
+
+        /* Sequence Panel */
+        .sequence-panel {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(-25deg);
+            background: linear-gradient(180deg, rgba(20,20,35,0.98), rgba(10,10,20,0.98));
+            border: 3px solid var(--gold);
+            border-radius: 20px;
+            padding: 20px;
+            z-index: 200;
+            text-align: center;
+            min-width: 300px;
+            box-shadow: 
+                0 0 50px rgba(255,215,0,0.4),
+                0 20px 60px rgba(0,0,0,0.8);
+            display: none;
+        }
+
+        .sequence-panel.active {
+            display: block;
+            animation: panelAppear 0.3s ease-out;
+        }
+
+        @keyframes panelAppear {
+            from { transform: translate(-50%, -50%) rotateX(-25deg) scale(0.8); opacity: 0; }
+            to { transform: translate(-50%, -50%) rotateX(-25deg) scale(1); opacity: 1; }
+        }
+
+        .sequence-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.2rem;
+            color: var(--gold);
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px var(--gold);
+        }
+
+        .sequence-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 0 10px rgba(255,215,0,0.5));
+        }
+
+        .sequence-keys {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 12px;
+            max-width: 280px;
+        }
+
+        .seq-key {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(180deg, #3a3a4a, #2a2a3a);
+            border: 2px solid #444;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Black Ops One', cursive;
+            font-size: 0.9rem;
+            color: #666;
+            transition: all 0.15s ease;
+            box-shadow: 0 2px 0 #222;
+        }
+
+        .seq-key.current {
+            border-color: var(--gold);
+            color: var(--gold);
+            box-shadow: 0 0 15px var(--gold-glow), 0 2px 0 #8b6914;
+            animation: keyPulse 0.5s ease-in-out infinite;
+            transform: scale(1.1);
+        }
+
+        .seq-key.completed {
+            background: linear-gradient(180deg, var(--gold), #b8860b);
+            color: #1a1a1a;
+            border-color: var(--gold);
+        }
+
+        .seq-key.wrong {
+            background: linear-gradient(180deg, var(--team-red), #aa1133);
+            border-color: var(--team-red);
+            color: white;
+            animation: wrongShake 0.3s ease;
+        }
+
+        @keyframes keyPulse {
+            0%, 100% { transform: scale(1.1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes wrongShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
+        }
+
+        .sequence-progress {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        /* Center Panel */
+        .center-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            min-width: 180px;
+        }
+
+        .timer-box {
+            background: linear-gradient(180deg, rgba(20,20,35,0.95), rgba(10,10,20,0.95));
+            border: 3px solid var(--gold);
+            border-radius: 15px;
+            padding: 20px 30px;
+            text-align: center;
+            box-shadow: 0 0 40px var(--gold-glow), 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timer-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,215,0,0.1), transparent);
+            animation: timerShine 3s linear infinite;
+        }
+
+        @keyframes timerShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .timer-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.45rem;
+            color: var(--gold);
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+
+        .timer {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-shadow: 0 0 30px var(--gold);
+        }
+
+        .legend-box {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(180deg, rgba(20,20,35,0.9), rgba(10,10,20,0.9));
+            border-radius: 12px;
+            border: 2px solid #444;
+        }
+
+        .legend-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.45rem;
+            color: var(--gold);
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.7rem;
+            color: #bbb;
+        }
+
+        .legend-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            font-size: 14px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .legend-icon.sand {
+            background: linear-gradient(180deg, #cca870, #a08040);
+        }
+
+        .legend-icon.crate {
+            background: linear-gradient(180deg, #8B5A2B, #5a3a1d);
+            border: 1px solid #3d2010;
+        }
+
+        .legend-icon.gate {
+            background: linear-gradient(180deg, #ffd700, #b8860b);
+            box-shadow: 0 0 10px var(--gold-glow);
+        }
+
+        /* Game Overlay */
+        .game-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at 50% 50%, rgba(20,20,35,0.95), rgba(5,5,10,0.98));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .game-overlay.hidden {
+            display: none;
+        }
+
+        .overlay-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 4rem;
+            background: linear-gradient(180deg, #fff, var(--gold), #b8860b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 30px var(--gold));
+        }
+
+        .overlay-subtitle {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.65rem;
+            color: var(--gold);
+            text-align: center;
+            line-height: 2.4;
+            margin-bottom: 40px;
+            max-width: 750px;
+            text-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        .start-btn {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.8rem;
+            padding: 18px 50px;
+            background: linear-gradient(180deg, var(--gold), #daa520, #b8860b);
+            border: none;
+            border-radius: 12px;
+            color: #1a1a1a;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #8b6914, 0 0 40px var(--gold-glow);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 #8b6914, 0 0 60px var(--gold-glow);
+        }
+
+        .countdown {
+            font-family: 'Black Ops One', cursive;
+            font-size: 12rem;
+            background: linear-gradient(180deg, #fff, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 50px var(--gold));
+            animation: countPulse 1s ease-in-out;
+        }
+
+        @keyframes countPulse {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .winner-display {
+            text-align: center;
+        }
+
+        .winner-text {
+            font-family: 'Black Ops One', cursive;
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: winnerGlow 1s ease-in-out infinite alternate;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        .winner-text.red {
+            color: var(--team-red);
+            text-shadow: 0 0 40px var(--team-red), 0 0 80px var(--team-red-glow);
+        }
+
+        .winner-text.blue {
+            color: var(--team-blue);
+            text-shadow: 0 0 40px var(--team-blue), 0 0 80px var(--team-blue-glow);
+        }
+
+        @keyframes winnerGlow {
+            from { filter: brightness(1); transform: scale(1); }
+            to { filter: brightness(1.3); transform: scale(1.02); }
+        }
+
+        .final-time {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            animation: particleFall 3s linear forwards;
+            z-index: 999;
+        }
+
+        @keyframes particleFall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .finished-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            z-index: 150;
+        }
+
+        .finished-text {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2rem;
+            color: var(--gold);
+            text-shadow: 0 0 30px var(--gold);
+            animation: finishedPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes finishedPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-wrapper">
+        <div class="header">
+            <div class="title">CASTLE CONQUEST</div>
+            <div class="subtitle">🏰 NAVIGATE THE MAZE • BREAK THE GATE • CLAIM VICTORY 🏰</div>
+        </div>
+
+        <div class="game-area">
+            <!-- Team Red Section -->
+            <div class="team-section red">
+                <div class="team-header red">
+                    <div class="team-name">TEAM RED</div>
+                    <div class="team-status" id="status-red">READY</div>
+                </div>
+                <div class="maze-container" id="maze-container-red">
+                    <div class="maze-3d-wrapper">
+                        <div class="maze" id="maze-red"></div>
+                        <div class="cart red" id="cart-red">
+                            <div class="cart-body"></div>
+                            <div class="cart-bottom"></div>
+                            <div class="cart-wheels">
+                                <div class="cart-wheel"></div>
+                                <div class="cart-wheel"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sequence-panel" id="sequence-red">
+                        <div class="sequence-icon" id="seq-icon-red">📦</div>
+                        <div class="sequence-title" id="seq-title-red">PUSH THE CRATE!</div>
+                        <div class="sequence-keys" id="seq-keys-red"></div>
+                        <div class="sequence-progress" id="seq-progress-red">0 / 6</div>
+                    </div>
+                </div>
+                <div class="progress-section">
+                    <div class="move-progress">
+                        <div class="progress-label">MOVEMENT</div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar red" id="progress-red" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text-red">0/4</div>
+                    </div>
+                </div>
+                <div class="controls-section">
+                    <div class="key-btn red" id="key-red-w"><span class="direction">↑</span>W</div>
+                    <div class="key-btn red" id="key-red-a"><span class="direction">←</span>A</div>
+                    <div class="key-btn red" id="key-red-s"><span class="direction">↓</span>S</div>
+                    <div class="key-btn red" id="key-red-d"><span class="direction">→</span>D</div>
+                </div>
+            </div>
+
+            <!-- Center Panel -->
+            <div class="center-panel">
+                <div class="timer-box">
+                    <div class="timer-label">ELAPSED TIME</div>
+                    <div class="timer" id="timer">00:00</div>
+                </div>
+                <div class="legend-box">
+                    <div class="legend-title">OBSTACLES</div>
+                    <div class="legend-item">
+                        <div class="legend-icon sand">≋</div>
+                        <span>Sand (8 clicks)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon crate">📦</div>
+                        <span>Crate (6-key seq)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon gate">🏰</div>
+                        <span>Gate (12-key seq)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Blue Section -->
+            <div class="team-section blue">
+                <div class="team-header blue">
+                    <div class="team-name">TEAM BLUE</div>
+                    <div class="team-status" id="status-blue">READY</div>
+                </div>
+                <div class="maze-container" id="maze-container-blue">
+                    <div class="maze-3d-wrapper">
+                        <div class="maze" id="maze-blue"></div>
+                        <div class="cart blue" id="cart-blue">
+                            <div class="cart-body"></div>
+                            <div class="cart-bottom"></div>
+                            <div class="cart-wheels">
+                                <div class="cart-wheel"></div>
+                                <div class="cart-wheel"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sequence-panel" id="sequence-blue">
+                        <div class="sequence-icon" id="seq-icon-blue">📦</div>
+                        <div class="sequence-title" id="seq-title-blue">PUSH THE CRATE!</div>
+                        <div class="sequence-keys" id="seq-keys-blue"></div>
+                        <div class="sequence-progress" id="seq-progress-blue">0 / 6</div>
+                    </div>
+                </div>
+                <div class="progress-section">
+                    <div class="move-progress">
+                        <div class="progress-label">MOVEMENT</div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar blue" id="progress-blue" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text" id="progress-text-blue">0/4</div>
+                    </div>
+                </div>
+                <div class="controls-section">
+                    <div class="key-btn blue" id="key-blue-i"><span class="direction">↑</span>I</div>
+                    <div class="key-btn blue" id="key-blue-j"><span class="direction">←</span>J</div>
+                    <div class="key-btn blue" id="key-blue-k"><span class="direction">↓</span>K</div>
+                    <div class="key-btn blue" id="key-blue-l"><span class="direction">→</span>L</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-overlay" id="game-overlay">
+        <div class="overlay-title">CASTLE CONQUEST</div>
+        <div class="overlay-subtitle">
+            🛒 EACH PLAYER CONTROLS ONE DIRECTION (4 PLAYERS PER TEAM)<br>
+            📦 OBSTACLES REQUIRE KEY SEQUENCES - WRONG KEY = RESTART!<br>
+            🏜️ SAND TERRAIN NEEDS MORE CLICKS TO CROSS<br>
+            🏰 FIRST TEAM TO BREAK THE CASTLE GATE WINS!<br>
+            ⚠️ NO HOLDING KEYS - CLICK RAPIDLY! ⚠️
+        </div>
+        <button class="start-btn" id="start-btn">START CONQUEST</button>
+    </div>
+
+    <script>
+        // Pre-designed 20x20 maze
+        const mazeTemplate = [
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+            [1,0,0,0,1,0,0,0,0,0,0,2,2,0,0,0,1,0,4,1],
+            [1,0,1,0,1,0,1,1,1,1,0,1,1,1,1,0,1,0,0,1],
+            [1,0,1,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,1,1],
+            [1,0,1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,0,0,1],
+            [1,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,0,1,1],
+            [1,1,1,1,1,1,0,1,1,1,1,0,1,1,1,1,1,3,1,1],
+            [1,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
+            [1,0,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,1,0,1],
+            [1,0,1,0,0,0,0,0,1,0,1,0,1,0,0,0,0,1,0,1],
+            [1,0,1,0,1,1,1,0,1,0,0,0,1,0,1,1,0,1,0,1],
+            [1,0,0,0,1,2,2,0,1,1,1,1,1,0,1,3,0,0,0,1],
+            [1,1,1,1,1,2,1,0,0,0,0,0,0,0,1,1,1,1,0,1],
+            [1,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,1,0,1],
+            [1,0,1,1,1,0,0,0,0,0,0,0,1,1,1,1,0,1,0,1],
+            [1,0,1,0,1,1,1,1,1,1,1,0,0,0,0,1,0,0,0,1],
+            [1,3,1,0,0,0,0,0,0,0,1,1,1,1,0,1,1,1,0,1],
+            [1,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1],
+            [1,5,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,1],
+            [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+        ];
+
+        function mirrorMaze(maze) {
+            return maze.map(row => [...row].reverse());
+        }
+
+        const config = {
+            cellSize: 26,
+            cellGap: 2,
+            mazePadding: 4,
+            cartSize: 22,
+            clicksToMove: 4,
+            clicksOnSand: 8,
+            crateSequenceLength: 6,
+            gateSequenceLength: 12,
+            keys: {
+                red: {
+                    up: 'KeyW', down: 'KeyS', left: 'KeyA', right: 'KeyD',
+                    all: ['KeyQ', 'KeyW', 'KeyE', 'KeyA', 'KeyS', 'KeyD']
+                },
+                blue: {
+                    up: 'KeyI', down: 'KeyK', left: 'KeyJ', right: 'KeyL',
+                    all: ['KeyI', 'KeyO', 'KeyP', 'KeyJ', 'KeyK', 'KeyL']
+                }
+            },
+            keyLabels: {
+                red: { 'KeyQ': 'Q', 'KeyW': 'W', 'KeyE': 'E', 'KeyA': 'A', 'KeyS': 'S', 'KeyD': 'D' },
+                blue: { 'KeyI': 'I', 'KeyO': 'O', 'KeyP': 'P', 'KeyJ': 'J', 'KeyK': 'K', 'KeyL': 'L' }
+            }
+        };
+
+        const state = {
+            isRunning: false,
+            startTime: null,
+            teams: {
+                red: {
+                    maze: JSON.parse(JSON.stringify(mazeTemplate)),
+                    pos: { x: 1, y: 18 },
+                    moveProgress: 0,
+                    currentDirection: null,
+                    requiredClicks: config.clicksToMove,
+                    inSequence: false,
+                    sequence: [],
+                    sequenceIndex: 0,
+                    finished: false,
+                    finishTime: null
+                },
+                blue: {
+                    maze: mirrorMaze(mazeTemplate),
+                    pos: { x: 18, y: 18 },
+                    moveProgress: 0,
+                    currentDirection: null,
+                    requiredClicks: config.clicksToMove,
+                    inSequence: false,
+                    sequence: [],
+                    sequenceIndex: 0,
+                    finished: false,
+                    finishTime: null
+                }
+            },
+            keysPressed: {},
+            timerInterval: null
+        };
+
+        function findPosition(maze, value) {
+            for (let y = 0; y < maze.length; y++) {
+                for (let x = 0; x < maze[y].length; x++) {
+                    if (maze[y][x] === value) return { x, y };
+                }
+            }
+            return null;
+        }
+
+        const timerEl = document.getElementById('timer');
+        const gameOverlay = document.getElementById('game-overlay');
+        const startBtn = document.getElementById('start-btn');
+
+        function renderMaze(team) {
+            const mazeEl = document.getElementById(`maze-${team}`);
+            const maze = state.teams[team].maze;
+            
+            mazeEl.innerHTML = '';
+            
+            for (let y = 0; y < maze.length; y++) {
+                for (let x = 0; x < maze[y].length; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.id = `cell-${team}-${x}-${y}`;
+                    
+                    switch (maze[y][x]) {
+                        case 0: 
+                            cell.classList.add('path'); 
+                            break;
+                        case 1: 
+                            cell.classList.add('wall'); 
+                            break;
+                        case 2: 
+                            cell.classList.add('sand'); 
+                            break;
+                        case 3: 
+                            cell.classList.add('crate');
+                            cell.innerHTML = `
+                                <div class="crate-top"></div>
+                                <div class="crate-front"></div>
+                                <div class="crate-band top"></div>
+                                <div class="crate-band bottom"></div>
+                                <div class="crate-icon">📦</div>
+                            `;
+                            break;
+                        case 4: 
+                            cell.classList.add('gate');
+                            cell.innerHTML = `
+                                <div class="gate-structure"></div>
+                                <div class="gate-front"></div>
+                                <div class="gate-shine"></div>
+                                <div class="gate-icon">🏰</div>
+                            `;
+                            break;
+                        case 5: 
+                            cell.classList.add('start', 'path'); 
+                            break;
+                    }
+                    
+                    mazeEl.appendChild(cell);
+                }
+            }
+        }
+
+        function renderCart(team) {
+            const cartBody = document.querySelector(`#cart-${team} .cart-body`);
+            cartBody.innerHTML = '';
+            
+            for (let i = 0; i < 9; i++) {
+                const member = document.createElement('div');
+                member.className = 'cart-member';
+                member.textContent = '😤';
+                cartBody.appendChild(member);
+            }
+            
+            updateCartPosition(team);
+        }
+
+        // FIXED: Cart now centers in cell
+        function updateCartPosition(team) {
+            const cart = document.getElementById(`cart-${team}`);
+            const pos = state.teams[team].pos;
+            
+            const cellTotalSize = config.cellSize + config.cellGap;
+            const cartOffset = (config.cellSize - config.cartSize) / 2;
+            
+            const left = config.mazePadding + (pos.x * cellTotalSize) + cartOffset;
+            const top = config.mazePadding + (pos.y * cellTotalSize) + cartOffset;
+            
+            cart.style.left = `${left}px`;
+            cart.style.top = `${top}px`;
+        }
+
+        function generateSequence(team, length) {
+            const keys = config.keys[team].all;
+            const sequence = [];
+            for (let i = 0; i < length; i++) {
+                sequence.push(keys[Math.floor(Math.random() * keys.length)]);
+            }
+            return sequence;
+        }
+
+        function showSequence(team, type) {
+            const teamState = state.teams[team];
+            const length = type === 'crate' ? config.crateSequenceLength : config.gateSequenceLength;
+            
+            teamState.inSequence = true;
+            teamState.sequence = generateSequence(team, length);
+            teamState.sequenceIndex = 0;
+            
+            const panel = document.getElementById(`sequence-${team}`);
+            const icon = document.getElementById(`seq-icon-${team}`);
+            const title = document.getElementById(`seq-title-${team}`);
+            const keysContainer = document.getElementById(`seq-keys-${team}`);
+            const progress = document.getElementById(`seq-progress-${team}`);
+            
+            if (type === 'crate') {
+                icon.textContent = '📦';
+                title.textContent = 'PUSH THE CRATE!';
+            } else {
+                icon.textContent = '🔨';
+                title.textContent = 'BREAK THE GATE!';
+            }
+            
+            keysContainer.innerHTML = '';
+            teamState.sequence.forEach((key, i) => {
+                const keyEl = document.createElement('div');
+                keyEl.className = 'seq-key';
+                keyEl.id = `seq-key-${team}-${i}`;
+                keyEl.textContent = config.keyLabels[team][key];
+                if (i === 0) keyEl.classList.add('current');
+                keysContainer.appendChild(keyEl);
+            });
+            
+            progress.textContent = `0 / ${length}`;
+            panel.classList.add('active');
+            
+            document.getElementById(`status-${team}`).textContent = type === 'crate' ? 'PUSHING CRATE...' : 'BREAKING GATE...';
+        }
+
+        function hideSequence(team) {
+            const teamState = state.teams[team];
+            teamState.inSequence = false;
+            teamState.sequence = [];
+            teamState.sequenceIndex = 0;
+            
+            document.getElementById(`sequence-${team}`).classList.remove('active');
+            document.getElementById(`status-${team}`).textContent = 'MOVING...';
+        }
+
+        function handleSequenceKey(team, keyCode) {
+            const teamState = state.teams[team];
+            if (!teamState.inSequence) return;
+            
+            const expectedKey = teamState.sequence[teamState.sequenceIndex];
+            const currentKeyEl = document.getElementById(`seq-key-${team}-${teamState.sequenceIndex}`);
+            
+            if (keyCode === expectedKey) {
+                currentKeyEl.classList.remove('current');
+                currentKeyEl.classList.add('completed');
+                teamState.sequenceIndex++;
+                
+                const progress = document.getElementById(`seq-progress-${team}`);
+                progress.textContent = `${teamState.sequenceIndex} / ${teamState.sequence.length}`;
+                
+                if (teamState.sequenceIndex < teamState.sequence.length) {
+                    const nextKeyEl = document.getElementById(`seq-key-${team}-${teamState.sequenceIndex}`);
+                    nextKeyEl.classList.add('current');
+                } else {
+                    completeSequence(team);
+                }
+                
+                playSound(800, 'sine', 0.1);
+            } else {
+                currentKeyEl.classList.add('wrong');
+                setTimeout(() => currentKeyEl.classList.remove('wrong'), 300);
+                
+                for (let i = 0; i < teamState.sequence.length; i++) {
+                    const keyEl = document.getElementById(`seq-key-${team}-${i}`);
+                    keyEl.classList.remove('completed', 'current');
+                    if (i === 0) keyEl.classList.add('current');
+                }
+                
+                teamState.sequenceIndex = 0;
+                document.getElementById(`seq-progress-${team}`).textContent = `0 / ${teamState.sequence.length}`;
+                
+                playSound(200, 'sawtooth', 0.2);
+            }
+        }
+
+        function completeSequence(team) {
+            const teamState = state.teams[team];
+            const targetPos = getTargetPosition(team, teamState.currentDirection);
+            const cellType = teamState.maze[targetPos.y][targetPos.x];
+            
+            if (cellType === 3) {
+                teamState.maze[targetPos.y][targetPos.x] = 0;
+                const cellEl = document.getElementById(`cell-${team}-${targetPos.x}-${targetPos.y}`);
+                cellEl.className = 'cell path';
+                cellEl.innerHTML = '';
+            }
+            
+            if (cellType === 4) {
+                teamState.finished = true;
+                teamState.finishTime = Date.now() - state.startTime;
+                hideSequence(team);
+                showFinished(team);
+                checkGameEnd();
+                return;
+            }
+            
+            hideSequence(team);
+            
+            teamState.pos = targetPos;
+            updateCartPosition(team);
+            teamState.moveProgress = 0;
+            teamState.currentDirection = null;
+            updateProgressDisplay(team);
+        }
+
+        function showFinished(team) {
+            const container = document.getElementById(`maze-container-${team}`);
+            const overlay = document.createElement('div');
+            overlay.className = 'finished-overlay';
+            overlay.innerHTML = `<div class="finished-text">🏆 FINISHED!</div>`;
+            container.appendChild(overlay);
+            
+            document.getElementById(`status-${team}`).textContent = 'VICTORY!';
+        }
+
+        function getTargetPosition(team, direction) {
+            const pos = state.teams[team].pos;
+            switch (direction) {
+                case 'up': return { x: pos.x, y: pos.y - 1 };
+                case 'down': return { x: pos.x, y: pos.y + 1 };
+                case 'left': return { x: pos.x - 1, y: pos.y };
+                case 'right': return { x: pos.x + 1, y: pos.y };
+            }
+            return pos;
+        }
+
+        function canMove(team, direction) {
+            const target = getTargetPosition(team, direction);
+            const maze = state.teams[team].maze;
+            
+            if (target.x < 0 || target.x >= 20 || target.y < 0 || target.y >= 20) return false;
+            
+            const cellType = maze[target.y][target.x];
+            return cellType !== 1;
+        }
+
+        function handleMovementKey(team, direction) {
+            const teamState = state.teams[team];
+            if (teamState.inSequence || teamState.finished) return;
+            
+            if (!canMove(team, direction)) return;
+            
+            const target = getTargetPosition(team, direction);
+            const cellType = teamState.maze[target.y][target.x];
+            
+            if (teamState.currentDirection !== direction) {
+                teamState.currentDirection = direction;
+                teamState.moveProgress = 0;
+                
+                if (cellType === 2) {
+                    teamState.requiredClicks = config.clicksOnSand;
+                } else {
+                    teamState.requiredClicks = config.clicksToMove;
+                }
+            }
+            
+            teamState.moveProgress++;
+            updateProgressDisplay(team);
+            
+            if (teamState.moveProgress >= teamState.requiredClicks) {
+                if (cellType === 3) {
+                    showSequence(team, 'crate');
+                    teamState.moveProgress = 0;
+                } else if (cellType === 4) {
+                    showSequence(team, 'gate');
+                    teamState.moveProgress = 0;
+                } else {
+                    teamState.pos = target;
+                    updateCartPosition(team);
+                    teamState.moveProgress = 0;
+                    teamState.currentDirection = null;
+                }
+                updateProgressDisplay(team);
+            }
+            
+            playSound(400 + teamState.moveProgress * 50, 'sine', 0.05);
+        }
+
+        function updateProgressDisplay(team) {
+            const teamState = state.teams[team];
+            const progress = (teamState.moveProgress / teamState.requiredClicks) * 100;
+            
+            document.getElementById(`progress-${team}`).style.width = `${progress}%`;
+            document.getElementById(`progress-text-${team}`).textContent = 
+                `${teamState.moveProgress}/${teamState.requiredClicks}`;
+        }
+
+        function playSound(freq, type, duration) {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                oscillator.frequency.value = freq;
+                oscillator.type = type;
+                
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function handleKeyDown(e) {
+            if (!state.isRunning) return;
+            
+            if (state.keysPressed[e.code]) return;
+            state.keysPressed[e.code] = true;
+
+            updateKeyVisual(e.code, true);
+
+            if (state.teams.red.inSequence) {
+                if (config.keys.red.all.includes(e.code)) {
+                    handleSequenceKey('red', e.code);
+                }
+            } else {
+                if (e.code === config.keys.red.up) handleMovementKey('red', 'up');
+                else if (e.code === config.keys.red.down) handleMovementKey('red', 'down');
+                else if (e.code === config.keys.red.left) handleMovementKey('red', 'left');
+                else if (e.code === config.keys.red.right) handleMovementKey('red', 'right');
+            }
+
+            if (state.teams.blue.inSequence) {
+                if (config.keys.blue.all.includes(e.code)) {
+                    handleSequenceKey('blue', e.code);
+                }
+            } else {
+                if (e.code === config.keys.blue.up) handleMovementKey('blue', 'up');
+                else if (e.code === config.keys.blue.down) handleMovementKey('blue', 'down');
+                else if (e.code === config.keys.blue.left) handleMovementKey('blue', 'left');
+                else if (e.code === config.keys.blue.right) handleMovementKey('blue', 'right');
+            }
+        }
+
+        function handleKeyUp(e) {
+            state.keysPressed[e.code] = false;
+            updateKeyVisual(e.code, false);
+        }
+
+        function updateKeyVisual(code, pressed) {
+            const keyMap = {
+                'KeyW': 'key-red-w', 'KeyA': 'key-red-a', 'KeyS': 'key-red-s', 'KeyD': 'key-red-d',
+                'KeyI': 'key-blue-i', 'KeyJ': 'key-blue-j', 'KeyK': 'key-blue-k', 'KeyL': 'key-blue-l'
+            };
+            
+            const keyId = keyMap[code];
+            if (keyId) {
+                const el = document.getElementById(keyId);
+                if (pressed) el.classList.add('pressed');
+                else el.classList.remove('pressed');
+            }
+        }
+
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function updateTimer() {
+            if (!state.isRunning) return;
+            const elapsed = Date.now() - state.startTime;
+            timerEl.textContent = formatTime(elapsed);
+        }
+
+        function checkGameEnd() {
+            if (state.teams.red.finished || state.teams.blue.finished) {
+                endGame();
+            }
+        }
+
+        async function startCountdown() {
+            gameOverlay.innerHTML = '<div class="countdown" id="countdown">3</div>';
+            
+            for (let i = 3; i >= 1; i--) {
+                document.getElementById('countdown').textContent = i;
+                document.getElementById('countdown').style.animation = 'none';
+                void document.getElementById('countdown').offsetWidth;
+                document.getElementById('countdown').style.animation = 'countPulse 1s ease-in-out';
+                await sleep(1000);
+            }
+            
+            document.getElementById('countdown').textContent = 'CONQUER!';
+            document.getElementById('countdown').style.color = 'var(--team-red)';
+            await sleep(500);
+            
+            gameOverlay.classList.add('hidden');
+            startGame();
+        }
+
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function initGame() {
+            state.teams.red.maze = JSON.parse(JSON.stringify(mazeTemplate));
+            state.teams.blue.maze = mirrorMaze(mazeTemplate);
+            
+            const redStart = findPosition(state.teams.red.maze, 5);
+            const blueStart = findPosition(state.teams.blue.maze, 5);
+            
+            state.teams.red.pos = redStart;
+            state.teams.blue.pos = blueStart;
+            
+            ['red', 'blue'].forEach(team => {
+                state.teams[team].moveProgress = 0;
+                state.teams[team].currentDirection = null;
+                state.teams[team].requiredClicks = config.clicksToMove;
+                state.teams[team].inSequence = false;
+                state.teams[team].sequence = [];
+                state.teams[team].sequenceIndex = 0;
+                state.teams[team].finished = false;
+                state.teams[team].finishTime = null;
+                
+                renderMaze(team);
+                renderCart(team);
+                updateProgressDisplay(team);
+                
+                document.getElementById(`status-${team}`).textContent = 'READY';
+                document.getElementById(`sequence-${team}`).classList.remove('active');
+                
+                const overlay = document.querySelector(`#maze-container-${team} .finished-overlay`);
+                if (overlay) overlay.remove();
+            });
+        }
+
+        function startGame() {
+            state.isRunning = true;
+            state.startTime = Date.now();
+            
+            state.timerInterval = setInterval(updateTimer, 100);
+            
+            ['red', 'blue'].forEach(team => {
+                document.getElementById(`status-${team}`).textContent = 'MOVING...';
+            });
+        }
+
+        function endGame() {
+            state.isRunning = false;
+            clearInterval(state.timerInterval);
+
+            let winner, winnerTime;
+            
+            if (state.teams.red.finished && !state.teams.blue.finished) {
+                winner = 'red';
+                winnerTime = state.teams.red.finishTime;
+            } else if (state.teams.blue.finished && !state.teams.red.finished) {
+                winner = 'blue';
+                winnerTime = state.teams.blue.finishTime;
+            } else if (state.teams.red.finished && state.teams.blue.finished) {
+                if (state.teams.red.finishTime < state.teams.blue.finishTime) {
+                    winner = 'red';
+                    winnerTime = state.teams.red.finishTime;
+                } else {
+                    winner = 'blue';
+                    winnerTime = state.teams.blue.finishTime;
+                }
+            }
+
+            const winnerText = winner === 'red' ? 'TEAM RED WINS!' : 'TEAM BLUE WINS!';
+
+            gameOverlay.innerHTML = `
+                <div class="winner-display">
+                    <div class="winner-text ${winner}">${winnerText}</div>
+                    <div class="final-time">🏰 Time: ${formatTime(winnerTime)}</div>
+                    <button class="start-btn" onclick="resetGame()">PLAY AGAIN</button>
+                </div>
+            `;
+            gameOverlay.classList.remove('hidden');
+            
+            createVictoryParticles(winner);
+        }
+
+        function createVictoryParticles(team) {
+            const colors = team === 'red' 
+                ? ['#ff2d55', '#ff6688', '#ffaacc', '#ffd700'] 
+                : ['#00d4ff', '#66e5ff', '#aaeeff', '#ffd700'];
+            
+            for (let i = 0; i < 120; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = `${Math.random() * 100}vw`;
+                    particle.style.top = '-20px';
+                    particle.style.width = `${8 + Math.random() * 12}px`;
+                    particle.style.height = particle.style.width;
+                    particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    particle.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    document.body.appendChild(particle);
+                    setTimeout(() => particle.remove(), 3000);
+                }, i * 20);
+            }
+        }
+
+        function resetGame() {
+            gameOverlay.innerHTML = `
+                <div class="overlay-title">CASTLE CONQUEST</div>
+                <div class="overlay-subtitle">
+                    🛒 EACH PLAYER CONTROLS ONE DIRECTION (4 PLAYERS PER TEAM)<br>
+                    📦 OBSTACLES REQUIRE KEY SEQUENCES - WRONG KEY = RESTART!<br>
+                    🏜️ SAND TERRAIN NEEDS MORE CLICKS TO CROSS<br>
+                    🏰 FIRST TEAM TO BREAK THE CASTLE GATE WINS!<br>
+                    ⚠️ NO HOLDING KEYS - CLICK RAPIDLY! ⚠️
+                </div>
+                <button class="start-btn" id="start-btn">START CONQUEST</button>
+            `;
+            document.getElementById('start-btn').addEventListener('click', () => {
+                initGame();
+                startCountdown();
+            });
+            gameOverlay.classList.remove('hidden');
+        }
+
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+        startBtn.addEventListener('click', () => {
+            initGame();
+            startCountdown();
+        });
+
+        initGame();
+    </script>
+</body>
+</html>

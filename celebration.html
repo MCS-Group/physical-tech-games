@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHYSICAL: TECH - CHAMPIONS!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=Black+Ops+One&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --gold: #ffd700;
+            --gold-glow: rgba(255, 215, 0, 0.6);
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: #0a0a12;
+            font-family: 'Orbitron', sans-serif;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Animated background */
+        .bg-celebration {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse at 30% 30%, rgba(255, 215, 0, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 70%, rgba(255, 215, 0, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 215, 0, 0.2) 0%, transparent 60%);
+            animation: bgCelebrate 3s ease-in-out infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes bgCelebrate {
+            0% { opacity: 0.3; transform: scale(1); }
+            100% { opacity: 0.6; transform: scale(1.1); }
+        }
+
+        .celebration-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 40px;
+            max-height: calc(100vh - 120px);
+            overflow: hidden;
+        }
+
+        /* Trophy animation */
+        .trophy-container {
+            margin-bottom: 20px;
+        }
+
+        .trophy {
+            font-size: 6rem;
+            animation: trophyBounce 1s ease-in-out infinite;
+            filter: drop-shadow(0 0 50px var(--gold-glow));
+        }
+
+        @keyframes trophyBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+        }
+
+        /* Title */
+        .champion-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 3.5rem;
+            background: linear-gradient(180deg, #fff 0%, var(--gold) 50%, #b8860b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+            animation: titleGlow 1.5s ease-in-out infinite alternate;
+            letter-spacing: 10px;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 20px var(--gold-glow)); transform: scale(1); }
+            100% { filter: drop-shadow(0 0 50px var(--gold)); transform: scale(1.02); }
+        }
+
+        .champion-subtitle {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        /* Team name */
+        .team-name {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 5px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Champions grid */
+        .champions-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            max-width: 900px;
+            margin-bottom: 30px;
+        }
+
+        .champion-member {
+            text-align: center;
+            animation: memberAppear 0.5s ease-out backwards;
+        }
+
+        @keyframes memberAppear {
+            from { opacity: 0; transform: translateY(50px) scale(0.5); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .member-sprite {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(180deg, #2a2a3a, #1a1a2a);
+            border: 3px solid var(--gold);
+            border-radius: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 0 20px var(--gold-glow), 0 10px 20px rgba(0,0,0,0.5);
+            animation: memberFloat 2s ease-in-out infinite;
+            overflow: hidden;
+        }
+
+        .member-sprite img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        @keyframes memberFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .member-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--gold);
+            text-shadow: 0 0 10px var(--gold-glow);
+        }
+
+        .member-dept {
+            font-size: 0.6rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        /* Crown on first member */
+        .champion-member:nth-child(5) .member-sprite::before {
+            content: '👑';
+            position: absolute;
+            top: -30px;
+            font-size: 2rem;
+            animation: crownFloat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes crownFloat {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+
+        /* Actions */
+        .celebration-actions {
+            display: flex;
+            gap: 20px;
+        }
+
+        .action-btn {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.2rem;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(180deg, var(--gold), #b8860b);
+            color: #1a1a1a;
+            box-shadow: 0 6px 0 #8b6914, 0 0 40px var(--gold-glow);
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 11px 0 #8b6914, 0 0 60px var(--gold-glow);
+        }
+
+        .action-btn.secondary {
+            background: linear-gradient(180deg, #444, #222);
+            color: white;
+            box-shadow: 0 6px 0 #111;
+        }
+
+        .action-btn.secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 #111;
+        }
+
+        /* Fireworks */
+        .firework {
+            position: fixed;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .firework-particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            animation: fireworkExplode 1.5s ease-out forwards;
+        }
+
+        @keyframes fireworkExplode {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        /* Sparkles */
+        .sparkle {
+            position: fixed;
+            pointer-events: none;
+            font-size: 2rem;
+            animation: sparkle 2s ease-out forwards;
+            z-index: 5;
+        }
+
+        @keyframes sparkle {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+
+        /* Stats banner */
+        .stats-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, transparent, rgba(0,0,0,0.8));
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2.5rem;
+            color: var(--gold);
+        }
+
+        .stat-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* No champion state */
+        .no-champion {
+            text-align: center;
+            padding: 60px;
+        }
+
+        .no-champion-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .no-champion-text {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-celebration"></div>
+
+    <div class="celebration-content" id="celebrationContent">
+        <!-- Content will be generated by JS -->
+    </div>
+
+    <div class="stats-banner" id="statsBanner">
+        <div class="stat-item">
+            <div class="stat-value">144</div>
+            <div class="stat-label">TOTAL PLAYERS</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value">8</div>
+            <div class="stat-label">MATCHES PLAYED</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="gamesPlayed">4</div>
+            <div class="stat-label">GAMES COMPLETED</div>
+        </div>
+    </div>
+
+    <script src="players.js"></script>
+    <script src="game-state.js"></script>
+    <script>
+        const content = document.getElementById('celebrationContent');
+
+        function init() {
+            const state = getState();
+
+            if (state.bracket.champions) {
+                showChampions(state.bracket.champions);
+                startCelebrationEffects();
+                playVictoryMusic();
+            } else {
+                showNoChampion();
+            }
+
+            // Update stats
+            let totalMatches = 0;
+            for (let i = 1; i <= 4; i++) {
+                totalMatches += state.results[i].length;
+            }
+            document.getElementById('gamesPlayed').textContent = totalMatches;
+        }
+
+        function showChampions(championTeamId) {
+            const team = TEAMS[championTeamId];
+            const members = team.members.map(id => PLAYERS[id]);
+
+            let membersHtml = '';
+            members.forEach((player, i) => {
+                membersHtml += `
+                    <div class="champion-member" style="animation-delay: ${i * 0.1}s">
+                        <div class="member-sprite" style="animation-delay: ${i * 0.2}s">
+                            <img src="assets/sprites/${player.sprite}" onerror="this.parentElement.innerHTML='👤'" alt="${player.name}">
+                        </div>
+                        <div class="member-name">${player.name}</div>
+                        <div class="member-dept">${player.department}</div>
+                    </div>
+                `;
+            });
+
+            content.innerHTML = `
+                <div class="trophy-container">
+                    <div class="trophy">🏆</div>
+                </div>
+                <h1 class="champion-title">CHAMPIONS!</h1>
+                <p class="champion-subtitle">PHYSICAL: TECH TOURNAMENT 2025</p>
+                <h2 class="team-name">${team.name}</h2>
+                <div class="champions-grid">
+                    ${membersHtml}
+                </div>
+                <div class="celebration-actions">
+                    <button class="action-btn primary" onclick="celebrateMore()">🎉 CELEBRATE!</button>
+                    <button class="action-btn secondary" onclick="viewScoreboard()">📊 SCOREBOARD</button>
+                    <button class="action-btn secondary" onclick="goHome()">🏠 HOME</button>
+                </div>
+            `;
+        }
+
+        function showNoChampion() {
+            content.innerHTML = `
+                <div class="no-champion">
+                    <div class="no-champion-icon">🏆</div>
+                    <p class="no-champion-text">No champion yet!<br>Complete all 4 games to crown a winner.</p>
+                    <button class="action-btn primary" onclick="goHome()">GO TO TOURNAMENT</button>
+                </div>
+            `;
+            document.getElementById('statsBanner').style.display = 'none';
+        }
+
+        function startCelebrationEffects() {
+            // Continuous confetti
+            setInterval(createConfetti, 100);
+
+            // Fireworks every few seconds
+            setInterval(createFirework, 2000);
+            createFirework();
+
+            // Sparkles
+            setInterval(createSparkle, 500);
+        }
+
+        function createConfetti() {
+            const colors = ['#ffd700', '#ff2d55', '#00d4ff', '#00ff88', '#9945ff', '#ff6b35'];
+            const confetti = document.createElement('div');
+            confetti.style.cssText = `
+                position: fixed;
+                left: ${Math.random() * 100}vw;
+                top: -20px;
+                width: ${6 + Math.random() * 10}px;
+                height: ${6 + Math.random() * 10}px;
+                background: ${colors[Math.floor(Math.random() * colors.length)]};
+                border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                pointer-events: none;
+                z-index: 5;
+                animation: confettiFall ${3 + Math.random() * 2}s linear forwards;
+            `;
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), 5000);
+        }
+
+        function createFirework() {
+            const colors = ['#ffd700', '#ff2d55', '#00d4ff', '#00ff88'];
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * (window.innerHeight * 0.5);
+
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            firework.style.left = x + 'px';
+            firework.style.top = y + 'px';
+
+            const particleCount = 20;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                const angle = (i / particleCount) * Math.PI * 2;
+                const distance = 50 + Math.random() * 100;
+                particle.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+                particle.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                firework.appendChild(particle);
+            }
+
+            document.body.appendChild(firework);
+            setTimeout(() => firework.remove(), 1500);
+        }
+
+        function createSparkle() {
+            const sparkles = ['✨', '⭐', '🌟', '💫'];
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+            sparkle.style.left = Math.random() * 100 + 'vw';
+            sparkle.style.top = Math.random() * 100 + 'vh';
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 2000);
+        }
+
+        function playVictoryMusic() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
+                notes.forEach((freq, i) => {
+                    setTimeout(() => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'sine';
+                        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                        osc.start(ctx.currentTime);
+                        osc.stop(ctx.currentTime + 0.5);
+                    }, i * 200);
+                });
+            } catch (e) {}
+        }
+
+        function celebrateMore() {
+            // Extra celebration burst
+            for (let i = 0; i < 5; i++) {
+                setTimeout(createFirework, i * 200);
+            }
+            for (let i = 0; i < 50; i++) {
+                setTimeout(createConfetti, i * 30);
+            }
+            playVictoryMusic();
+        }
+
+        function viewScoreboard() {
+            window.open('scoreboard.html', '_blank');
+        }
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        // Add confetti animation style
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes confettiFall {
+                0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+                100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHYSICAL: TECH Tournament</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=Black+Ops+One&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-dark: #0a0a12;
+            --gold: #ffd700;
+            --gold-glow: rgba(255, 215, 0, 0.5);
+            --red: #ff2d55;
+            --red-glow: rgba(255, 45, 85, 0.5);
+            --blue: #00d4ff;
+            --blue-glow: rgba(0, 212, 255, 0.5);
+            --green: #00ff88;
+            --purple: #9945ff;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: var(--bg-dark);
+            font-family: 'Orbitron', sans-serif;
+            color: white;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, var(--red-glow) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, var(--blue-glow) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, var(--gold-glow) 0%, transparent 40%);
+            opacity: 0.3;
+            animation: bgPulse 4s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes bgPulse {
+            0% { opacity: 0.2; transform: scale(1); }
+            100% { opacity: 0.4; transform: scale(1.1); }
+        }
+
+        /* ========== START SCREEN ========== */
+        .start-screen {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .start-screen.hidden {
+            opacity: 0;
+            transform: scale(1.1);
+            pointer-events: none;
+        }
+
+        .main-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 6rem;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: titlePulse 2s ease-in-out infinite alternate;
+        }
+
+        .main-title .physical {
+            display: block;
+            background: linear-gradient(180deg, #fff 0%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 15px;
+        }
+
+        .main-title .tech {
+            display: block;
+            color: var(--gold);
+            text-shadow: 0 0 50px var(--gold), 0 0 100px var(--gold-glow);
+            letter-spacing: 20px;
+        }
+
+        @keyframes titlePulse {
+            0% { transform: scale(1); filter: brightness(1); }
+            100% { transform: scale(1.02); filter: brightness(1.1); }
+        }
+
+        .subtitle {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: var(--gold);
+            margin-bottom: 60px;
+            text-shadow: 0 0 20px var(--gold-glow);
+            letter-spacing: 5px;
+        }
+
+        .start-btn {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2rem;
+            padding: 25px 80px;
+            background: linear-gradient(180deg, var(--gold), #daa520, #b8860b);
+            border: none;
+            border-radius: 15px;
+            color: #1a1a1a;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #8b6914, 0 0 50px var(--gold-glow);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            animation: btnFloat 3s ease-in-out infinite;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 13px 0 #8b6914, 0 0 80px var(--gold-glow);
+        }
+
+        .start-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 3px 0 #8b6914, 0 0 30px var(--gold-glow);
+        }
+
+        @keyframes btnFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .player-count {
+            margin-top: 40px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        /* ========== GAME HUB ========== */
+        .hub-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 30px;
+            z-index: 10;
+            display: none;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .hub-screen.active {
+            display: flex;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hub-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hub-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .hub-title .physical { color: #aaa; }
+        .hub-title .tech { color: var(--gold); text-shadow: 0 0 30px var(--gold); }
+
+        .hub-subtitle {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: var(--gold);
+            letter-spacing: 3px;
+        }
+
+        /* Game Cards Grid */
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto 40px;
+        }
+
+        .game-card {
+            background: linear-gradient(180deg, rgba(20, 20, 35, 0.95), rgba(10, 10, 20, 0.95));
+            border: 3px solid #333;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 5px;
+            background: #333;
+            transition: all 0.3s;
+        }
+
+        .game-card.unlocked {
+            border-color: var(--gold);
+        }
+
+        .game-card.unlocked::before {
+            background: var(--gold);
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        .game-card.unlocked:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+        }
+
+        .game-card.completed {
+            border-color: var(--green);
+        }
+
+        .game-card.completed::before {
+            background: var(--green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .game-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .game-card.locked:hover {
+            transform: none;
+        }
+
+        .game-number {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .game-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+        }
+
+        .game-card.locked .game-icon {
+            filter: grayscale(1) brightness(0.5);
+        }
+
+        .game-name {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.3rem;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .game-card.locked .game-name {
+            color: #555;
+        }
+
+        .game-players {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        .game-card.locked .game-players {
+            color: #444;
+        }
+
+        .game-status {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .game-status.locked {
+            background: #222;
+            color: #555;
+        }
+
+        .game-status.ready {
+            background: linear-gradient(180deg, var(--gold), #b8860b);
+            color: #1a1a1a;
+            animation: statusPulse 1.5s ease-in-out infinite;
+        }
+
+        .game-status.in-progress {
+            background: linear-gradient(180deg, var(--blue), #0088aa);
+            color: white;
+        }
+
+        .game-status.completed {
+            background: linear-gradient(180deg, var(--green), #00aa55);
+            color: #1a1a1a;
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { box-shadow: 0 0 10px var(--gold-glow); }
+            50% { box-shadow: 0 0 25px var(--gold-glow); }
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            opacity: 0.8;
+        }
+
+        /* Progress Bar */
+        .tournament-progress {
+            max-width: 1400px;
+            margin: 0 auto 30px;
+            background: rgba(20, 20, 35, 0.9);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 20px 30px;
+        }
+
+        .progress-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .progress-bar-container {
+            height: 30px;
+            background: #1a1a2a;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--red), var(--gold), var(--green));
+            border-radius: 15px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.3) 0%, transparent 50%);
+        }
+
+        .progress-markers {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            padding: 0 10px;
+        }
+
+        .progress-marker {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.4rem;
+            color: #555;
+        }
+
+        .progress-marker.active {
+            color: var(--gold);
+        }
+
+        .progress-marker.completed {
+            color: var(--green);
+        }
+
+        /* Bottom Actions */
+        .hub-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .hub-btn {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1rem;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hub-btn.primary {
+            background: linear-gradient(180deg, var(--purple), #6622aa);
+            color: white;
+            box-shadow: 0 5px 0 #441177;
+        }
+
+        .hub-btn.primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #441177, 0 0 30px rgba(153, 69, 255, 0.5);
+        }
+
+        .hub-btn.secondary {
+            background: linear-gradient(180deg, #444, #222);
+            color: white;
+            box-shadow: 0 5px 0 #111;
+        }
+
+        .hub-btn.secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 0 #111;
+        }
+
+        .hub-btn.danger {
+            background: linear-gradient(180deg, var(--red), #aa1133);
+            color: white;
+            box-shadow: 0 5px 0 #661122;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .games-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 3rem;
+            }
+            .games-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- START SCREEN -->
+    <div class="start-screen" id="startScreen">
+        <h1 class="main-title">
+            <span class="physical">PHYSICAL:</span>
+            <span class="tech">TECH</span>
+        </h1>
+        <p class="subtitle">TOURNAMENT 2025</p>
+        <button class="start-btn" id="startBtn">START TOURNAMENT</button>
+        <p class="player-count">144 PLAYERS | 16 TEAMS | 4 GAMES | 1 CHAMPION</p>
+    </div>
+
+    <!-- GAME HUB -->
+    <div class="hub-screen" id="hubScreen">
+        <div class="hub-header">
+            <h1 class="hub-title">
+                <span class="physical">PHYSICAL:</span>
+                <span class="tech">TECH</span>
+            </h1>
+            <p class="hub-subtitle">SELECT A GAME TO BEGIN</p>
+        </div>
+
+        <div class="games-grid" id="gamesGrid">
+            <!-- Game cards will be generated by JS -->
+        </div>
+
+        <div class="tournament-progress">
+            <div class="progress-title">TOURNAMENT PROGRESS</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            </div>
+            <div class="progress-markers">
+                <span class="progress-marker" data-game="1">GAME 1</span>
+                <span class="progress-marker" data-game="2">GAME 2</span>
+                <span class="progress-marker" data-game="3">GAME 3</span>
+                <span class="progress-marker" data-game="4">FINAL</span>
+            </div>
+        </div>
+
+        <div class="hub-actions">
+            <button class="hub-btn primary" onclick="openScoreboard()">VIEW SCOREBOARD</button>
+            <button class="hub-btn secondary" onclick="openAdminPanel()">ADMIN PANEL</button>
+            <button class="hub-btn danger" onclick="confirmReset()">RESET</button>
+        </div>
+    </div>
+
+    <script src="players.js"></script>
+    <script src="game-state.js"></script>
+    <script>
+        // DOM Elements
+        const startScreen = document.getElementById('startScreen');
+        const hubScreen = document.getElementById('hubScreen');
+        const startBtn = document.getElementById('startBtn');
+        const gamesGrid = document.getElementById('gamesGrid');
+        const progressBar = document.getElementById('progressBar');
+
+        // Game URLs
+        const GAME_URLS = {
+            1: 'game-flow.html?game=1',
+            2: 'game-flow.html?game=2',
+            3: 'game-flow.html?game=3',
+            4: 'game-flow.html?game=4'
+        };
+
+        // Initialize
+        function init() {
+            const state = getState();
+
+            if (state.tournamentStarted) {
+                showHub();
+            } else {
+                showStartScreen();
+            }
+        }
+
+        // Show start screen
+        function showStartScreen() {
+            startScreen.classList.remove('hidden');
+            hubScreen.classList.remove('active');
+        }
+
+        // Show hub
+        function showHub() {
+            startScreen.classList.add('hidden');
+            hubScreen.classList.add('active');
+            renderGameCards();
+            updateProgress();
+        }
+
+        // Start tournament
+        startBtn.addEventListener('click', () => {
+            playSound(800, 'sine', 0.2);
+            startTournament();
+            showHub();
+        });
+
+        // Render game cards
+        function renderGameCards() {
+            const state = getState();
+            gamesGrid.innerHTML = '';
+
+            for (let i = 1; i <= 4; i++) {
+                const config = GAME_CONFIG[i];
+                const gameState = state.games[i];
+                const card = document.createElement('div');
+
+                let statusClass = 'locked';
+                let statusText = 'LOCKED';
+
+                if (gameState.completed) {
+                    statusClass = 'completed';
+                    statusText = 'COMPLETED';
+                } else if (gameState.unlocked) {
+                    if (gameState.currentMatch > 0) {
+                        statusClass = 'in-progress';
+                        statusText = `MATCH ${gameState.currentMatch}/${config.matches}`;
+                    } else {
+                        statusClass = 'ready';
+                        statusText = 'READY';
+                    }
+                }
+
+                card.className = `game-card ${gameState.unlocked ? 'unlocked' : 'locked'} ${gameState.completed ? 'completed' : ''}`;
+                card.innerHTML = `
+                    <div class="game-number">GAME ${i}</div>
+                    <div class="game-icon">${config.icon}</div>
+                    <div class="game-name">${config.name}</div>
+                    <div class="game-players">${config.playersPerTeam} vs ${config.playersPerTeam}</div>
+                    <div class="game-status ${statusClass}">${gameState.unlocked ? '' : '🔒 '}${statusText}</div>
+                    ${!gameState.unlocked ? '<div class="lock-icon">🔒</div>' : ''}
+                `;
+
+                if (gameState.unlocked && !gameState.completed) {
+                    card.addEventListener('click', () => launchGame(i));
+                }
+
+                gamesGrid.appendChild(card);
+            }
+        }
+
+        // Update progress bar
+        function updateProgress() {
+            const state = getState();
+            let totalMatches = 0;
+            let completedMatches = 0;
+
+            for (let i = 1; i <= 4; i++) {
+                totalMatches += GAME_CONFIG[i].matches;
+                completedMatches += state.results[i].length;
+            }
+
+            const percentage = totalMatches > 0 ? (completedMatches / totalMatches) * 100 : 0;
+            progressBar.style.width = `${percentage}%`;
+
+            // Update markers
+            document.querySelectorAll('.progress-marker').forEach(marker => {
+                const game = parseInt(marker.dataset.game);
+                marker.classList.remove('active', 'completed');
+
+                if (state.games[game].completed) {
+                    marker.classList.add('completed');
+                } else if (state.games[game].unlocked) {
+                    marker.classList.add('active');
+                }
+            });
+        }
+
+        // Launch game
+        function launchGame(gameNumber) {
+            playSound(600, 'sine', 0.15);
+            window.location.href = GAME_URLS[gameNumber];
+        }
+
+        // Open scoreboard
+        function openScoreboard() {
+            window.open('scoreboard.html', '_blank');
+        }
+
+        // Open admin panel
+        function openAdminPanel() {
+            window.open('scoreboard.html', 'admin', 'width=1200,height=800');
+        }
+
+        // Confirm reset
+        function confirmReset() {
+            if (confirm('Are you sure you want to reset the tournament? All progress will be lost!')) {
+                resetTournament();
+                showStartScreen();
+            }
+        }
+
+        // Sound effect
+        function playSound(freq, type, duration) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = freq;
+                osc.type = type;
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        // Listen for state changes
+        window.addEventListener('tournamentStateChanged', () => {
+            if (hubScreen.classList.contains('active')) {
+                renderGameCards();
+                updateProgress();
+            }
+        });
+
+        // Check for celebration redirect
+        window.addEventListener('focus', () => {
+            const state = getState();
+            if (state.currentScreen === 'celebration') {
+                window.location.href = 'celebration.html';
+            }
+        });
+
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

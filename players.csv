@@ -1,0 +1,145 @@
+id,name,team,department,company,sprite
+1,B.Batbold,1,Machine Learning,TechCorp,batbold.png
+2,D.Dolgorsuren,1,Engineering,TechCorp,dolgorsuren.png
+3,G.Ganzorig,1,Design,TechCorp,ganzorig.png
+4,E.Enkhtuya,1,Marketing,TechCorp,enkhtuya.png
+5,T.Tsolmon,1,Data Science,TechCorp,tsolmon.png
+6,M.Munkhbat,1,DevOps,TechCorp,munkhbat.png
+7,S.Sarnai,1,Product,TechCorp,sarnai.png
+8,O.Oyunbileg,1,Finance,TechCorp,oyunbileg.png
+9,N.Narantsetseg,1,HR,TechCorp,narantsetseg.png
+10,A.Altantsetseg,2,Machine Learning,TechCorp,altantsetseg.png
+11,B.Bayarmaa,2,Engineering,TechCorp,bayarmaa.png
+12,C.Chinbat,2,Design,TechCorp,chinbat.png
+13,D.Delgermaa,2,Marketing,TechCorp,delgermaa.png
+14,E.Erdene,2,Data Science,TechCorp,erdene.png
+15,G.Ganbold,2,DevOps,TechCorp,ganbold.png
+16,H.Hulan,2,Product,TechCorp,hulan.png
+17,J.Jargal,2,Finance,TechCorp,jargal.png
+18,K.Khongorzul,2,HR,TechCorp,khongorzul.png
+19,L.Lkhagvasuren,3,Machine Learning,DataHub,lkhagvasuren.png
+20,M.Molor,3,Engineering,DataHub,molor.png
+21,N.Nomintuya,3,Design,DataHub,nomintuya.png
+22,O.Otgonbayar,3,Marketing,DataHub,otgonbayar.png
+23,P.Purevdorj,3,Data Science,DataHub,purevdorj.png
+24,S.Solongo,3,DevOps,DataHub,solongo.png
+25,T.Temuulen,3,Product,DataHub,temuulen.png
+26,U.Uyanga,3,Finance,DataHub,uyanga.png
+27,Z.Zolzaya,3,HR,DataHub,zolzaya.png
+28,A.Amartuvshin,4,Machine Learning,DataHub,amartuvshin.png
+29,B.Batjargal,4,Engineering,DataHub,batjargal.png
+30,C.Chuluunbat,4,Design,DataHub,chuluunbat.png
+31,D.Dorjsuren,4,Marketing,DataHub,dorjsuren.png
+32,E.Enkhbold,4,Data Science,DataHub,enkhbold.png
+33,G.Ganbaatar,4,DevOps,DataHub,ganbaatar.png
+34,H.Haserdene,4,Product,DataHub,haserdene.png
+35,J.Javkhlan,4,Finance,DataHub,javkhlan.png
+36,K.Khulan,4,HR,DataHub,khulan.png
+37,L.Lkhamsuren,5,Machine Learning,CloudNet,lkhamsuren.png
+38,M.Myagmar,5,Engineering,CloudNet,myagmar.png
+39,N.Narangerel,5,Design,CloudNet,narangerel.png
+40,O.Odmaa,5,Marketing,CloudNet,odmaa.png
+41,P.Purevsuren,5,Data Science,CloudNet,purevsuren.png
+42,S.Saikhanbileg,5,DevOps,CloudNet,saikhanbileg.png
+43,T.Tselmeg,5,Product,CloudNet,tselmeg.png
+44,U.Undram,5,Finance,CloudNet,undram.png
+45,Z.Zaya,5,HR,CloudNet,zaya.png
+46,A.Ankhbayar,6,Machine Learning,CloudNet,ankhbayar.png
+47,B.Boldbaatar,6,Engineering,CloudNet,boldbaatar.png
+48,C.Chimgee,6,Design,CloudNet,chimgee.png
+49,D.Davaasuren,6,Marketing,CloudNet,davaasuren.png
+50,E.Enkhzaya,6,Data Science,CloudNet,enkhzaya.png
+51,G.Gerelmaa,6,DevOps,CloudNet,gerelmaa.png
+52,H.Hulegu,6,Product,CloudNet,hulegu.png
+53,J.Jamsran,6,Finance,CloudNet,jamsran.png
+54,K.Khaliun,6,HR,CloudNet,khaliun.png
+55,L.Lkhamjav,7,Machine Learning,AILabs,lkhamjav.png
+56,M.Munkhjin,7,Engineering,AILabs,munkhjin.png
+57,N.Nergui,7,Design,AILabs,nergui.png
+58,O.Oyungerel,7,Marketing,AILabs,oyungerel.png
+59,P.Purevjav,7,Data Science,AILabs,purevjav.png
+60,S.Sarangerel,7,DevOps,AILabs,sarangerel.png
+61,T.Tugsuu,7,Product,AILabs,tugsuu.png
+62,U.Uranchimeg,7,Finance,AILabs,uranchimeg.png
+63,Z.Zolboo,7,HR,AILabs,zolboo.png
+64,A.Ariunbold,8,Machine Learning,AILabs,ariunbold.png
+65,B.Batsaikhan,8,Engineering,AILabs,batsaikhan.png
+66,C.Chultem,8,Design,AILabs,chultem.png
+67,D.Dashnyam,8,Marketing,AILabs,dashnyam.png
+68,E.Enkhsaikhan,8,Data Science,AILabs,enkhsaikhan.png
+69,G.Gankhuyag,8,DevOps,AILabs,gankhuyag.png
+70,H.Hanui,8,Product,AILabs,hanui.png
+71,J.Janchiv,8,Finance,AILabs,janchiv.png
+72,K.Khosbayar,8,HR,AILabs,khosbayar.png
+73,L.Luvsan,9,Machine Learning,ByteWave,luvsan.png
+74,M.Mandakh,9,Engineering,ByteWave,mandakh.png
+75,N.Nyamjargal,9,Design,ByteWave,nyamjargal.png
+76,O.Odonchimeg,9,Marketing,ByteWave,odonchimeg.png
+77,P.Purevbaatar,9,Data Science,ByteWave,purevbaatar.png
+78,S.Sumiya,9,DevOps,ByteWave,sumiya.png
+79,T.Tsogzolmaa,9,Product,ByteWave,tsogzolmaa.png
+80,U.Ulziisaikhan,9,Finance,ByteWave,ulziisaikhan.png
+81,Z.Zorigt,9,HR,ByteWave,zorigt.png
+82,A.Amgalan,10,Machine Learning,ByteWave,amgalan.png
+83,B.Batkhuu,10,Engineering,ByteWave,batkhuu.png
+84,C.Chimeddorj,10,Design,ByteWave,chimeddorj.png
+85,D.Davgadorj,10,Marketing,ByteWave,davgadorj.png
+86,E.Enkhmend,10,Data Science,ByteWave,enkhmend.png
+87,G.Galsandorj,10,DevOps,ByteWave,galsandorj.png
+88,H.Hiroshi,10,Product,ByteWave,hiroshi.png
+89,J.Jambal,10,Finance,ByteWave,jambal.png
+90,K.Khishigbayar,10,HR,ByteWave,khishigbayar.png
+91,L.Luvsandorj,11,Machine Learning,NexGen,luvsandorj.png
+92,M.Monkhorgil,11,Engineering,NexGen,monkhorgil.png
+93,N.Nasanjargal,11,Design,NexGen,nasanjargal.png
+94,O.Oyuunaa,11,Marketing,NexGen,oyuunaa.png
+95,P.Purevkhuu,11,Data Science,NexGen,purevkhuu.png
+96,S.Selenge,11,DevOps,NexGen,selenge.png
+97,T.Tuguldur,11,Product,NexGen,tuguldur.png
+98,U.Uranbileg,11,Finance,NexGen,uranbileg.png
+99,Z.Zunduisuren,11,HR,NexGen,zunduisuren.png
+100,A.Altansukh,12,Machine Learning,NexGen,altansukh.png
+101,B.Bayasgalan,12,Engineering,NexGen,bayasgalan.png
+102,C.Chuluuntsetseg,12,Design,NexGen,chuluuntsetseg.png
+103,D.Dolgoon,12,Marketing,NexGen,dolgoon.png
+104,E.Erdenechimeg,12,Data Science,NexGen,erdenechimeg.png
+105,G.Gantulga,12,DevOps,NexGen,gantulga.png
+106,H.Hunbish,12,Product,NexGen,hunbish.png
+107,J.Jamiyansuren,12,Finance,NexGen,jamiyansuren.png
+108,K.Khuslen,12,HR,NexGen,khuslen.png
+109,L.Lkhagvadorj,13,Machine Learning,QuantumSoft,lkhagvadorj.png
+110,M.Mungunshagai,13,Engineering,QuantumSoft,mungunshagai.png
+111,N.Nyamdavaa,13,Design,QuantumSoft,nyamdavaa.png
+112,O.Ochirbat,13,Marketing,QuantumSoft,ochirbat.png
+113,P.Purevtogtokh,13,Data Science,QuantumSoft,purevtogtokh.png
+114,S.Saranchimeg,13,DevOps,QuantumSoft,saranchimeg.png
+115,T.Tuvshinjargal,13,Product,QuantumSoft,tuvshinjargal.png
+116,U.Uuganbaatar,13,Finance,QuantumSoft,uuganbaatar.png
+117,Z.Zandanshatar,13,HR,QuantumSoft,zandanshatar.png
+118,A.Ariunjargal,14,Machine Learning,QuantumSoft,ariunjargal.png
+119,B.Baterdene,14,Engineering,QuantumSoft,baterdene.png
+120,C.Choijiljav,14,Design,QuantumSoft,choijiljav.png
+121,D.Demberel,14,Marketing,QuantumSoft,demberel.png
+122,E.Enkhgerel,14,Data Science,QuantumSoft,enkhgerel.png
+123,G.Ganzul,14,DevOps,QuantumSoft,ganzul.png
+124,H.Hishigdulam,14,Product,QuantumSoft,hishigdulam.png
+125,J.Jamyankhuu,14,Finance,QuantumSoft,jamyankhuu.png
+126,K.Khongortul,14,HR,QuantumSoft,khongortul.png
+127,L.Lundeg,15,Machine Learning,FutureTech,lundeg.png
+128,M.Mendbayar,15,Engineering,FutureTech,mendbayar.png
+129,N.Norovbanzad,15,Design,FutureTech,norovbanzad.png
+130,O.Oyuntsetseg,15,Marketing,FutureTech,oyuntsetseg.png
+131,P.Purevochir,15,Data Science,FutureTech,purevochir.png
+132,S.Sosorbaram,15,DevOps,FutureTech,sosorbaram.png
+133,T.Tsendmaa,15,Product,FutureTech,tsendmaa.png
+134,U.Ulziitogtokh,15,Finance,FutureTech,ulziitogtokh.png
+135,Z.Zolbayar,15,HR,FutureTech,zolbayar.png
+136,A.Ayurzana,16,Machine Learning,FutureTech,ayurzana.png
+137,B.Battseren,16,Engineering,FutureTech,battseren.png
+138,C.Chimed,16,Design,FutureTech,chimed.png
+139,D.Dulguun,16,Marketing,FutureTech,dulguun.png
+140,E.Erdenebulgan,16,Data Science,FutureTech,erdenebulgan.png
+141,G.Ganbat,16,DevOps,FutureTech,ganbat.png
+142,H.Idesh,16,Product,FutureTech,idesh.png
+143,J.Jargalsaikhan,16,Finance,FutureTech,jargalsaikhan.png
+144,K.Kherlen,16,HR,FutureTech,kherlen.png

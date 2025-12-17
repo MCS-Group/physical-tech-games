@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHYSICAL: TECH - Game Flow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;700;900&family=Black+Ops+One&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-dark: #0a0a12;
+            --gold: #ffd700;
+            --gold-glow: rgba(255, 215, 0, 0.5);
+            --red: #ff2d55;
+            --red-glow: rgba(255, 45, 85, 0.5);
+            --blue: #00d4ff;
+            --blue-glow: rgba(0, 212, 255, 0.5);
+            --green: #00ff88;
+            --purple: #9945ff;
+        }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: var(--bg-dark);
+            font-family: 'Orbitron', sans-serif;
+            color: white;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 20%, var(--red-glow) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, var(--blue-glow) 0%, transparent 50%);
+            opacity: 0.3;
+            animation: bgPulse 4s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes bgPulse {
+            0% { opacity: 0.2; }
+            100% { opacity: 0.4; }
+        }
+
+        /* ========== SCREEN SYSTEM ========== */
+        .screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            padding: 40px;
+            overflow: hidden;
+        }
+
+        .screen.active {
+            display: flex;
+            animation: screenFadeIn 0.4s ease-out;
+        }
+
+        @keyframes screenFadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* ========== BACK BUTTON ========== */
+        .back-btn {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            font-family: 'Black Ops One', cursive;
+            font-size: 1rem;
+            padding: 12px 25px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #444;
+            border-radius: 8px;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 100;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: #666;
+            color: white;
+        }
+
+        /* ========== INTRO SCREEN ========== */
+        .intro-badge {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            color: var(--gold);
+            background: rgba(255, 215, 0, 0.1);
+            padding: 12px 40px;
+            border-radius: 30px;
+            border: 2px solid var(--gold);
+            margin-bottom: 30px;
+            box-shadow: 0 0 30px var(--gold-glow);
+        }
+
+        .intro-icon {
+            font-size: 10rem;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .intro-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 5rem;
+            color: white;
+            text-shadow: 0 5px 30px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .intro-stats {
+            display: flex;
+            gap: 80px;
+            margin-bottom: 50px;
+        }
+
+        .intro-stat {
+            text-align: center;
+        }
+
+        .intro-stat-value {
+            font-family: 'Black Ops One', cursive;
+            font-size: 4rem;
+            color: var(--gold);
+            text-shadow: 0 0 30px var(--gold-glow);
+        }
+
+        .intro-stat-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: #888;
+            margin-top: 10px;
+        }
+
+        .big-btn {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2.5rem;
+            padding: 30px 100px;
+            background: linear-gradient(180deg, var(--gold), #b8860b);
+            border: none;
+            border-radius: 20px;
+            color: #1a1a1a;
+            cursor: pointer;
+            box-shadow: 0 10px 0 #8b6914, 0 0 60px var(--gold-glow);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        .big-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 0 #8b6914, 0 0 80px var(--gold-glow);
+        }
+
+        .big-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 5px 0 #8b6914;
+        }
+
+        /* ========== MATCHUP SCREEN ========== */
+        .matchup-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 3rem;
+            color: var(--gold);
+            text-shadow: 0 0 30px var(--gold-glow);
+            margin-bottom: 40px;
+        }
+
+        .matchup-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            max-width: 1100px;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        .matchup-card {
+            background: linear-gradient(180deg, rgba(20, 20, 35, 0.95), rgba(10, 10, 20, 0.95));
+            border: 3px solid #333;
+            border-radius: 15px;
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s;
+        }
+
+        .matchup-card.current {
+            border-color: var(--gold);
+            box-shadow: 0 0 40px var(--gold-glow);
+            transform: scale(1.02);
+        }
+
+        .matchup-card.completed {
+            border-color: var(--green);
+            opacity: 0.6;
+        }
+
+        .matchup-team {
+            flex: 1;
+            text-align: center;
+        }
+
+        .matchup-team-name {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.5rem;
+        }
+
+        .matchup-team.red .matchup-team-name { color: var(--red); }
+        .matchup-team.blue .matchup-team-name { color: var(--blue); }
+
+        .matchup-vs {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2rem;
+            color: var(--gold);
+            padding: 0 25px;
+        }
+
+        .matchup-actions {
+            display: flex;
+            gap: 30px;
+        }
+
+        .action-btn {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.5rem;
+            padding: 20px 60px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .action-btn.shuffle {
+            background: linear-gradient(180deg, var(--purple), #6622aa);
+            color: white;
+            box-shadow: 0 6px 0 #441177;
+        }
+
+        .action-btn.shuffle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 #441177, 0 0 30px rgba(153, 69, 255, 0.5);
+        }
+
+        .action-btn.confirm {
+            background: linear-gradient(180deg, var(--gold), #b8860b);
+            color: #1a1a1a;
+            box-shadow: 0 6px 0 #8b6914;
+        }
+
+        .action-btn.confirm:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 #8b6914, 0 0 30px var(--gold-glow);
+        }
+
+        /* ========== SELECTION SCREEN ========== */
+        .selection-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .selection-team-badge {
+            display: inline-block;
+            font-family: 'Black Ops One', cursive;
+            font-size: 2rem;
+            padding: 15px 50px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+
+        .selection-team-badge.red {
+            background: linear-gradient(180deg, var(--red), #aa1133);
+            color: white;
+            box-shadow: 0 0 50px var(--red-glow);
+        }
+
+        .selection-team-badge.blue {
+            background: linear-gradient(180deg, var(--blue), #0088aa);
+            color: white;
+            box-shadow: 0 0 50px var(--blue-glow);
+        }
+
+        .selection-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .selection-counter {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-top: 10px;
+        }
+
+        /* Player grid */
+        .team-sections {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-bottom: 25px;
+            max-height: 55vh;
+            overflow: hidden;
+        }
+
+        .team-section {
+            background: rgba(20, 20, 35, 0.8);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 15px;
+            min-width: 350px;
+        }
+
+        .team-section-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: var(--purple);
+            text-align: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #333;
+        }
+
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .player-card {
+            background: linear-gradient(180deg, #2a2a3a, #1a1a2a);
+            border: 3px solid #444;
+            border-radius: 12px;
+            padding: 10px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            position: relative;
+        }
+
+        .player-card:hover:not(.locked):not(.selected) {
+            border-color: var(--gold);
+            transform: translateY(-3px);
+        }
+
+        .player-card.selected {
+            border-color: var(--green);
+            background: linear-gradient(180deg, rgba(0, 255, 136, 0.2), rgba(0, 100, 50, 0.2));
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.4);
+        }
+
+        .player-card.locked {
+            opacity: 0.35;
+            cursor: not-allowed;
+            filter: grayscale(1);
+        }
+
+        .player-card.locked::after {
+            content: '🔒';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+        }
+
+        .player-sprite {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 6px;
+            background: #333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            overflow: hidden;
+        }
+
+        .player-sprite img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.55rem;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .player-card.selected .player-name { color: var(--green); }
+
+        .selection-check {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            font-size: 1rem;
+            display: none;
+        }
+
+        .player-card.selected .selection-check { display: block; }
+
+        .ready-btn {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2rem;
+            padding: 25px 80px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .ready-btn.red {
+            background: linear-gradient(180deg, var(--red), #aa1133);
+            color: white;
+            box-shadow: 0 8px 0 #661122;
+        }
+
+        .ready-btn.blue {
+            background: linear-gradient(180deg, var(--blue), #0088aa);
+            color: white;
+            box-shadow: 0 8px 0 #004466;
+        }
+
+        .ready-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .ready-btn:not(:disabled):hover {
+            transform: translateY(-5px);
+        }
+
+        /* ========== PREVIEW SCREEN ========== */
+        .preview-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 3rem;
+            color: var(--gold);
+            text-shadow: 0 0 40px var(--gold-glow);
+            margin-bottom: 10px;
+        }
+
+        .preview-match-info {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 40px;
+        }
+
+        .preview-teams {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 80px;
+            margin-bottom: 50px;
+        }
+
+        .preview-team {
+            text-align: center;
+        }
+
+        .preview-team-name {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+        }
+
+        .preview-team.red .preview-team-name {
+            color: var(--red);
+            text-shadow: 0 0 40px var(--red-glow);
+        }
+
+        .preview-team.blue .preview-team-name {
+            color: var(--blue);
+            text-shadow: 0 0 40px var(--blue-glow);
+        }
+
+        .preview-players {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .preview-player {
+            background: rgba(30, 30, 45, 0.9);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .preview-team.red .preview-player { border: 2px solid var(--red); }
+        .preview-team.blue .preview-player { border: 2px solid var(--blue); }
+
+        .preview-player-sprite {
+            width: 55px;
+            height: 55px;
+            margin: 0 auto 8px;
+            background: #333;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            overflow: hidden;
+        }
+
+        .preview-player-sprite img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .preview-player-name {
+            font-size: 0.6rem;
+            color: white;
+        }
+
+        .preview-vs {
+            font-family: 'Black Ops One', cursive;
+            font-size: 6rem;
+            color: var(--gold);
+            text-shadow: 0 0 60px var(--gold-glow);
+            animation: vsPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes vsPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .begin-btn {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2.5rem;
+            padding: 30px 100px;
+            background: linear-gradient(180deg, var(--green), #00aa55);
+            border: none;
+            border-radius: 20px;
+            color: #1a1a1a;
+            cursor: pointer;
+            box-shadow: 0 10px 0 #006633, 0 0 60px rgba(0, 255, 136, 0.5);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            animation: beginPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes beginPulse {
+            0%, 100% { box-shadow: 0 10px 0 #006633, 0 0 40px rgba(0, 255, 136, 0.3); }
+            50% { box-shadow: 0 10px 0 #006633, 0 0 80px rgba(0, 255, 136, 0.6); }
+        }
+
+        .begin-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 0 #006633, 0 0 100px rgba(0, 255, 136, 0.7);
+        }
+
+        /* ========== RESULT SCREEN ========== */
+        .result-title {
+            font-family: 'Black Ops One', cursive;
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: resultGlow 1s ease-in-out infinite alternate;
+        }
+
+        .result-title.red {
+            color: var(--red);
+            text-shadow: 0 0 60px var(--red-glow);
+        }
+
+        .result-title.blue {
+            color: var(--blue);
+            text-shadow: 0 0 60px var(--blue-glow);
+        }
+
+        @keyframes resultGlow {
+            from { filter: brightness(1); transform: scale(1); }
+            to { filter: brightness(1.3); transform: scale(1.03); }
+        }
+
+        .result-team-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        .result-players {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .result-player {
+            text-align: center;
+        }
+
+        .result-player-sprite {
+            width: 90px;
+            height: 90px;
+            background: #333;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            animation: winnerBounce 0.5s ease-in-out infinite alternate;
+            overflow: hidden;
+        }
+
+        .result-player-sprite img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        @keyframes winnerBounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+
+        .result-btn {
+            font-family: 'Black Ops One', cursive;
+            font-size: 2rem;
+            padding: 25px 80px;
+            background: linear-gradient(180deg, var(--gold), #b8860b);
+            border: none;
+            border-radius: 15px;
+            color: #1a1a1a;
+            cursor: pointer;
+            box-shadow: 0 8px 0 #8b6914;
+            transition: all 0.2s;
+        }
+
+        .result-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 13px 0 #8b6914, 0 0 40px var(--gold-glow);
+        }
+
+        /* Confetti */
+        @keyframes confettiFall {
+            to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <button class="back-btn" id="backBtn" onclick="goBack()">← BACK</button>
+
+    <!-- INTRO SCREEN -->
+    <div class="screen" id="introScreen">
+        <div class="intro-badge" id="introBadge">GAME 1</div>
+        <div class="intro-icon" id="introIcon">🏋️</div>
+        <h1 class="intro-title" id="introTitle">WALL PUSH</h1>
+        <div class="intro-stats">
+            <div class="intro-stat">
+                <div class="intro-stat-value" id="introPlayers">6</div>
+                <div class="intro-stat-label">PLAYERS PER TEAM</div>
+            </div>
+            <div class="intro-stat">
+                <div class="intro-stat-value" id="introMatches">4</div>
+                <div class="intro-stat-label">MATCHES</div>
+            </div>
+        </div>
+        <button class="big-btn" onclick="showMatchups()">START GAME</button>
+    </div>
+
+    <!-- MATCHUP SCREEN -->
+    <div class="screen" id="matchupScreen">
+        <h1 class="matchup-title" id="matchupTitle">⚔️ GAME 1 MATCHUPS</h1>
+        <div class="matchup-grid" id="matchupGrid"></div>
+        <div class="matchup-actions">
+            <button class="action-btn shuffle" onclick="shuffleMatchups()">🎲 SHUFFLE</button>
+            <button class="action-btn confirm" onclick="confirmMatchups()">✓ CONFIRM</button>
+        </div>
+    </div>
+
+    <!-- SELECTION SCREEN -->
+    <div class="screen" id="selectionScreen">
+        <div class="selection-header">
+            <div class="selection-team-badge" id="selectionBadge">RED TEAM</div>
+            <h1 class="selection-title" id="selectionTitle">SELECT YOUR FIGHTERS</h1>
+            <div class="selection-counter">
+                Selected: <span id="selectionCount">0</span> / <span id="selectionRequired">6</span>
+            </div>
+        </div>
+        <div class="team-sections" id="teamSections"></div>
+        <button class="ready-btn" id="readyBtn" onclick="confirmSelection()" disabled>READY →</button>
+    </div>
+
+    <!-- PREVIEW SCREEN -->
+    <div class="screen" id="previewScreen">
+        <h1 class="preview-title">⚔️ MATCH READY!</h1>
+        <p class="preview-match-info" id="previewMatchInfo">MATCH 1 OF 4</p>
+        <div class="preview-teams">
+            <div class="preview-team red">
+                <div class="preview-team-name" id="previewRedName">TEAM RED</div>
+                <div class="preview-players" id="previewRedPlayers"></div>
+            </div>
+            <div class="preview-vs">VS</div>
+            <div class="preview-team blue">
+                <div class="preview-team-name" id="previewBlueName">TEAM BLUE</div>
+                <div class="preview-players" id="previewBluePlayers"></div>
+            </div>
+        </div>
+        <button class="begin-btn" onclick="beginMatch()">▶ BEGIN MATCH</button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div class="screen" id="resultScreen">
+        <h1 class="result-title" id="resultTitle">WINNER!</h1>
+        <div class="result-team-name" id="resultTeamName">Team Name</div>
+        <div class="result-players" id="resultPlayers"></div>
+        <button class="result-btn" onclick="continueFlow()">CONTINUE →</button>
+    </div>
+
+    <script src="players.js"></script>
+    <script src="game-state.js"></script>
+    <script>
+        // Get game number from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentGame = parseInt(urlParams.get('game')) || 1;
+
+        const GAME_FILES = {
+            1: 'physical-tech-wall-push-v2.html',
+            2: 'physical-tech-hanging-endurance.html',
+            3: 'iron-ball-tug.html',
+            4: 'castle-conquest-v3-3d.html'
+        };
+
+        let currentMatchups = [];
+        let currentMatchIndex = 0;
+        let selectedPlayers = [];
+        let currentScreenName = 'intro';
+
+        // Initialize
+        function init() {
+            const state = getState();
+            const config = GAME_CONFIG[currentGame];
+
+            // Check if we're returning from a game with a result
+            const gameResult = localStorage.getItem('gameResult');
+            if (gameResult) {
+                localStorage.removeItem('gameResult');
+                const result = JSON.parse(gameResult);
+                showResult(result.winner);
+                return;
+            }
+
+            // Setup intro screen
+            document.getElementById('introBadge').textContent = `GAME ${currentGame}`;
+            document.getElementById('introIcon').textContent = config.icon;
+            document.getElementById('introTitle').textContent = config.name.toUpperCase();
+            document.getElementById('introPlayers').textContent = config.playersPerTeam;
+            document.getElementById('introMatches').textContent = config.matches;
+
+            // Check if matchups already exist for this game
+            if (state.matchups[currentGame] && state.matchups[currentGame].length > 0) {
+                currentMatchups = state.matchups[currentGame];
+                currentMatchIndex = state.results[currentGame].length;
+                if (currentMatchIndex < currentMatchups.length) {
+                    showMatchups();
+                    return;
+                } else {
+                    window.location.href = 'index.html';
+                    return;
+                }
+            }
+
+            showScreen('introScreen');
+        }
+
+        // Show screen (hide all others first)
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            currentScreenName = screenId.replace('Screen', '');
+            updateBackButton();
+        }
+
+        // Update back button behavior
+        function updateBackButton() {
+            const btn = document.getElementById('backBtn');
+            btn.style.display = currentScreenName === 'result' ? 'none' : 'block';
+        }
+
+        // Go back
+        function goBack() {
+            switch(currentScreenName) {
+                case 'intro':
+                    window.location.href = 'index.html';
+                    break;
+                case 'matchup':
+                    showScreen('introScreen');
+                    break;
+                case 'selection':
+                    showScreen('matchupScreen');
+                    break;
+                case 'preview':
+                    startSelection('red');
+                    break;
+                default:
+                    window.location.href = 'index.html';
+            }
+        }
+
+        // Show matchups screen
+        function showMatchups() {
+            const config = GAME_CONFIG[currentGame];
+            document.getElementById('matchupTitle').textContent = `⚔️ GAME ${currentGame} MATCHUPS`;
+
+            if (currentMatchups.length === 0) {
+                currentMatchups = generateMatchups(currentGame);
+            }
+
+            renderMatchups();
+            showScreen('matchupScreen');
+        }
+
+        // Render matchups
+        function renderMatchups() {
+            const grid = document.getElementById('matchupGrid');
+            const state = getState();
+            grid.innerHTML = '';
+
+            currentMatchups.forEach((matchup, index) => {
+                const isCompleted = index < state.results[currentGame].length;
+                const isCurrent = index === state.results[currentGame].length;
+
+                let redTeam, blueTeam;
+                if (matchup.isOriginalTeams) {
+                    redTeam = TEAMS[matchup.red];
+                    blueTeam = TEAMS[matchup.blue];
+                } else {
+                    redTeam = COMBINED_TEAMS[matchup.red];
+                    blueTeam = COMBINED_TEAMS[matchup.blue];
+                }
+
+                const card = document.createElement('div');
+                card.className = `matchup-card ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}`;
+                card.innerHTML = `
+                    <div class="matchup-team red">
+                        <div class="matchup-team-name">${redTeam.name}</div>
+                    </div>
+                    <div class="matchup-vs">${isCompleted ? '✓' : 'VS'}</div>
+                    <div class="matchup-team blue">
+                        <div class="matchup-team-name">${blueTeam.name}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Shuffle matchups
+        function shuffleMatchups() {
+            playSound(400, 'sine', 0.1);
+            currentMatchups = generateMatchups(currentGame);
+            renderMatchups();
+        }
+
+        // Confirm matchups
+        function confirmMatchups() {
+            playSound(600, 'sine', 0.15);
+            setMatchups(currentGame, currentMatchups);
+            currentMatchIndex = getState().results[currentGame].length;
+            startSelection('red');
+        }
+
+        // Start player selection
+        function startSelection(phase) {
+            const config = GAME_CONFIG[currentGame];
+            const matchup = currentMatchups[currentMatchIndex];
+            const isRed = phase === 'red';
+
+            let team;
+            if (matchup.isOriginalTeams) {
+                team = TEAMS[isRed ? matchup.red : matchup.blue];
+            } else {
+                team = COMBINED_TEAMS[isRed ? matchup.red : matchup.blue];
+            }
+
+            // Update UI
+            const badge = document.getElementById('selectionBadge');
+            badge.className = `selection-team-badge ${isRed ? 'red' : 'blue'}`;
+            badge.textContent = `${isRed ? '🔴 RED' : '🔵 BLUE'} TEAM`;
+
+            document.getElementById('selectionTitle').textContent = team.name.toUpperCase();
+            document.getElementById('selectionRequired').textContent = config.playersPerTeam;
+
+            const readyBtn = document.getElementById('readyBtn');
+            readyBtn.className = `ready-btn ${isRed ? 'red' : 'blue'}`;
+
+            // Reset selection
+            selectedPlayers = [];
+            updateSelectionCount();
+
+            // Render player grid
+            renderPlayerSelection(team, matchup.isOriginalTeams);
+
+            // Store current phase
+            readyBtn.dataset.phase = phase;
+            readyBtn.dataset.teamId = isRed ? matchup.red : matchup.blue;
+
+            showScreen('selectionScreen');
+        }
+
+        // Render player selection grid
+        function renderPlayerSelection(team, isOriginalTeam) {
+            const container = document.getElementById('teamSections');
+            const state = getState();
+            container.innerHTML = '';
+
+            if (isOriginalTeam) {
+                const section = createTeamSection(team.name, team.members, state.playedPlayers);
+                container.appendChild(section);
+            } else {
+                const originalTeam1 = TEAMS[team.originalTeams[0]];
+                const originalTeam2 = TEAMS[team.originalTeams[1]];
+
+                container.appendChild(createTeamSection(originalTeam1.name, originalTeam1.members, state.playedPlayers));
+                container.appendChild(createTeamSection(originalTeam2.name, originalTeam2.members, state.playedPlayers));
+            }
+        }
+
+        // Create team section
+        function createTeamSection(teamName, memberIds, playedPlayers) {
+            const section = document.createElement('div');
+            section.className = 'team-section';
+            section.innerHTML = `<div class="team-section-title">${teamName}</div>`;
+
+            const grid = document.createElement('div');
+            grid.className = 'players-grid';
+
+            memberIds.forEach(playerId => {
+                const player = PLAYERS[playerId];
+                const isLocked = playedPlayers.includes(playerId);
+                const isSelected = selectedPlayers.includes(playerId);
+
+                const card = document.createElement('div');
+                card.className = `player-card ${isLocked ? 'locked' : ''} ${isSelected ? 'selected' : ''}`;
+                card.dataset.playerId = playerId;
+
+                card.innerHTML = `
+                    <div class="player-sprite">
+                        <img src="assets/sprites/${player.sprite}" onerror="this.parentElement.innerHTML='👤'" alt="${player.name}">
+                    </div>
+                    <div class="player-name">${player.name}</div>
+                    <div class="selection-check">✓</div>
+                `;
+
+                if (!isLocked) {
+                    card.addEventListener('click', () => togglePlayer(playerId));
+                }
+
+                grid.appendChild(card);
+            });
+
+            section.appendChild(grid);
+            return section;
+        }
+
+        // Toggle player selection
+        function togglePlayer(playerId) {
+            const config = GAME_CONFIG[currentGame];
+            const index = selectedPlayers.indexOf(playerId);
+
+            if (index > -1) {
+                selectedPlayers.splice(index, 1);
+            } else if (selectedPlayers.length < config.playersPerTeam) {
+                selectedPlayers.push(playerId);
+                playSound(500 + selectedPlayers.length * 50, 'sine', 0.1);
+            }
+
+            document.querySelectorAll('.player-card').forEach(card => {
+                const id = parseInt(card.dataset.playerId);
+                card.classList.toggle('selected', selectedPlayers.includes(id));
+            });
+
+            updateSelectionCount();
+        }
+
+        // Update selection counter
+        function updateSelectionCount() {
+            const config = GAME_CONFIG[currentGame];
+            document.getElementById('selectionCount').textContent = selectedPlayers.length;
+            document.getElementById('readyBtn').disabled = selectedPlayers.length !== config.playersPerTeam;
+        }
+
+        // Confirm selection
+        function confirmSelection() {
+            const readyBtn = document.getElementById('readyBtn');
+            const phase = readyBtn.dataset.phase;
+            const matchup = currentMatchups[currentMatchIndex];
+
+            playSound(700, 'sine', 0.15);
+
+            if (phase === 'red') {
+                updateState({
+                    currentMatchSetup: {
+                        game: currentGame,
+                        matchIndex: currentMatchIndex,
+                        redTeam: matchup.red,
+                        blueTeam: matchup.blue,
+                        redPlayers: [...selectedPlayers],
+                        bluePlayers: [],
+                        isOriginalTeams: matchup.isOriginalTeams
+                    }
+                });
+                startSelection('blue');
+            } else {
+                const state = getState();
+                updateState({
+                    currentMatchSetup: {
+                        ...state.currentMatchSetup,
+                        bluePlayers: [...selectedPlayers]
+                    }
+                });
+                showPreview();
+            }
+        }
+
+        // Show match preview
+        function showPreview() {
+            const state = getState();
+            const setup = state.currentMatchSetup;
+            const config = GAME_CONFIG[currentGame];
+
+            let redTeam, blueTeam;
+            if (setup.isOriginalTeams) {
+                redTeam = TEAMS[setup.redTeam];
+                blueTeam = TEAMS[setup.blueTeam];
+            } else {
+                redTeam = COMBINED_TEAMS[setup.redTeam];
+                blueTeam = COMBINED_TEAMS[setup.blueTeam];
+            }
+
+            document.getElementById('previewMatchInfo').textContent = `MATCH ${currentMatchIndex + 1} OF ${config.matches}`;
+            document.getElementById('previewRedName').textContent = redTeam.name;
+            document.getElementById('previewBlueName').textContent = blueTeam.name;
+
+            renderPreviewPlayers('previewRedPlayers', setup.redPlayers);
+            renderPreviewPlayers('previewBluePlayers', setup.bluePlayers);
+
+            showScreen('previewScreen');
+        }
+
+        // Render preview players
+        function renderPreviewPlayers(containerId, playerIds) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            playerIds.forEach(playerId => {
+                const player = PLAYERS[playerId];
+                container.innerHTML += `
+                    <div class="preview-player">
+                        <div class="preview-player-sprite">
+                            <img src="assets/sprites/${player.sprite}" onerror="this.parentElement.innerHTML='👤'" alt="${player.name}">
+                        </div>
+                        <div class="preview-player-name">${player.name}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // Begin match
+        function beginMatch() {
+            const state = getState();
+            const setup = state.currentMatchSetup;
+
+            localStorage.setItem('currentMatch', JSON.stringify({
+                game: currentGame,
+                matchIndex: currentMatchIndex,
+                redTeam: setup.redTeam,
+                blueTeam: setup.blueTeam,
+                redPlayers: setup.redPlayers,
+                bluePlayers: setup.bluePlayers,
+                isOriginalTeams: setup.isOriginalTeams
+            }));
+
+            window.location.href = GAME_FILES[currentGame];
+        }
+
+        // Show result
+        function showResult(winner) {
+            const state = getState();
+            const setup = state.currentMatchSetup;
+            const isRed = winner === 'red';
+
+            let winnerTeam;
+            if (setup.isOriginalTeams) {
+                winnerTeam = TEAMS[isRed ? setup.redTeam : setup.blueTeam];
+            } else {
+                winnerTeam = COMBINED_TEAMS[isRed ? setup.redTeam : setup.blueTeam];
+            }
+
+            const winnerPlayers = isRed ? setup.redPlayers : setup.bluePlayers;
+
+            const resultTitle = document.getElementById('resultTitle');
+            resultTitle.className = `result-title ${isRed ? 'red' : 'blue'}`;
+            resultTitle.textContent = `${isRed ? '🔴' : '🔵'} WINNER!`;
+
+            document.getElementById('resultTeamName').textContent = winnerTeam.name;
+
+            const container = document.getElementById('resultPlayers');
+            container.innerHTML = '';
+            winnerPlayers.forEach((playerId, i) => {
+                const player = PLAYERS[playerId];
+                container.innerHTML += `
+                    <div class="result-player">
+                        <div class="result-player-sprite" style="animation-delay: ${i * 0.1}s">
+                            <img src="assets/sprites/${player.sprite}" onerror="this.parentElement.innerHTML='👤'" alt="${player.name}">
+                        </div>
+                        <div style="font-size:0.7rem;color:#aaa;">${player.name}</div>
+                    </div>
+                `;
+            });
+
+            recordMatchResult(winner);
+            createConfetti(isRed ? 'red' : 'blue');
+            showScreen('resultScreen');
+        }
+
+        // Continue flow
+        function continueFlow() {
+            const state = getState();
+            const config = GAME_CONFIG[currentGame];
+
+            currentMatchIndex = state.results[currentGame].length;
+
+            if (currentMatchIndex >= config.matches) {
+                if (currentGame === 4) {
+                    window.location.href = 'celebration.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } else {
+                showMatchups();
+            }
+        }
+
+        // Create confetti
+        function createConfetti(color) {
+            const colors = color === 'red'
+                ? ['#ff2d55', '#ff6688', '#ffaacc', '#ffd700']
+                : ['#00d4ff', '#66e5ff', '#aaeeff', '#ffd700'];
+
+            for (let i = 0; i < 60; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.cssText = `
+                        position: fixed;
+                        left: ${Math.random() * 100}vw;
+                        top: -20px;
+                        width: ${8 + Math.random() * 12}px;
+                        height: ${8 + Math.random() * 12}px;
+                        background: ${colors[Math.floor(Math.random() * colors.length)]};
+                        border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+                        pointer-events: none;
+                        z-index: 1000;
+                        animation: confettiFall 3s linear forwards;
+                    `;
+                    document.body.appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        // Sound effect
+        function playSound(freq, type, duration) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = freq;
+                osc.type = type;
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + duration);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        init();
+    </script>
+</body>
+</html>
