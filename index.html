@@ -152,12 +152,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            padding: 30px;
+            padding: 40px;
             z-index: 10;
             display: none;
             flex-direction: column;
-            overflow-y: auto;
-            overflow-x: hidden;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
         .hub-screen.active {
@@ -172,13 +173,13 @@
 
         .hub-header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
 
         .hub-title {
             font-family: 'Black Ops One', cursive;
-            font-size: 3rem;
-            margin-bottom: 10px;
+            font-size: 3.5rem;
+            margin-bottom: 15px;
         }
 
         .hub-title .physical { color: #aaa; }
@@ -186,30 +187,34 @@
 
         .hub-subtitle {
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.6rem;
+            font-size: 0.7rem;
             color: var(--gold);
-            letter-spacing: 3px;
+            letter-spacing: 4px;
         }
 
         /* Game Cards Grid */
         .games-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 30px;
-            max-width: 1400px;
-            margin: 0 auto 40px;
+            gap: 35px;
+            max-width: 1600px;
+            width: 100%;
         }
 
         .game-card {
             background: linear-gradient(180deg, rgba(20, 20, 35, 0.95), rgba(10, 10, 20, 0.95));
             border: 3px solid #333;
             border-radius: 20px;
-            padding: 30px 20px;
+            padding: 40px 25px;
             text-align: center;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .game-card::before {
@@ -253,17 +258,24 @@
             transform: none;
         }
 
+        .game-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
         .game-number {
             font-family: 'Black Ops One', cursive;
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: #666;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .game-icon {
-            font-size: 4rem;
-            margin-bottom: 15px;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5));
+            font-size: 5rem;
+            margin-bottom: 18px;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
         }
 
         .game-card.locked .game-icon {
@@ -272,9 +284,9 @@
 
         .game-name {
             font-family: 'Black Ops One', cursive;
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             color: white;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .game-card.locked .game-name {
@@ -283,9 +295,9 @@
 
         .game-players {
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.5rem;
+            font-size: 0.55rem;
             color: var(--gold);
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
 
         .game-card.locked .game-players {
@@ -294,8 +306,8 @@
 
         .game-status {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.8rem;
-            padding: 8px 15px;
+            font-size: 0.85rem;
+            padding: 10px 20px;
             border-radius: 20px;
             display: inline-block;
         }
@@ -326,16 +338,167 @@
             50% { box-shadow: 0 0 25px var(--gold-glow); }
         }
 
-        .lock-icon {
+        /* Hidden game content (mystery mode) */
+        .game-card .game-content {
+            transition: opacity 0.5s, transform 0.5s;
+        }
+
+        .game-card.mystery .game-content {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+
+        .game-card.mystery .mystery-overlay {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mystery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(180deg, rgba(15, 15, 25, 0.98), rgba(10, 10, 18, 0.98));
+            border-radius: 17px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+            z-index: 5;
+        }
+
+        /* X-shaped chain pattern */
+        .chains-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            border-radius: 17px;
+        }
+
+        .chain-x {
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 3rem;
-            opacity: 0.8;
+            font-size: 1.8rem;
+            color: #3a3a4a;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            letter-spacing: -5px;
+            white-space: nowrap;
+            transform-origin: center;
         }
 
-        /* Progress Bar */
+        .chain-x-1 {
+            transform: translate(-50%, -50%) rotate(45deg);
+            animation: chainGlow 3s ease-in-out infinite;
+        }
+
+        .chain-x-2 {
+            transform: translate(-50%, -50%) rotate(-45deg);
+            animation: chainGlow 3s ease-in-out infinite 1.5s;
+        }
+
+        @keyframes chainGlow {
+            0%, 100% { color: #3a3a4a; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+            50% { color: #4a4a5a; text-shadow: 0 2px 8px rgba(100,100,120,0.3); }
+        }
+
+        .lock-container {
+            position: relative;
+            z-index: 3;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .big-lock {
+            font-size: 3.5rem;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.7));
+            animation: lockPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes lockPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .mystery-text {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.55rem;
+            color: #555;
+            margin-top: 15px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .mystery-game-number {
+            font-family: 'Black Ops One', cursive;
+            font-size: 1.1rem;
+            color: #444;
+            margin-top: 12px;
+        }
+
+        /* Chain breaking animation */
+        @keyframes chainBreakX1 {
+            0% { transform: translate(-50%, -50%) rotate(45deg) scale(1); opacity: 1; }
+            100% { transform: translate(-150%, -150%) rotate(45deg) scale(0.5); opacity: 0; }
+        }
+
+        @keyframes chainBreakX2 {
+            0% { transform: translate(-50%, -50%) rotate(-45deg) scale(1); opacity: 1; }
+            100% { transform: translate(50%, -150%) rotate(-45deg) scale(0.5); opacity: 0; }
+        }
+
+        @keyframes lockShatter {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; filter: brightness(1); }
+            30% { transform: scale(1.5) rotate(-10deg); opacity: 1; filter: brightness(3); }
+            100% { transform: scale(0) rotate(180deg); opacity: 0; filter: brightness(0); }
+        }
+
+        .chains-container.breaking .chain-x-1 {
+            animation: chainBreakX1 0.6s ease-out forwards;
+        }
+
+        .chains-container.breaking .chain-x-2 {
+            animation: chainBreakX2 0.6s ease-out 0.1s forwards;
+        }
+
+        .lock-container.breaking .big-lock {
+            animation: lockShatter 0.8s ease-out forwards;
+        }
+
+        .mystery-overlay.revealing {
+            animation: overlayFade 0.8s ease-out 0.5s forwards;
+        }
+
+        @keyframes overlayFade {
+            0% { opacity: 1; }
+            100% { opacity: 0; pointer-events: none; }
+        }
+
+        /* Sparks effect */
+        .spark {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes sparkFly {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+        }
+
+        /* Progress Bar - HIDDEN */
         .tournament-progress {
             max-width: 1400px;
             margin: 0 auto 30px;
@@ -447,9 +610,13 @@
         }
 
         /* Responsive */
-        @media (max-width: 1200px) {
+        @media (max-width: 1400px) {
             .games-grid {
                 grid-template-columns: repeat(2, 1fr);
+                max-width: 900px;
+            }
+            .game-card {
+                min-height: 260px;
             }
         }
 
@@ -457,8 +624,15 @@
             .main-title {
                 font-size: 3rem;
             }
+            .hub-title {
+                font-size: 2.5rem;
+            }
             .games-grid {
                 grid-template-columns: 1fr;
+                max-width: 400px;
+            }
+            .game-card {
+                min-height: 240px;
             }
         }
     </style>
@@ -491,24 +665,7 @@
             <!-- Game cards will be generated by JS -->
         </div>
 
-        <div class="tournament-progress">
-            <div class="progress-title">TOURNAMENT PROGRESS</div>
-            <div class="progress-bar-container">
-                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
-            </div>
-            <div class="progress-markers">
-                <span class="progress-marker" data-game="1">GAME 1</span>
-                <span class="progress-marker" data-game="2">GAME 2</span>
-                <span class="progress-marker" data-game="3">GAME 3</span>
-                <span class="progress-marker" data-game="4">FINAL</span>
-            </div>
-        </div>
-
-        <div class="hub-actions">
-            <button class="hub-btn primary" onclick="openScoreboard()">VIEW SCOREBOARD</button>
-            <button class="hub-btn secondary" onclick="openAdminPanel()">ADMIN PANEL</button>
-            <button class="hub-btn danger" onclick="confirmReset()">RESET</button>
-        </div>
+        <!-- Tournament progress and admin buttons moved to scoreboard.html -->
     </div>
 
     <script src="players.js"></script>
@@ -519,7 +676,6 @@
         const hubScreen = document.getElementById('hubScreen');
         const startBtn = document.getElementById('startBtn');
         const gamesGrid = document.getElementById('gamesGrid');
-        const progressBar = document.getElementById('progressBar');
 
         // Game URLs
         const GAME_URLS = {
@@ -551,7 +707,6 @@
             startScreen.classList.add('hidden');
             hubScreen.classList.add('active');
             renderGameCards();
-            updateProgress();
         }
 
         // Start tournament
@@ -560,6 +715,9 @@
             startTournament();
             showHub();
         });
+
+        // Track which games have been revealed this session
+        const revealedGames = new Set();
 
         // Render game cards
         function renderGameCards() {
@@ -587,73 +745,116 @@
                     }
                 }
 
-                card.className = `game-card ${gameState.unlocked ? 'unlocked' : 'locked'} ${gameState.completed ? 'completed' : ''}`;
+                // Determine if game should show mystery (chains) or revealed content
+                const isRevealed = revealedGames.has(i) || gameState.completed || (gameState.unlocked && gameState.currentMatch > 0);
+                const showMystery = !isRevealed;
+
+                card.className = `game-card ${gameState.unlocked ? 'unlocked' : 'locked'} ${gameState.completed ? 'completed' : ''} ${showMystery ? 'mystery' : ''}`;
+                card.dataset.game = i;
+
+                // Generate X chain pattern
+                const chainStr = '⛓️'.repeat(12);
+
                 card.innerHTML = `
-                    <div class="game-number">GAME ${i}</div>
-                    <div class="game-icon">${config.icon}</div>
-                    <div class="game-name">${config.name}</div>
-                    <div class="game-players">${config.playersPerTeam} vs ${config.playersPerTeam}</div>
-                    <div class="game-status ${statusClass}">${gameState.unlocked ? '' : '🔒 '}${statusText}</div>
-                    ${!gameState.unlocked ? '<div class="lock-icon">🔒</div>' : ''}
+                    <div class="game-content">
+                        <div class="game-number">GAME ${i}</div>
+                        <div class="game-icon">${config.icon}</div>
+                        <div class="game-name">${config.name}</div>
+                        <div class="game-players">${config.playersPerTeam} vs ${config.playersPerTeam}</div>
+                        <div class="game-status ${statusClass}">${statusText}</div>
+                    </div>
+                    <div class="mystery-overlay">
+                        <div class="chains-container">
+                            <div class="chain-x chain-x-1">${chainStr}</div>
+                            <div class="chain-x chain-x-2">${chainStr}</div>
+                        </div>
+                        <div class="lock-container">
+                            <span class="big-lock">${gameState.unlocked ? '🔓' : '🔒'}</span>
+                            <div class="mystery-text">${gameState.unlocked ? 'CLICK TO REVEAL' : 'LOCKED'}</div>
+                            <div class="mystery-game-number">GAME ${i}</div>
+                        </div>
+                    </div>
                 `;
 
                 if (gameState.unlocked && !gameState.completed) {
-                    card.addEventListener('click', () => launchGame(i));
+                    card.addEventListener('click', () => {
+                        if (showMystery && !revealedGames.has(i)) {
+                            revealGame(i, card);
+                        } else {
+                            launchGame(i);
+                        }
+                    });
                 }
 
                 gamesGrid.appendChild(card);
             }
         }
 
-        // Update progress bar
-        function updateProgress() {
-            const state = getState();
-            let totalMatches = 0;
-            let completedMatches = 0;
+        // Reveal game with chain-breaking animation
+        function revealGame(gameNumber, card) {
+            playSound(200, 'sawtooth', 0.3);
 
-            for (let i = 1; i <= 4; i++) {
-                totalMatches += GAME_CONFIG[i].matches;
-                completedMatches += state.results[i].length;
+            const overlay = card.querySelector('.mystery-overlay');
+            const chainsContainer = card.querySelector('.chains-container');
+            const lockContainer = card.querySelector('.lock-container');
+
+            // Create sparks
+            createSparks(card);
+
+            // Start breaking animation
+            chainsContainer.classList.add('breaking');
+            lockContainer.classList.add('breaking');
+            overlay.classList.add('revealing');
+
+            // Play breaking sounds
+            setTimeout(() => playSound(150, 'square', 0.2), 100);
+            setTimeout(() => playSound(100, 'square', 0.2), 200);
+            setTimeout(() => playSound(300, 'triangle', 0.3), 400);
+
+            // Mark as revealed
+            setTimeout(() => {
+                revealedGames.add(gameNumber);
+                card.classList.remove('mystery');
+                // Play reveal sound
+                playSound(500, 'sine', 0.15);
+                setTimeout(() => playSound(700, 'sine', 0.15), 100);
+                setTimeout(() => playSound(900, 'sine', 0.2), 200);
+            }, 1000);
+        }
+
+        // Create spark effects
+        function createSparks(card) {
+            const rect = card.getBoundingClientRect();
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const spark = document.createElement('div');
+                    spark.className = 'spark';
+
+                    const angle = (Math.PI * 2 * i) / 20 + Math.random() * 0.5;
+                    const distance = 80 + Math.random() * 60;
+                    const tx = Math.cos(angle) * distance;
+                    const ty = Math.sin(angle) * distance;
+
+                    spark.style.left = centerX + 'px';
+                    spark.style.top = centerY + 'px';
+                    spark.style.setProperty('--tx', tx + 'px');
+                    spark.style.setProperty('--ty', ty + 'px');
+                    spark.style.animation = `sparkFly 0.6s ease-out forwards`;
+                    spark.style.background = ['#ffd700', '#ff6600', '#ffaa00', '#ffffff'][Math.floor(Math.random() * 4)];
+
+                    card.appendChild(spark);
+                    setTimeout(() => spark.remove(), 600);
+                }, i * 30);
             }
-
-            const percentage = totalMatches > 0 ? (completedMatches / totalMatches) * 100 : 0;
-            progressBar.style.width = `${percentage}%`;
-
-            // Update markers
-            document.querySelectorAll('.progress-marker').forEach(marker => {
-                const game = parseInt(marker.dataset.game);
-                marker.classList.remove('active', 'completed');
-
-                if (state.games[game].completed) {
-                    marker.classList.add('completed');
-                } else if (state.games[game].unlocked) {
-                    marker.classList.add('active');
-                }
-            });
         }
 
         // Launch game
         function launchGame(gameNumber) {
             playSound(600, 'sine', 0.15);
             window.location.href = GAME_URLS[gameNumber];
-        }
-
-        // Open scoreboard
-        function openScoreboard() {
-            window.open('scoreboard.html', '_blank');
-        }
-
-        // Open admin panel
-        function openAdminPanel() {
-            window.open('scoreboard.html', 'admin', 'width=1200,height=800');
-        }
-
-        // Confirm reset
-        function confirmReset() {
-            if (confirm('Are you sure you want to reset the tournament? All progress will be lost!')) {
-                resetTournament();
-                showStartScreen();
-            }
         }
 
         // Sound effect
@@ -677,7 +878,6 @@
         window.addEventListener('tournamentStateChanged', () => {
             if (hubScreen.classList.contains('active')) {
                 renderGameCards();
-                updateProgress();
             }
         });
 

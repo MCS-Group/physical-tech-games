@@ -823,7 +823,7 @@
     <div class="game-wrapper">
         <div class="header">
             <div class="title">PHYSICAL: TECH</div>
-            <div class="subtitle">🤚 HANGING ENDURANCE 🤚</div>
+            <div class="subtitle">GAME 2: HANGING ENDURANCE</div>
         </div>
 
         <div class="scoreboard">
@@ -1629,13 +1629,24 @@
             });
         }
 
+        // Get match data from localStorage (set by game-flow.html)
+        let matchData = null;
+        try {
+            const stored = localStorage.getItem('currentMatch');
+            if (stored) {
+                matchData = JSON.parse(stored);
+            }
+        } catch (e) {
+            console.log('No match data found, running in standalone mode');
+        }
+
         // End game
         function endGame() {
             state.isRunning = false;
-            
+
             const redTotal = state.teams.red.totalTime;
             const blueTotal = state.teams.blue.totalTime;
-            
+
             let winner, winnerClass;
             if (redTotal > blueTotal) {
                 winner = 'TEAM RED WINS!';
@@ -1644,9 +1655,14 @@
                 winner = 'TEAM BLUE WINS!';
                 winnerClass = 'blue';
             } else {
-                winner = "IT'S A TIE!";
-                winnerClass = 'draw';
+                // Tie goes to a random team (rare edge case)
+                winnerClass = Math.random() > 0.5 ? 'red' : 'blue';
+                winner = winnerClass === 'red' ? 'TEAM RED WINS!' : 'TEAM BLUE WINS!';
             }
+
+            // Store result for game-flow.html to read
+            const gameWinner = winnerClass;
+            localStorage.setItem('gameResult', JSON.stringify({ winner: gameWinner }));
 
             gameOverlay.innerHTML = `
                 <div class="winner-display">
@@ -1654,14 +1670,19 @@
                     <div class="final-times">
                         RED: ${formatTime(redTotal)} | BLUE: ${formatTime(blueTotal)}
                     </div>
-                    <button class="start-btn" onclick="resetGame()">PLAY AGAIN</button>
+                    <button class="start-btn" onclick="returnToFlow()">CONTINUE</button>
                 </div>
             `;
             gameOverlay.classList.remove('hidden');
-            
+
             if (winnerClass !== 'draw') {
                 createVictoryParticles(winnerClass);
             }
+        }
+
+        // Return to game flow
+        function returnToFlow() {
+            window.location.href = 'game-flow.html?game=' + (matchData ? matchData.game : 2);
         }
 
         // Create victory particles

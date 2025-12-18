@@ -390,15 +390,15 @@
         }
 
         .player-sprite {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 6px;
-            background: #333;
+            width: 105px;
+            height: 140px;
+            margin: 0 auto 8px;
+            background: #33333300;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 3.5rem;
             overflow: hidden;
         }
 
@@ -410,11 +410,13 @@
 
         .player-name {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.55rem;
+            font-size: 0.85rem;
+            font-weight: 700;
             color: white;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .player-card.selected .player-name { color: var(--green); }
@@ -523,15 +525,15 @@
         .preview-team.blue .preview-player { border: 2px solid var(--blue); }
 
         .preview-player-sprite {
-            width: 55px;
-            height: 55px;
-            margin: 0 auto 8px;
-            background: #333;
+            width: 120px;
+            height: 160px;
+            margin: 0 auto 12px;
+            background: #33333300;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 4rem;
             overflow: hidden;
         }
 
@@ -543,8 +545,10 @@
         }
 
         .preview-player-name {
-            font-size: 0.6rem;
+            font-size: 0.95rem;
+            font-weight: 700;
             color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
         .preview-vs {
@@ -562,28 +566,28 @@
 
         .begin-btn {
             font-family: 'Black Ops One', cursive;
-            font-size: 2.5rem;
-            padding: 30px 100px;
+            font-size: 1.5rem;
+            padding: 18px 50px;
             background: linear-gradient(180deg, var(--green), #00aa55);
             border: none;
-            border-radius: 20px;
+            border-radius: 15px;
             color: #1a1a1a;
             cursor: pointer;
-            box-shadow: 0 10px 0 #006633, 0 0 60px rgba(0, 255, 136, 0.5);
+            box-shadow: 0 6px 0 #006633, 0 0 40px rgba(0, 255, 136, 0.5);
             transition: all 0.2s ease;
             text-transform: uppercase;
-            letter-spacing: 5px;
+            letter-spacing: 3px;
             animation: beginPulse 2s ease-in-out infinite;
         }
 
         @keyframes beginPulse {
-            0%, 100% { box-shadow: 0 10px 0 #006633, 0 0 40px rgba(0, 255, 136, 0.3); }
-            50% { box-shadow: 0 10px 0 #006633, 0 0 80px rgba(0, 255, 136, 0.6); }
+            0%, 100% { box-shadow: 0 6px 0 #006633, 0 0 40px rgba(0, 255, 136, 0.3); }
+            50% { box-shadow: 0 6px 0 #006633, 0 0 60px rgba(0, 255, 136, 0.6); }
         }
 
         .begin-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 0 #006633, 0 0 100px rgba(0, 255, 136, 0.7);
+            transform: translateY(-3px);
+            box-shadow: 0 9px 0 #006633, 0 0 60px rgba(0, 255, 136, 0.7);
         }
 
         /* ========== RESULT SCREEN ========== */
@@ -629,15 +633,15 @@
         }
 
         .result-player-sprite {
-            width: 90px;
-            height: 90px;
+            width: 105px;
+            height: 140px;
             background: #333;
             border-radius: 15px;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
+            font-size: 3.5rem;
             animation: winnerBounce 0.5s ease-in-out infinite alternate;
             overflow: hidden;
         }
@@ -705,7 +709,7 @@
         <h1 class="matchup-title" id="matchupTitle">⚔️ GAME 1 MATCHUPS</h1>
         <div class="matchup-grid" id="matchupGrid"></div>
         <div class="matchup-actions">
-            <button class="action-btn shuffle" onclick="shuffleMatchups()">🎲 SHUFFLE</button>
+            <button class="action-btn shuffle" id="shuffleBtn" onclick="shuffleMatchups()">🎲 SHUFFLE</button>
             <button class="action-btn confirm" onclick="confirmMatchups()">✓ CONFIRM</button>
         </div>
     </div>
@@ -773,6 +777,22 @@
             const state = getState();
             const config = GAME_CONFIG[currentGame];
 
+            // LOAD MATCHUPS LOGIC (Must be done first to ensure state is ready for result processing)
+            const existingMatchups = state.matchups[currentGame] || [];
+            const existingResults = state.results[currentGame] || [];
+
+            if (existingMatchups.length > 0) {
+                currentMatchups = existingMatchups;
+            } else if (existingResults.length > 0) {
+                console.warn("Matchups missing but results exist. Reconstructing from history...");
+                currentMatchups = existingResults.map(r => ({
+                    red: r.red,
+                    blue: r.blue,
+                    isOriginalTeams: r.isOriginalTeams
+                }));
+                setMatchups(currentGame, currentMatchups);
+            }
+
             // Check if we're returning from a game with a result
             const gameResult = localStorage.getItem('gameResult');
             if (gameResult) {
@@ -789,17 +809,19 @@
             document.getElementById('introPlayers').textContent = config.playersPerTeam;
             document.getElementById('introMatches').textContent = config.matches;
 
-            // Check if matchups already exist for this game
-            if (state.matchups[currentGame] && state.matchups[currentGame].length > 0) {
-                currentMatchups = state.matchups[currentGame];
-                currentMatchIndex = state.results[currentGame].length;
-                if (currentMatchIndex < currentMatchups.length) {
-                    showMatchups();
-                    return;
-                } else {
+            // Determine flow
+            if (currentMatchups.length > 0) {
+                currentMatchIndex = existingResults.length;
+                
+                // Check if all matches are done
+                if (currentMatchIndex >= currentMatchups.length && currentMatchIndex >= config.matches) {
                     window.location.href = 'index.html';
                     return;
                 }
+                
+                // Show matchups screen directly
+                showMatchups();
+                return;
             }
 
             showScreen('introScreen');
@@ -858,18 +880,41 @@
             const state = getState();
             grid.innerHTML = '';
 
+            const completedMatches = state.results[currentGame].length;
+
+            // Disable shuffle if any match has been played (can't reshuffle mid-game)
+            const shuffleBtn = document.getElementById('shuffleBtn');
+            if (completedMatches > 0) {
+                shuffleBtn.disabled = true;
+                shuffleBtn.style.opacity = '0.4';
+                shuffleBtn.style.cursor = 'not-allowed';
+                shuffleBtn.title = 'Cannot shuffle after matches have started';
+            } else {
+                shuffleBtn.disabled = false;
+                shuffleBtn.style.opacity = '1';
+                shuffleBtn.style.cursor = 'pointer';
+                shuffleBtn.title = '';
+            }
+
             currentMatchups.forEach((matchup, index) => {
-                const isCompleted = index < state.results[currentGame].length;
-                const isCurrent = index === state.results[currentGame].length;
+                const isCompleted = index < completedMatches;
+                const isCurrent = index === completedMatches;
 
                 let redTeam, blueTeam;
-                if (matchup.isOriginalTeams) {
+                // Use the flag from the specific matchup object, or fallback to game config
+                const useOriginals = matchup.isOriginalTeams !== undefined ? matchup.isOriginalTeams : (currentGame === 4);
+
+                if (useOriginals) {
                     redTeam = TEAMS[matchup.red];
                     blueTeam = TEAMS[matchup.blue];
                 } else {
                     redTeam = COMBINED_TEAMS[matchup.red];
                     blueTeam = COMBINED_TEAMS[matchup.blue];
                 }
+
+                // Safety check if team not found
+                if (!redTeam) redTeam = { name: `Unknown (${matchup.red})` };
+                if (!blueTeam) blueTeam = { name: `Unknown (${matchup.blue})` };
 
                 const card = document.createElement('div');
                 card.className = `matchup-card ${isCompleted ? 'completed' : ''} ${isCurrent ? 'current' : ''}`;
@@ -888,6 +933,13 @@
 
         // Shuffle matchups
         function shuffleMatchups() {
+            // Safety check: don't allow shuffle if matches have been played
+            const state = getState();
+            if (state.results[currentGame].length > 0) {
+                console.warn('Cannot shuffle: matches already played in this game');
+                return;
+            }
+
             playSound(400, 'sine', 0.1);
             currentMatchups = generateMatchups(currentGame);
             renderMatchups();
@@ -1115,10 +1167,40 @@
             window.location.href = GAME_FILES[currentGame];
         }
 
+        let pendingWinner = null;
+
         // Show result
         function showResult(winner) {
-            const state = getState();
-            const setup = state.currentMatchSetup;
+            pendingWinner = winner;
+            let state = getState();
+            let setup = state.currentMatchSetup;
+
+            // RECOVERY: Check if we have the actual match data from the game execution
+            // This prevents desync if state.currentMatchSetup was lost or overwritten
+            try {
+                const executedMatchJson = localStorage.getItem('currentMatch');
+                if (executedMatchJson) {
+                    const executedMatch = JSON.parse(executedMatchJson);
+                    // If the stored setup looks empty or different, use the executed match
+                    if (!setup || !setup.redTeam || setup.redTeam !== executedMatch.redTeam) {
+                        console.log("Restoring match setup from execution data");
+                        setup = {
+                            game: executedMatch.game,
+                            matchIndex: executedMatch.matchIndex,
+                            redTeam: executedMatch.redTeam,
+                            blueTeam: executedMatch.blueTeam,
+                            redPlayers: executedMatch.redPlayers,
+                            bluePlayers: executedMatch.bluePlayers,
+                            isOriginalTeams: executedMatch.isOriginalTeams
+                        };
+                        // Update state to match reality
+                        updateState({ currentMatchSetup: setup });
+                    }
+                }
+            } catch (e) {
+                console.error("Error recovering match data", e);
+            }
+
             const isRed = winner === 'red';
 
             let winnerTeam;
@@ -1150,13 +1232,18 @@
                 `;
             });
 
-            recordMatchResult(winner);
+            // recordMatchResult(winner); // Moved to continueFlow
             createConfetti(isRed ? 'red' : 'blue');
             showScreen('resultScreen');
         }
 
         // Continue flow
         function continueFlow() {
+            if (pendingWinner) {
+                recordMatchResult(pendingWinner);
+                pendingWinner = null;
+            }
+            
             const state = getState();
             const config = GAME_CONFIG[currentGame];
 

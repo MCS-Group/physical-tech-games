@@ -377,9 +377,9 @@
         .heroes-container.blue { right: 20px; flex-direction: row-reverse; }
 
         .hero {
-            width: 35px;
-            height: 55px;
-            border-radius: 8px;
+            width: 75px;
+            height: 100px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -739,22 +739,6 @@
             }
         }
 
-        .instructions {
-            text-align: center;
-            margin-top: 15px;
-            padding: 12px;
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid var(--gold);
-            border-radius: 10px;
-        }
-
-        .instructions-text {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.5rem;
-            color: var(--gold);
-            line-height: 2.2;
-        }
-
         /* Push effect indicator */
         .push-indicator {
             position: absolute;
@@ -896,8 +880,12 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="settings-row">
+    <div class="game-overlay" id="game-overlay">
+        <div class="overlay-title">WALL PUSHING MATCH</div>
+        <div class="overlay-subtitle">12 PLAYERS • PUSH TO WIN</div>
+        <div class="settings-row" style="margin-bottom: 20px;">
             <div class="setting">
                 <label>TIME:</label>
                 <select id="time-select">
@@ -909,19 +897,6 @@
                 </select>
             </div>
         </div>
-
-        <div class="instructions">
-            <div class="instructions-text">
-                🎮 ALTERNATE YOUR TWO KEYS AS FAST AS POSSIBLE! 🎮<br>
-                ⏱️ WHEN TIME ENDS: EACH BOX ON YOUR SIDE OF THE CENTER LINE = 1 POINT ⏱️<br>
-                🏆 PUSH THE BOXES TO THE OPPONENT'S SIDE TO WIN! 🏆
-            </div>
-        </div>
-    </div>
-
-    <div class="game-overlay" id="game-overlay">
-        <div class="overlay-title">WALL PUSHING MATCH</div>
-        <div class="overlay-subtitle">12 PLAYERS • 60 SECONDS • PUSH TO WIN</div>
         <button class="start-btn" id="start-btn">START MATCH</button>
     </div>
 
@@ -1009,12 +984,12 @@
                 redHeroes.className = 'heroes-container red';
 
                 // Get player sprites if match data exists
-                let redPlayer1 = '💪', redPlayer2 = '💪';
+                let redPlayer1 = '👤', redPlayer2 = '👤';
                 if (matchData && matchData.redPlayers) {
                     const p1 = getPlayerInfo(matchData.redPlayers[index * 2]);
                     const p2 = getPlayerInfo(matchData.redPlayers[index * 2 + 1]);
-                    if (p1) redPlayer1 = `<img src="assets/sprites/${p1.sprite}" onerror="this.parentElement.innerHTML='💪'" style="width:28px;height:28px;border-radius:4px;">`;
-                    if (p2) redPlayer2 = `<img src="assets/sprites/${p2.sprite}" onerror="this.parentElement.innerHTML='💪'" style="width:28px;height:28px;border-radius:4px;">`;
+                    if (p1) redPlayer1 = `<img src="assets/sprites/${p1.sprite}" onerror="this.parentElement.innerHTML='👤'" style="width:70px;height:95px;border-radius:8px;object-fit:cover;">`;
+                    if (p2) redPlayer2 = `<img src="assets/sprites/${p2.sprite}" onerror="this.parentElement.innerHTML='👤'" style="width:70px;height:95px;border-radius:8px;object-fit:cover;">`;
                 }
 
                 redHeroes.innerHTML = `
@@ -1035,12 +1010,12 @@
                 blueHeroes.className = 'heroes-container blue';
 
                 // Get player sprites if match data exists
-                let bluePlayer1 = '💪', bluePlayer2 = '💪';
+                let bluePlayer1 = '👤', bluePlayer2 = '👤';
                 if (matchData && matchData.bluePlayers) {
                     const p1 = getPlayerInfo(matchData.bluePlayers[index * 2]);
                     const p2 = getPlayerInfo(matchData.bluePlayers[index * 2 + 1]);
-                    if (p1) bluePlayer1 = `<img src="assets/sprites/${p1.sprite}" onerror="this.parentElement.innerHTML='💪'" style="width:28px;height:28px;border-radius:4px;">`;
-                    if (p2) bluePlayer2 = `<img src="assets/sprites/${p2.sprite}" onerror="this.parentElement.innerHTML='💪'" style="width:28px;height:28px;border-radius:4px;">`;
+                    if (p1) bluePlayer1 = `<img src="assets/sprites/${p1.sprite}" onerror="this.parentElement.innerHTML='👤'" style="width:70px;height:95px;border-radius:8px;object-fit:cover;">`;
+                    if (p2) bluePlayer2 = `<img src="assets/sprites/${p2.sprite}" onerror="this.parentElement.innerHTML='👤'" style="width:70px;height:95px;border-radius:8px;object-fit:cover;">`;
                 }
 
                 blueHeroes.innerHTML = `
@@ -1350,6 +1325,18 @@
             gameOverlay.innerHTML = `
                 <div class="overlay-title">WALL PUSHING MATCH</div>
                 <div class="overlay-subtitle">12 PLAYERS • ${timeSelect.value} SECONDS • PUSH TO WIN</div>
+                <div class="settings-row" style="margin-bottom: 20px;">
+                    <div class="setting">
+                        <label>TIME:</label>
+                        <select id="time-select">
+                            <option value="30">30 sec</option>
+                            <option value="45">45 sec</option>
+                            <option value="60" selected>60 sec</option>
+                            <option value="90">90 sec</option>
+                            <option value="120">120 sec</option>
+                        </select>
+                    </div>
+                </div>
                 <button class="start-btn" id="start-btn">START MATCH</button>
             `;
             document.getElementById('start-btn').addEventListener('click', () => {

@@ -506,16 +506,32 @@
     <script>
         const STORAGE_KEY = 'physicalTechTournament';
 
+        // Read state directly from localStorage to ensure fresh data
+        function getStateDirectly() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    return JSON.parse(saved);
+                }
+            } catch (e) {
+                console.error('Failed to read state:', e);
+            }
+            return null;
+        }
+
         function init() {
             render();
-            // Auto-refresh every 2 seconds
-            setInterval(render, 2000);
+            // Auto-refresh every 2 seconds - force fresh read from localStorage
+            setInterval(() => {
+                render();
+            }, 2000);
         }
 
         function render() {
-            const state = getState();
+            // Read directly from localStorage to bypass any caching
+            const state = getStateDirectly();
 
-            if (!state.tournamentStarted) {
+            if (!state || !state.tournamentStarted) {
                 showNoData();
                 return;
             }

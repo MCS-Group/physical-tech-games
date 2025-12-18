@@ -1040,8 +1040,8 @@
 <body>
     <div class="game-wrapper">
         <div class="header">
-            <div class="title">CASTLE CONQUEST</div>
-            <div class="subtitle">🏰 NAVIGATE THE MAZE • BREAK THE GATE • CLAIM VICTORY 🏰</div>
+            <div class="title">PHYSICAL: TECH</div>
+            <div class="subtitle">GAME 4: CASTLE CONQUEST</div>
         </div>
 
         <div class="game-area">
@@ -1321,7 +1321,11 @@
             const cartBody = document.querySelector(`#cart-${team} .cart-body`);
             cartBody.innerHTML = '';
             
-            for (let i = 0; i < 9; i++) {
+            // Render 4 members (2x2 grid)
+            cartBody.style.gridTemplateColumns = "repeat(2, 1fr)";
+            cartBody.style.gridTemplateRows = "repeat(2, 1fr)";
+
+            for (let i = 0; i < 4; i++) {
                 const member = document.createElement('div');
                 member.className = 'cart-member';
                 member.textContent = '😤';
@@ -1709,12 +1713,23 @@
             });
         }
 
+        // Get match data from localStorage (set by game-flow.html)
+        let matchData = null;
+        try {
+            const stored = localStorage.getItem('currentMatch');
+            if (stored) {
+                matchData = JSON.parse(stored);
+            }
+        } catch (e) {
+            console.log('No match data found, running in standalone mode');
+        }
+
         function endGame() {
             state.isRunning = false;
             clearInterval(state.timerInterval);
 
             let winner, winnerTime;
-            
+
             if (state.teams.red.finished && !state.teams.blue.finished) {
                 winner = 'red';
                 winnerTime = state.teams.red.finishTime;
@@ -1731,18 +1746,26 @@
                 }
             }
 
+            // Store result for game-flow.html to read
+            localStorage.setItem('gameResult', JSON.stringify({ winner: winner }));
+
             const winnerText = winner === 'red' ? 'TEAM RED WINS!' : 'TEAM BLUE WINS!';
 
             gameOverlay.innerHTML = `
                 <div class="winner-display">
                     <div class="winner-text ${winner}">${winnerText}</div>
                     <div class="final-time">🏰 Time: ${formatTime(winnerTime)}</div>
-                    <button class="start-btn" onclick="resetGame()">PLAY AGAIN</button>
+                    <button class="start-btn" onclick="returnToFlow()">CONTINUE</button>
                 </div>
             `;
             gameOverlay.classList.remove('hidden');
-            
+
             createVictoryParticles(winner);
+        }
+
+        // Return to game flow
+        function returnToFlow() {
+            window.location.href = 'game-flow.html?game=' + (matchData ? matchData.game : 4);
         }
 
         function createVictoryParticles(team) {

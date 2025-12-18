@@ -295,9 +295,20 @@ function recordMatchResult(winner) {
         isOriginalTeams: setup.isOriginalTeams
     };
 
-    // Add to results
+    // Add to results - Check if this match already exists (re-play or correction)
     const newResults = { ...state.results };
-    newResults[gameNumber] = [...newResults[gameNumber], result];
+    const existingIndex = newResults[gameNumber].findIndex(r => 
+        (r.red === result.red && r.blue === result.blue) || 
+        (r.red === result.blue && r.blue === result.red)
+    );
+
+    if (existingIndex !== -1) {
+        // Update existing result
+        newResults[gameNumber][existingIndex] = result;
+    } else {
+        // Add new result
+        newResults[gameNumber] = [...newResults[gameNumber], result];
+    }
 
     // Mark players as played
     const allPlayers = [...setup.redPlayers, ...setup.bluePlayers];
@@ -308,9 +319,13 @@ function recordMatchResult(winner) {
     const winnerTeam = winner === 'red' ? setup.redTeam : setup.blueTeam;
 
     if (gameNumber === 1) {
-        newBracket.game1Winners = [...newBracket.game1Winners, winnerTeam];
+        if (!newBracket.game1Winners.includes(winnerTeam)) {
+             newBracket.game1Winners = [...newBracket.game1Winners, winnerTeam];
+        }
     } else if (gameNumber === 2) {
-        newBracket.game2Winners = [...newBracket.game2Winners, winnerTeam];
+        if (!newBracket.game2Winners.includes(winnerTeam)) {
+            newBracket.game2Winners = [...newBracket.game2Winners, winnerTeam];
+        }
     } else if (gameNumber === 3) {
         newBracket.game3Winner = winnerTeam;
         newBracket.finalist = winnerTeam;
