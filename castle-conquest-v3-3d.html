@@ -832,6 +832,9 @@
             font-weight: 900;
             color: var(--gold);
             text-shadow: 0 0 30px var(--gold);
+            font-variant-numeric: tabular-nums;
+            min-width: 200px;
+            display: inline-block;
         }
 
         .legend-box {
@@ -1035,9 +1038,31 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
+
+        .dev-skip-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            color: #444;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            z-index: 9999;
+            border-radius: 4px;
+        }
+        .dev-skip-btn:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-color: white;
+        }
     </style>
 </head>
 <body>
+    <button class="dev-skip-btn" onclick="devSkip()">DEV: SKIP</button>
+
     <div class="game-wrapper">
         <div class="header">
             <div class="title">PHYSICAL: TECH</div>
@@ -1166,7 +1191,11 @@
         <button class="start-btn" id="start-btn">START CONQUEST</button>
     </div>
 
+    <script src="audio-manager.js"></script>
     <script>
+        // Initialize audio manager (music will start on button click)
+        audioManager.initialize();
+
         // Pre-designed 20x20 maze
         const mazeTemplate = [
             [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
@@ -1207,16 +1236,18 @@
             keys: {
                 red: {
                     up: 'KeyW', down: 'KeyS', left: 'KeyA', right: 'KeyD',
-                    all: ['KeyQ', 'KeyW', 'KeyE', 'KeyA', 'KeyS', 'KeyD']
+                    movement: ['KeyW', 'KeyA', 'KeyS', 'KeyD'],  // Only movement keys
+                    all: ['KeyW', 'KeyA', 'KeyS', 'KeyD']        // Same as movement for sequences
                 },
                 blue: {
                     up: 'KeyI', down: 'KeyK', left: 'KeyJ', right: 'KeyL',
-                    all: ['KeyI', 'KeyO', 'KeyP', 'KeyJ', 'KeyK', 'KeyL']
+                    movement: ['KeyI', 'KeyJ', 'KeyK', 'KeyL'],  // Only movement keys
+                    all: ['KeyI', 'KeyJ', 'KeyK', 'KeyL']        // Same as movement for sequences
                 }
             },
             keyLabels: {
-                red: { 'KeyQ': 'Q', 'KeyW': 'W', 'KeyE': 'E', 'KeyA': 'A', 'KeyS': 'S', 'KeyD': 'D' },
-                blue: { 'KeyI': 'I', 'KeyO': 'O', 'KeyP': 'P', 'KeyJ': 'J', 'KeyK': 'K', 'KeyL': 'L' }
+                red: { 'KeyW': 'W', 'KeyA': 'A', 'KeyS': 'S', 'KeyD': 'D' },
+                blue: { 'KeyI': 'I', 'KeyJ': 'J', 'KeyK': 'K', 'KeyL': 'L' }
             }
         };
 
@@ -1234,7 +1265,7 @@
                     sequence: [],
                     sequenceIndex: 0,
                     finished: false,
-                    finishTime: null
+                    finishTime: nullqqqqqwwwwiiiijjjilijiljjl
                 },
                 blue: {
                     maze: mirrorMaze(mazeTemplate),
@@ -1649,7 +1680,17 @@
 
         async function startCountdown() {
             gameOverlay.innerHTML = '<div class="countdown" id="countdown">3</div>';
-            
+
+            // Play countdown audio FIRST (louder than background)
+            audioManager.playCountdown().catch(() => {
+                console.log('Countdown audio not available');
+            });
+
+            // Start background music with slight delay (500ms) so countdown is heard
+            setTimeout(() => {
+                audioManager.playBackgroundMusic('gameplay', true);
+            }, 4000);
+
             for (let i = 3; i >= 1; i--) {
                 document.getElementById('countdown').textContent = i;
                 document.getElementById('countdown').style.animation = 'none';
@@ -1657,17 +1698,23 @@
                 document.getElementById('countdown').style.animation = 'countPulse 1s ease-in-out';
                 await sleep(1000);
             }
-            
+
             document.getElementById('countdown').textContent = 'CONQUER!';
             document.getElementById('countdown').style.color = 'var(--team-red)';
             await sleep(500);
-            
+
             gameOverlay.classList.add('hidden');
             startGame();
         }
 
         function sleep(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function devSkip() {
+            state.teams.red.finished = true;
+            state.teams.red.finishTime = 1000; // 1 second
+            endGame();
         }
 
         function initGame() {

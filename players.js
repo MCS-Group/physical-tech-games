@@ -144,42 +144,132 @@ const PLAYERS = {
 
 // Original 16 teams
 const TEAMS = {
-    1: { id: 1, name: "Ширээ", company: "Mixed", members: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
-    2: { id: 2, name: "Ширээ", company: "Mixed", members: [10, 11, 12, 13, 14, 15, 16, 17, 18] },
-    3: { id: 3, name: "Ширээ", company: "TPG", members: [19, 20, 21, 22, 23, 24, 25, 26, 27] },
-    4: { id: 4, name: "Ширээ", company: "Mixed", members: [28, 29, 30, 31, 32, 33, 34, 35] },
-    5: { id: 5, name: "Ширээ", company: "TPG", members: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45] },
-    6: { id: 6, name: "Ширээ", company: "Mixed", members: [46, 47, 48, 49, 50, 51, 52, 53] },
-    7: { id: 7, name: "Ширээ", company: "TPG", members: [54, 55, 56, 57, 58, 59, 60, 61] },
-    8: { id: 8, name: "Ширээ", company: "Mixed", members: [62, 63, 64, 65, 66, 67, 68, 69] },
-    9: { id: 9, name: "Ширээ", company: "TPG", members: [70, 71, 72, 73, 74, 75, 76, 77, 78] },
-    10: { id: 10, name: "Ширээ", company: "Mixed", members: [79, 80, 81, 82, 83, 84, 85, 86, 87] },
-    11: { id: 11, name: "Ширээ", company: "VH", members: [88, 89, 90, 91, 92, 93, 94, 95, 96] },
-    12: { id: 12, name: "Ширээ", company: "EM", members: [97, 98, 99, 100, 101, 102, 103, 104, 105] },
-    13: { id: 13, name: "Ширээ", company: "EM", members: [106, 107, 108, 109, 110, 111, 112, 113, 114] },
-    14: { id: 14, name: "Ширээ", company: "eSchool", members: [115, 116, 117, 118, 119, 120, 121, 122] },
-    15: { id: 15, name: "Ширээ", company: "eSchool", members: [123, 124, 125, 126, 127, 128, 129, 130] },
-    16: { id: 16, name: "Ширээ", company: "Mixed", members: [131, 132, 133, 134, 135, 136, 137, 138] }
+    1: { id: 1, name: "Ширээ 1", company: "Mixed", members: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
+    2: { id: 2, name: "Ширээ 2", company: "Mixed", members: [10, 11, 12, 13, 14, 15, 16, 17, 18] },
+    3: { id: 3, name: "Ширээ 3", company: "TPG", members: [19, 20, 21, 22, 23, 24, 25, 26, 27] },
+    4: { id: 4, name: "Ширээ 4", company: "Mixed", members: [28, 29, 30, 31, 32, 33, 34, 35] },
+    5: { id: 5, name: "Ширээ 5", company: "TPG", members: [36, 37, 38, 39, 40, 41, 42, 43, 44, 45] },
+    6: { id: 6, name: "Ширээ 6", company: "Mixed", members: [46, 47, 48, 49, 50, 51, 52, 53] },
+    7: { id: 7, name: "Ширээ 7", company: "TPG", members: [54, 55, 56, 57, 58, 59, 60, 61] },
+    8: { id: 8, name: "Ширээ 8", company: "Mixed", members: [62, 63, 64, 65, 66, 67, 68, 69] },
+    9: { id: 9, name: "Ширээ 9", company: "TPG", members: [70, 71, 72, 73, 74, 75, 76, 77, 78] },
+    10: { id: 10, name: "Ширээ 10", company: "Mixed", members: [79, 80, 81, 82, 83, 84, 85, 86, 87] },
+    11: { id: 11, name: "Ширээ 11", company: "VH", members: [88, 89, 90, 91, 92, 93, 94, 95, 96] },
+    12: { id: 12, name: "Ширээ 12", company: "EM", members: [97, 98, 99, 100, 101, 102, 103, 104, 105] },
+    13: { id: 13, name: "Ширээ 13", company: "EM", members: [106, 107, 108, 109, 110, 111, 112, 113, 114] },
+    14: { id: 14, name: "Ширээ 14", company: "eSchool", members: [115, 116, 117, 118, 119, 120, 121, 122] },
+    15: { id: 15, name: "Ширээ 15", company: "eSchool", members: [123, 124, 125, 126, 127, 128, 129, 130] },
+    16: { id: 16, name: "Ширээ 16", company: "Mixed", members: [131, 132, 133, 134, 135, 136, 137, 138] }
 };
 
 // Combined teams for tournament (2 original teams combined)
 const COMBINED_TEAMS = {
-    1: { id: 1, name: "Нэгдсэн", originalTeams: [1, 2], members: [...TEAMS[1].members, ...TEAMS[2].members] },
-    2: { id: 2, name: "Нэгдсэн", originalTeams: [3, 4], members: [...TEAMS[3].members, ...TEAMS[4].members] },
-    3: { id: 3, name: "Нэгдсэн", originalTeams: [5, 6], members: [...TEAMS[5].members, ...TEAMS[6].members] },
-    4: { id: 4, name: "Нэгдсэн", originalTeams: [7, 8], members: [...TEAMS[7].members, ...TEAMS[8].members] },
-    5: { id: 5, name: "Нэгдсэн", originalTeams: [9, 10], members: [...TEAMS[9].members, ...TEAMS[10].members] },
-    6: { id: 6, name: "Нэгдсэн", originalTeams: [11, 12], members: [...TEAMS[11].members, ...TEAMS[12].members] },
-    7: { id: 7, name: "Нэгдсэн", originalTeams: [13, 14], members: [...TEAMS[13].members, ...TEAMS[14].members] },
-    8: { id: 8, name: "Нэгдсэн", originalTeams: [15, 16], members: [...TEAMS[15].members, ...TEAMS[16].members] }
+    1: { id: 1, name: "Ширээ 1&2", originalTeams: [1, 2], members: [...TEAMS[1].members, ...TEAMS[2].members] },
+    2: { id: 2, name: "Ширээ 3&4", originalTeams: [3, 4], members: [...TEAMS[3].members, ...TEAMS[4].members] },
+    3: { id: 3, name: "Ширээ 5&6", originalTeams: [5, 6], members: [...TEAMS[5].members, ...TEAMS[6].members] },
+    4: { id: 4, name: "Ширээ 7&8", originalTeams: [7, 8], members: [...TEAMS[7].members, ...TEAMS[8].members] },
+    5: { id: 5, name: "Ширээ 9&10", originalTeams: [9, 10], members: [...TEAMS[9].members, ...TEAMS[10].members] },
+    6: { id: 6, name: "Ширээ 11&12", originalTeams: [11, 12], members: [...TEAMS[11].members, ...TEAMS[12].members] },
+    7: { id: 7, name: "Ширээ 13&14", originalTeams: [13, 14], members: [...TEAMS[13].members, ...TEAMS[14].members] },
+    8: { id: 8, name: "Ширээ 15&16", originalTeams: [15, 16], members: [...TEAMS[15].members, ...TEAMS[16].members] }
 };
 
 // Game configuration
 const GAME_CONFIG = {
-    1: { name: "Wall", playersPerTeam: 6, matches: 4, icon: "🏋️", color: "#ff6b35" },
-    2: { name: "Hanging", playersPerTeam: 2, matches: 2, icon: "💪", color: "#4ecdc4" },
-    3: { name: "Iron", playersPerTeam: 1, matches: 1, icon: "⚔️", color: "#ffe66d" },
-    4: { name: "Castle", playersPerTeam: 4, matches: 1, icon: "🏰", color: "#ff2d55", isFinal: true }
+    1: {
+        name: "Game 1: Wall Pushing Match",
+        playersPerTeam: 3,
+        matches: 4,
+        icon: "🏋️",
+        color: "#ff6b35",
+        screenshot: "assets/screenshots/game1-wall.png",
+        description: "Push with all your might! Teams press against a digital wall. The team that pushes hardest wins. Strength and teamwork are key!",
+        controls: {
+            red: [
+                { player: 1, keys: ['Q', 'A'] },
+                { player: 2, keys: ['W', 'S'] },
+                { player: 3, keys: ['E', 'D'] }
+            ],
+            blue: [
+                { player: 1, keys: ['U', 'J'] },
+                { player: 2, keys: ['I', 'K'] },
+                { player: 3, keys: ['O', 'L'] }
+            ]
+        }
+    },
+    2: {
+        name: "Game 2 : Hanging Endurance",
+        playersPerTeam: 4,
+        matches: 2,
+        icon: "💪",
+        color: "#4ecdc4",
+        screenshot: "assets/screenshots/game2-hanging.png",
+        description: "Hang on tight! Players grip the bar as long as they can. Last one hanging wins. Pure endurance and willpower!",
+        rounds: 3,
+        controls: {
+            red: [
+                { player: 1, keys: ['W'] },
+                { player: 2, keys: ['A'] },
+                { player: 3, keys: ['S'] },
+                { player: 4, keys: ['D'] }
+            ],
+            blue: [
+                { player: 1, keys: ['I'] },
+                { player: 2, keys: ['J'] },
+                { player: 3, keys: ['K'] },
+                { player: 4, keys: ['L'] }
+            ]
+        }
+    },
+    3: {
+        name: "Game 3 : Iron ball Drag",
+        playersPerTeam: 3,
+        matches: 1,
+        icon: "⚔️",
+        color: "#ffe66d",
+        screenshot: "assets/screenshots/game3-iron.png",
+        description: "One warrior. One iron ball. Drag it across the finish line. The fastest time claims victory. Ultimate test of strength!",
+        controls: {
+            red: [
+                { player: 1, keys: ['Q', 'A'] },
+                { player: 2, keys: ['W', 'S'] },
+                { player: 3, keys: ['E', 'D'] }
+            ],
+            blue: [
+                { player: 1, keys: ['U', 'J'] },
+                { player: 2, keys: ['I', 'K'] },
+                { player: 3, keys: ['O', 'L'] }
+            ]
+        }
+    },
+    4: {
+        name: "Game 4 : Castle Conquest",
+        playersPerTeam: 4,
+        matches: 1,
+        icon: "🏰",
+        color: "#ff2d55",
+        isFinal: true,
+        screenshot: "assets/screenshots/game4-castle.png",
+        description: "The final battle! Attack enemy castles while defending yours. Friends become enemies. Only one team survives!",
+        controls: {
+            red: [
+                { player: 1, keys: ['W'], direction: 'up' },
+                { player: 2, keys: ['A'], direction: 'left' },
+                { player: 3, keys: ['S'], direction: 'down' },
+                { player: 4, keys: ['D'], direction: 'right' }
+            ],
+            blue: [
+                { player: 1, keys: ['I'], direction: 'up' },
+                { player: 2, keys: ['J'], direction: 'left' },
+                { player: 3, keys: ['K'], direction: 'down' },
+                { player: 4, keys: ['L'], direction: 'right' }
+            ]
+        },
+        unlockKeys: {
+            red: ['W', 'A', 'S', 'D'],
+            blue: ['I', 'J', 'K', 'L']
+        }
+    }
 };
 
 // Helper functions

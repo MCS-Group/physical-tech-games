@@ -69,19 +69,20 @@
 
         .title {
             font-family: 'Black Ops One', cursive;
-            font-size: 2.8rem;
-            background: linear-gradient(180deg, #fff 0%, #888 100%);
+            font-size: 2.5rem;
+            background: linear-gradient(180deg, #fff 0%, var(--gold) 50%, #b8860b 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: 8px;
+            letter-spacing: 6px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
         }
 
         .subtitle {
             font-family: 'Press Start 2P', cursive;
-            font-size: 1rem;
+            font-size: 0.7rem;
             color: var(--gold);
-            text-shadow: 0 0 20px var(--gold);
+            text-shadow: 0 0 15px var(--gold);
             margin-top: 5px;
         }
 
@@ -368,36 +369,33 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            display: flex;
-            gap: 3px;
             z-index: 15;
         }
 
         .heroes-container.red { left: 20px; }
-        .heroes-container.blue { right: 20px; flex-direction: row-reverse; }
+        .heroes-container.blue { right: 20px; }
 
         .hero {
-            width: 75px;
-            height: 100px;
+            width: 140px;
+            height: 90px;
             border-radius: 12px;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            gap: 10px;
             position: relative;
+            padding: 10px;
+            background: rgba(20, 20, 30, 0.8);
+            border: 3px solid #444;
         }
 
         .hero.red {
-            background: linear-gradient(180deg, var(--team-red), #aa1133);
-            border: 2px solid #ff6688;
-            box-shadow: 0 0 10px var(--team-red-glow);
+            border-color: rgba(255, 45, 85, 0.5);
         }
 
         .hero.blue {
-            background: linear-gradient(180deg, var(--team-blue), #0088aa);
-            border: 2px solid #66ddff;
-            box-shadow: 0 0 10px var(--team-blue-glow);
+            border-color: rgba(0, 212, 255, 0.5);
         }
 
         .hero.pushing {
@@ -410,15 +408,107 @@
             100% { transform: scaleX(1) scaleY(1); }
         }
 
-        .hero-key {
-            position: absolute;
-            bottom: -16px;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.35rem;
+        .hero-keys-display {
+            display: flex;
+            flex-direction: row;
+            gap: 8px;
+        }
+
+        .hero-key-btn {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(180deg, #555, #2a2a2a);
+            border: 3px solid #777;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: bold;
             color: white;
-            background: rgba(0,0,0,0.8);
-            padding: 2px 4px;
-            border-radius: 3px;
+            box-shadow: 0 4px 0 #111;
+            transition: all 0.1s ease;
+        }
+
+        .hero-key-btn.pressed-red {
+            background: var(--team-red);
+            border-color: #ff6688;
+            box-shadow: 0 0 20px var(--team-red-glow), 0 4px 0 #aa1133;
+            transform: translateY(2px);
+        }
+
+        .hero-key-btn.pressed-blue {
+            background: var(--team-blue);
+            border-color: #66ddff;
+            box-shadow: 0 0 20px var(--team-blue-glow), 0 4px 0 #0088aa;
+            transform: translateY(2px);
+        }
+
+        /* Player Characters Row Outside Arena */
+        .players-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .team-players {
+            display: flex;
+            gap: 15px;
+        }
+
+        .team-players.blue {
+            flex-direction: row-reverse;
+        }
+
+        .player-character {
+            text-align: center;
+        }
+
+        .player-sprite {
+            width: 90px;
+            height: 110px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            border: 3px solid;
+            overflow: hidden;
+        }
+
+        .player-character.red .player-sprite {
+            background: linear-gradient(180deg, var(--team-red), #aa1133);
+            border-color: #ff6688;
+            box-shadow: 0 0 15px var(--team-red-glow);
+        }
+
+        .player-character.blue .player-sprite {
+            background: linear-gradient(180deg, var(--team-blue), #0088aa);
+            border-color: #66ddff;
+            box-shadow: 0 0 15px var(--team-blue-glow);
+        }
+
+        .player-sprite img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-character-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: #ccc;
+            margin-bottom: 3px;
+        }
+
+        .player-character-keys {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            color: var(--gold);
+            font-weight: bold;
         }
 
         /* Power meters */
@@ -473,106 +563,6 @@
             box-shadow: 0 0 10px var(--team-blue);
         }
 
-        /* Controls */
-        .controls-section {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            gap: 20px;
-        }
-
-        .team-controls {
-            flex: 1;
-            padding: 15px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 15px;
-        }
-
-        .team-controls.red { border: 2px solid var(--team-red); }
-        .team-controls.blue { border: 2px solid var(--team-blue); }
-
-        .controls-title {
-            font-family: 'Black Ops One', cursive;
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        .team-controls.red .controls-title { color: var(--team-red); }
-        .team-controls.blue .controls-title { color: var(--team-blue); }
-
-        .player-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 10px;
-            margin-bottom: 5px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 8px;
-        }
-
-        .player-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .player-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-        }
-
-        .team-controls.red .player-avatar { background: var(--team-red); }
-        .team-controls.blue .player-avatar { background: var(--team-blue); }
-
-        .player-name {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.45rem;
-            color: #ccc;
-        }
-
-        .player-keys {
-            display: flex;
-            gap: 5px;
-        }
-
-        .key {
-            min-width: 32px;
-            height: 32px;
-            background: linear-gradient(180deg, #444, #222);
-            border: 2px solid #666;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 3px 0 #111;
-            transition: all 0.05s ease;
-            padding: 0 6px;
-        }
-
-        .key.pressed {
-            transform: translateY(3px);
-            box-shadow: 0 0 0 #111;
-        }
-
-        .key.pressed.red {
-            background: var(--team-red);
-            border-color: #ff6688;
-        }
-
-        .key.pressed.blue {
-            background: var(--team-blue);
-            border-color: #66e5ff;
-        }
 
         /* Settings */
         .settings-row {
@@ -753,9 +743,31 @@
             0% { opacity: 1; transform: translateY(0) scale(1); }
             100% { opacity: 0; transform: translateY(-30px) scale(1.5); }
         }
+
+        .dev-skip-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            color: #444;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            z-index: 9999;
+            border-radius: 4px;
+        }
+        .dev-skip-btn:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-color: white;
+        }
     </style>
 </head>
 <body>
+    <button class="dev-skip-btn" onclick="devSkip()">DEV: SKIP</button>
+
     <div class="game-wrapper">
         <div class="header">
             <div class="title">PHYSICAL: TECH</div>
@@ -775,6 +787,11 @@
                 <div class="score-value" id="score-blue">0</div>
                 <div class="team-name">BLUE</div>
             </div>
+        </div>
+
+        <!-- Player Characters Row -->
+        <div class="players-row" id="players-row">
+            <!-- Will be populated by JavaScript -->
         </div>
 
         <div class="arena">
@@ -811,80 +828,11 @@
             </div>
         </div>
 
-        <div class="controls-section">
-            <div class="team-controls red">
-                <div class="controls-title">TEAM RED - 6 PLAYERS</div>
-                <div class="player-row">
-                    <div class="player-info">
-                        <div class="player-avatar">💪</div>
-                        <div class="player-name">P1-2 → 100KG</div>
-                    </div>
-                    <div class="player-keys">
-                        <div class="key" id="key-q">Q</div>
-                        <div class="key" id="key-w">W</div>
-                    </div>
-                </div>
-                <div class="player-row">
-                    <div class="player-info">
-                        <div class="player-avatar">💪</div>
-                        <div class="player-name">P3-4 → 200KG</div>
-                    </div>
-                    <div class="player-keys">
-                        <div class="key" id="key-a">A</div>
-                        <div class="key" id="key-s">S</div>
-                    </div>
-                </div>
-                <div class="player-row">
-                    <div class="player-info">
-                        <div class="player-avatar">💪</div>
-                        <div class="player-name">P5-6 → 300KG</div>
-                    </div>
-                    <div class="player-keys">
-                        <div class="key" id="key-z">Z</div>
-                        <div class="key" id="key-x">X</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="team-controls blue">
-                <div class="controls-title">TEAM BLUE - 6 PLAYERS</div>
-                <div class="player-row">
-                    <div class="player-info">
-                        <div class="player-avatar">💪</div>
-                        <div class="player-name">P1-2 → 100KG</div>
-                    </div>
-                    <div class="player-keys">
-                        <div class="key" id="key-p">P</div>
-                        <div class="key" id="key-o">O</div>
-                    </div>
-                </div>
-                <div class="player-row">
-                    <div class="player-info">
-                        <div class="player-avatar">💪</div>
-                        <div class="player-name">P3-4 → 200KG</div>
-                    </div>
-                    <div class="player-keys">
-                        <div class="key" id="key-l">L</div>
-                        <div class="key" id="key-k">K</div>
-                    </div>
-                </div>
-                <div class="player-row">
-                    <div class="player-info">
-                        <div class="player-avatar">💪</div>
-                        <div class="player-name">P5-6 → 300KG</div>
-                    </div>
-                    <div class="player-keys">
-                        <div class="key" id="key-m">M</div>
-                        <div class="key" id="key-n">N</div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div class="game-overlay" id="game-overlay">
         <div class="overlay-title">WALL PUSHING MATCH</div>
-        <div class="overlay-subtitle">12 PLAYERS • PUSH TO WIN</div>
+        <div class="overlay-subtitle">6 PLAYERS • PUSH TO WIN</div>
         <div class="settings-row" style="margin-bottom: 20px;">
             <div class="setting">
                 <label>TIME:</label>
@@ -901,7 +849,11 @@
     </div>
 
     <script src="players.js"></script>
+    <script src="audio-manager.js"></script>
     <script>
+        // Initialize audio manager (music will start on button click)
+        audioManager.initialize();
+
         // Tournament integration - load match data
         let matchData = null;
         try {
@@ -930,14 +882,14 @@
             ],
             keyMappings: {
                 red: [
-                    ['q', 'w'],
-                    ['a', 's'],
-                    ['z', 'x']
+                    ['q', 'a'],  // Player 1
+                    ['w', 's'],  // Player 2
+                    ['e', 'd']   // Player 3
                 ],
                 blue: [
-                    ['p', 'o'],
-                    ['l', 'k'],
-                    ['m', 'n']
+                    ['u', 'j'],  // Player 1
+                    ['i', 'k'],  // Player 2
+                    ['o', 'l']   // Player 3
                 ]
             },
             moveAmount: 2,      // Percentage to move per successful push
@@ -979,22 +931,20 @@
                 lane.className = 'block-lane';
                 lane.innerHTML = `<div class="weight-label">${blockConfig.label}</div>`;
 
-                // Red heroes (left side - pushing RIGHT toward blue)
+                // Red hero (left side - pushing RIGHT toward blue)
                 const redHeroes = document.createElement('div');
                 redHeroes.className = 'heroes-container red';
 
-                // Get player sprites if match data exists
-                let redPlayer1 = '👤', redPlayer2 = '👤';
-                if (matchData && matchData.redPlayers) {
-                    const p1 = getPlayerInfo(matchData.redPlayers[index * 2]);
-                    const p2 = getPlayerInfo(matchData.redPlayers[index * 2 + 1]);
-                    if (p1) redPlayer1 = `<img src="assets/sprites/${p1.sprite}" onerror="this.parentElement.innerHTML='👤'" style="width:70px;height:95px;border-radius:8px;object-fit:cover;">`;
-                    if (p2) redPlayer2 = `<img src="assets/sprites/${p2.sprite}" onerror="this.parentElement.innerHTML='👤'" style="width:70px;height:95px;border-radius:8px;object-fit:cover;">`;
-                }
+                const redKey1 = config.keyMappings.red[index][0].toUpperCase();
+                const redKey2 = config.keyMappings.red[index][1].toUpperCase();
 
                 redHeroes.innerHTML = `
-                    <div class="hero red" id="hero-red-${index}-0">${redPlayer1}<span class="hero-key">${config.keyMappings.red[index][0].toUpperCase()}</span></div>
-                    <div class="hero red" id="hero-red-${index}-1">${redPlayer2}<span class="hero-key">${config.keyMappings.red[index][1].toUpperCase()}</span></div>
+                    <div class="hero red" id="hero-red-${index}">
+                        <div class="hero-keys-display">
+                            <div class="hero-key-btn" data-key="${config.keyMappings.red[index][0]}">${redKey1}</div>
+                            <div class="hero-key-btn" data-key="${config.keyMappings.red[index][1]}">${redKey2}</div>
+                        </div>
+                    </div>
                 `;
                 lane.appendChild(redHeroes);
 
@@ -1005,22 +955,20 @@
                 block.innerHTML = `${blockConfig.label}<span class="block-clicks" id="block-clicks-${index}">0</span>`;
                 lane.appendChild(block);
 
-                // Blue heroes (right side - pushing LEFT toward red)
+                // Blue hero (right side - pushing LEFT toward red)
                 const blueHeroes = document.createElement('div');
                 blueHeroes.className = 'heroes-container blue';
 
-                // Get player sprites if match data exists
-                let bluePlayer1 = '👤', bluePlayer2 = '👤';
-                if (matchData && matchData.bluePlayers) {
-                    const p1 = getPlayerInfo(matchData.bluePlayers[index * 2]);
-                    const p2 = getPlayerInfo(matchData.bluePlayers[index * 2 + 1]);
-                    if (p1) bluePlayer1 = `<img src="assets/sprites/${p1.sprite}" onerror="this.parentElement.innerHTML='👤'" style="width:70px;height:95px;border-radius:8px;object-fit:cover;">`;
-                    if (p2) bluePlayer2 = `<img src="assets/sprites/${p2.sprite}" onerror="this.parentElement.innerHTML='👤'" style="width:70px;height:95px;border-radius:8px;object-fit:cover;">`;
-                }
+                const blueKey1 = config.keyMappings.blue[index][0].toUpperCase();
+                const blueKey2 = config.keyMappings.blue[index][1].toUpperCase();
 
                 blueHeroes.innerHTML = `
-                    <div class="hero blue" id="hero-blue-${index}-0">${bluePlayer1}<span class="hero-key">${config.keyMappings.blue[index][0].toUpperCase()}</span></div>
-                    <div class="hero blue" id="hero-blue-${index}-1">${bluePlayer2}<span class="hero-key">${config.keyMappings.blue[index][1].toUpperCase()}</span></div>
+                    <div class="hero blue" id="hero-blue-${index}">
+                        <div class="hero-keys-display">
+                            <div class="hero-key-btn" data-key="${config.keyMappings.blue[index][0]}">${blueKey1}</div>
+                            <div class="hero-key-btn" data-key="${config.keyMappings.blue[index][1]}">${blueKey2}</div>
+                        </div>
+                    </div>
                 `;
                 lane.appendChild(blueHeroes);
 
@@ -1039,19 +987,81 @@
             document.getElementById('clicks-blue').textContent = '0 clicks';
         }
 
+        // Render player characters
+        function renderControls() {
+            const playersRow = document.getElementById('players-row');
+
+            let redPlayersHTML = '';
+            let bluePlayersHTML = '';
+
+            for (let i = 0; i < 3; i++) {
+                const redKeys = config.keyMappings.red[i];
+                const blueKeys = config.keyMappings.blue[i];
+
+                // Get player info for red team
+                let redPlayerSprite = '👤';
+                let redPlayerName = `Player ${i + 1}`;
+                if (matchData && matchData.redPlayers && matchData.redPlayers[i]) {
+                    const player = getPlayerInfo(matchData.redPlayers[i]);
+                    if (player) {
+                        redPlayerSprite = `<img src="assets/sprites/${player.sprite}" onerror="this.parentElement.innerHTML='👤'">`;
+                        redPlayerName = player.name;
+                    }
+                }
+
+                // Get player info for blue team
+                let bluePlayerSprite = '👤';
+                let bluePlayerName = `Player ${i + 1}`;
+                if (matchData && matchData.bluePlayers && matchData.bluePlayers[i]) {
+                    const player = getPlayerInfo(matchData.bluePlayers[i]);
+                    if (player) {
+                        bluePlayerSprite = `<img src="assets/sprites/${player.sprite}" onerror="this.parentElement.innerHTML='👤'">`;
+                        bluePlayerName = player.name;
+                    }
+                }
+
+                // Build players row HTML
+                redPlayersHTML += `
+                    <div class="player-character red">
+                        <div class="player-sprite">${redPlayerSprite}</div>
+                        <div class="player-character-name">${redPlayerName}</div>
+                        <div class="player-character-keys">${redKeys[0].toUpperCase()} + ${redKeys[1].toUpperCase()}</div>
+                    </div>
+                `;
+
+                bluePlayersHTML += `
+                    <div class="player-character blue">
+                        <div class="player-sprite">${bluePlayerSprite}</div>
+                        <div class="player-character-name">${bluePlayerName}</div>
+                        <div class="player-character-keys">${blueKeys[0].toUpperCase()} + ${blueKeys[1].toUpperCase()}</div>
+                    </div>
+                `;
+            }
+
+            // Populate players row
+            playersRow.innerHTML = `
+                <div class="team-players red">${redPlayersHTML}</div>
+                <div class="team-players blue">${bluePlayersHTML}</div>
+            `;
+        }
+
         // Handle key press
         function handleKeyDown(e) {
             const key = e.key.toLowerCase();
-            
-            const keyEl = document.getElementById(`key-${key}`);
-            if (keyEl) {
-                keyEl.classList.add('pressed');
-                if (config.keyMappings.red.flat().includes(key)) {
-                    keyEl.classList.add('red');
-                } else if (config.keyMappings.blue.flat().includes(key)) {
-                    keyEl.classList.add('blue');
-                }
-            }
+
+            // Add glow effect to hero keys in arena
+            ['red', 'blue'].forEach(team => {
+                config.keyMappings[team].forEach((keys, blockIndex) => {
+                    keys.forEach((k, keyIndex) => {
+                        if (k === key) {
+                            const heroKeyBtns = document.querySelectorAll(`#hero-${team}-${blockIndex} .hero-key-btn`);
+                            if (heroKeyBtns[keyIndex]) {
+                                heroKeyBtns[keyIndex].classList.add(`pressed-${team}`);
+                            }
+                        }
+                    });
+                });
+            });
 
             if (!state.isRunning) return;
             if (state.keysPressed[key]) return;
@@ -1107,7 +1117,7 @@
                         state.lastKeyPressed[team][blockIndex] = { key: keyIndex, time: Date.now() };
 
                         // Animate hero
-                        const hero = document.getElementById(`hero-${team}-${blockIndex}-${keyIndex}`);
+                        const hero = document.getElementById(`hero-${team}-${blockIndex}`);
                         if (hero) {
                             hero.classList.remove('pushing');
                             void hero.offsetWidth;
@@ -1126,11 +1136,20 @@
         function handleKeyUp(e) {
             const key = e.key.toLowerCase();
             state.keysPressed[key] = false;
-            
-            const keyEl = document.getElementById(`key-${key}`);
-            if (keyEl) {
-                keyEl.classList.remove('pressed', 'red', 'blue');
-            }
+
+            // Remove glow effect from hero keys in arena
+            ['red', 'blue'].forEach(team => {
+                config.keyMappings[team].forEach((keys, blockIndex) => {
+                    keys.forEach((k, keyIndex) => {
+                        if (k === key) {
+                            const heroKeyBtns = document.querySelectorAll(`#hero-${team}-${blockIndex} .hero-key-btn`);
+                            if (heroKeyBtns[keyIndex]) {
+                                heroKeyBtns[keyIndex].classList.remove(`pressed-${team}`);
+                            }
+                        }
+                    });
+                });
+            });
         }
 
         // Create push effect
@@ -1184,9 +1203,19 @@
             state.totalTime = parseInt(timeSelect.value);
             state.timeLeft = state.totalTime;
             timerEl.textContent = state.timeLeft;
-            
+
             gameOverlay.innerHTML = '<div class="countdown" id="countdown">3</div>';
-            
+
+            // Play countdown audio FIRST (louder than background)
+            audioManager.playCountdown().catch(() => {
+                console.log('Countdown audio not available');
+            });
+
+            // Start background music with slight delay (500ms) so countdown is heard
+            setTimeout(() => {
+                audioManager.playBackgroundMusic('gameplay', true);
+            }, 4000);
+
             for (let i = 3; i >= 1; i--) {
                 document.getElementById('countdown').textContent = i;
                 document.getElementById('countdown').style.animation = 'none';
@@ -1194,11 +1223,11 @@
                 document.getElementById('countdown').style.animation = 'countPulse 1s ease-in-out';
                 await sleep(1000);
             }
-            
+
             document.getElementById('countdown').textContent = 'PUSH!';
             document.getElementById('countdown').style.color = 'var(--team-red)';
             await sleep(500);
-            
+
             gameOverlay.classList.add('hidden');
             startMatch();
         }
@@ -1355,12 +1384,18 @@
         });
 
         timeSelect.addEventListener('change', () => {
-            document.querySelector('.overlay-subtitle').textContent = 
-                `12 PLAYERS • ${timeSelect.value} SECONDS • PUSH TO WIN`;
+            document.querySelector('.overlay-subtitle').textContent =
+                `6 PLAYERS • ${timeSelect.value} SECONDS • PUSH TO WIN`;
         });
 
-        // Initialize
+        function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        function devSkip() {
+            endMatch();
+        }
+
         initArena();
+        renderControls();
     </script>
 </body>
 </html>

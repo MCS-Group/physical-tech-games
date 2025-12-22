@@ -795,17 +795,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 2.5rem;
             border: 3px solid transparent;
             background: rgba(0,0,0,0.5);
             transition: all 0.2s ease;
-            overflow: hidden;
-        }
-
-        .player-sprite img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            image-rendering: pixelated;
         }
 
         .team-players.red .player-sprite {
@@ -920,7 +913,7 @@
     <div class="game-wrapper">
         <div class="header">
             <div class="title">PHYSICAL: TECH</div>
-            <div class="subtitle">GAME 2: HANGING ENDURANCE</div>
+            <div class="subtitle">GAME 2: HANGING ENDURANCE - TEAM COORDINATION</div>
         </div>
 
         <div class="scoreboard">
@@ -948,7 +941,7 @@
             <div class="center-status">
                 <div class="status-label">MATCH</div>
                 <div class="current-round" id="round-display">ROUND 1/3</div>
-                <div class="match-info">4 PLAYERS PER TEAM • 3 ROUNDS</div>
+                <div class="match-info">4 PLAYERS PER TEAM • 3 ROUNDS • TEAM CONTROL</div>
             </div>
 
             <div class="team-panel blue">
@@ -977,7 +970,7 @@
 
         <div class="arena-container">
             <div class="arena red" id="arena-red">
-                <div class="arena-label">RED PLAYER <span id="red-player-num">1</span></div>
+                <div class="arena-label">RED TEAM - ALL 4 PLAYERS</div>
                 
                 <div class="hanging-hero">
                     <div class="bar"></div>
@@ -1015,7 +1008,7 @@
             </div>
 
             <div class="arena blue" id="arena-blue">
-                <div class="arena-label">BLUE PLAYER <span id="blue-player-num">1</span></div>
+                <div class="arena-label">BLUE TEAM - ALL 4 PLAYERS</div>
                 
                 <div class="hanging-hero">
                     <div class="bar"></div>
@@ -1055,9 +1048,9 @@
 
         <div class="instructions">
             <div class="instructions-text">
-                ⌨️ RED: W-A-S-D | BLUE: I-J-K-L • ONE KEY PER PLAYER • 3 ROUNDS ⌨️<br>
-                💨 WIND WILL PUSH YOU! THE ZONE SHRINKS AND MOVES! AVOID RED DEAD ZONES! 💨<br>
-                ⏱️ LONGEST COMBINED TIME WINS! STAY IN THE GREEN ZONE OR LOSE GRIP! ⏱️
+                ⌨️ RED TEAM: W(UP)-A(LEFT)-S(DOWN)-D(RIGHT) | BLUE TEAM: I-J-K-L • 4 PLAYERS PER TEAM • 3 ROUNDS ⌨️<br>
+                💨 TEAM COORDINATION REQUIRED! RAPID CLICKS MOVE CURSOR! ONE KEY PER PLAYER! 💨<br>
+                ⏱️ COMMUNICATE WITH YOUR TEAM! ALL 4 PLAYERS CONTROL THE SAME CURSOR! ⏱️
             </div>
         </div>
     </div>
@@ -1065,74 +1058,72 @@
     <div class="game-overlay" id="game-overlay">
         <div class="overlay-title">HANGING ENDURANCE</div>
         <div class="overlay-subtitle">
-            4 vs 4 EXTREME FOCUS TEST • 3 ROUNDS<br>
-            WASD vs IJKL • ONE KEY PER PLAYER • MOVING ZONES • WIND CHAOS<br>
-            LONGEST COMBINED TIME WINS!
+            4 vs 4 TEAM COORDINATION CHALLENGE • 3 ROUNDS<br>
+            W-A-S-D vs I-J-K-L • ONE KEY PER PLAYER • ALL PLAY TOGETHER<br>
+            COMMUNICATE TO STAY IN ZONE! RAPID CLICKS MOVE CURSOR!
         </div>
         <button class="start-btn" id="start-btn">START MATCH</button>
     </div>
 
-    <script src="players.js"></script>
     <script src="audio-manager.js"></script>
     <script>
-        // Initialize audio manager (music will start on button click)
-        audioManager.initialize();
+        // Initialize audio manager and start background music
+        // Note: Ensure audio-manager.js exists or remove this line
+        // audioManager.initialize();
+        // audioManager.playBackgroundMusic('gameplay', true);
 
-        // Helper function to get player info
-        function getPlayerInfo(playerId) {
-            if (typeof PLAYERS !== 'undefined' && PLAYERS[playerId]) {
-                return PLAYERS[playerId];
-            }
-            return null;
-        }
-
-        // Game configuration
+        // Game configuration - UPDATED FOR TEAM PLAY
         const config = {
             playersPerTeam: 4,
             totalRounds: 3,
             initialZoneSize: 180,
             minZoneSize: 30,
-            zoneShrinkRate: 0.8,       // pixels per second - balanced
-            zoneShrinkInterval: 100,   // ms
-            zoneMoveSpeed: 0.8,        // Zone moves around (faster!)
-            zoneMoveInterval: 150,     // ms
-            zoneMoveBounds: { minX: 100, maxX: 400, minY: 80, maxY: 270 }, // Zone center bounds
-            windInterval: { min: 2000, max: 4000 }, // Less frequent - easier!
-            windStrength: { min: 8, max: 15 },    // Much weaker - easier!
+            zoneShrinkRate: 0.8,
+            zoneShrinkInterval: 100,
+            zoneMoveSpeed: 0.8,
+            zoneMoveInterval: 150,
+            zoneMoveBounds: { minX: 100, maxX: 400, minY: 80, maxY: 270 },
+            windInterval: { min: 2000, max: 4000 },
+            windStrength: { min: 8, max: 15 },
             windDuration: 600,
-            gripDrainRate: 3,          // per second when outside (easier - was 5)
-            gripRecoveryRate: 8,       // per second when inside (faster!)
-            perfectRecoveryRate: 12,   // When very centered (bonus!)
-            perfectRadius: 25,         // Radius for perfect recovery (slightly bigger)
-            reticleSpeed: 1.5,         // Movement speed with keys (easier - was 2.5)
-            reticleInertia: 0.88,      // Momentum (lower = more slippery)
-            reticleMaxSpeed: 6,        // Max velocity
-            deadZoneSpawnInterval: { min: 10000, max: 18000 }, // Less frequent
+            gripDrainRate: 5,
+            gripRecoveryRate: 8,
+            perfectRecoveryRate: 12,
+            perfectRadius: 25,
+            
+            // UPDATED: Click-based movement settings
+            reticleMovePerClick: 4, // Small movement per keypress
+            reticleInertia: 0.88,
+            reticleMaxSpeed: 8,
+            
+            deadZoneSpawnInterval: { min: 10000, max: 18000 },
             deadZoneSize: { min: 25, max: 40 },
-            deadZoneDuration: 5000,    // Shorter duration
-            deadZoneDrain: 15,         // Less harsh instant loss
-            windParticleCount: 15,     // Visual particles per gust (reduced)
+            deadZoneDuration: 5000,
+            deadZoneDrain: 15,
+            windParticleCount: 15,
+            
+            // Key assignments for each team
             keys: {
-                red: ['w', 'a', 's', 'd'],     // W=up, A=left, S=down, D=right
-                blue: ['i', 'j', 'k', 'l']     // I=up, J=left, K=down, L=right
+                red: ['w', 'a', 's', 'd'],     // Each player controls one direction
+                blue: ['i', 'j', 'k', 'l']     // Each player controls one direction
             },
+            
+            // Key to direction mapping
             keyMap: {
                 red: { w: 'up', a: 'left', s: 'down', d: 'right' },
                 blue: { i: 'up', j: 'left', k: 'down', l: 'right' }
             }
         };
 
-        // Game state
+        // Game state - UPDATED FOR TEAM PLAY
         const state = {
             isRunning: false,
             currentRound: 0,
             currentMatch: 1,
-            redPlayers: [],   // Will be populated from matchData
-            bluePlayers: [],  // Will be populated from matchData
             teams: {
                 red: {
-                    currentPlayer: 0,
-                    times: [0, 0, 0, 0],
+                    currentPlayer: 0, // Tracks which round we're in (0, 1, or 2)
+                    times: [0, 0, 0], // Times for 3 rounds
                     totalTime: 0,
                     reticle: { x: 250, y: 175 },
                     velocity: { x: 0, y: 0 },
@@ -1144,12 +1135,12 @@
                     isFallen: false,
                     windForce: { x: 0, y: 0 },
                     startTime: 0,
-                    deadZones: [],
-                    keysPressed: {}
+                    deadZones: []
+                    // Note: Removed keysPressed since we're using click-based movement
                 },
                 blue: {
                     currentPlayer: 0,
-                    times: [0, 0, 0, 0],
+                    times: [0, 0, 0], // Times for 3 rounds
                     totalTime: 0,
                     reticle: { x: 250, y: 175 },
                     velocity: { x: 0, y: 0 },
@@ -1161,57 +1152,50 @@
                     isFallen: false,
                     windForce: { x: 0, y: 0 },
                     startTime: 0,
-                    deadZones: [],
-                    keysPressed: {}
+                    deadZones: []
+                    // Note: Removed keysPressed
                 }
             }
         };
+
+        // Key cooldown tracker to prevent auto-repeat
+        let keyCooldown = {};
 
         // DOM Elements
         const gameOverlay = document.getElementById('game-overlay');
         const startBtn = document.getElementById('start-btn');
 
-        // Initialize players row
+        // Player sprites
+        const playerSprites = ['👆', '👈', '👇', '👉']; // Direction indicators for clarity
+
+        // Initialize players row with direction indicators
         function initPlayersRow() {
             const playersRow = document.getElementById('players-row');
 
             let redPlayersHTML = '';
             let bluePlayersHTML = '';
 
-            const redKeyLabels = ['W', 'A', 'S', 'D'];
-            const blueKeyLabels = ['I', 'J', 'K', 'L'];
+            const redKeyLabels = ['W(UP)', 'A(LEFT)', 'S(DOWN)', 'D(RIGHT)'];
+            const blueKeyLabels = ['I(UP)', 'J(LEFT)', 'K(DOWN)', 'L(RIGHT)'];
 
             for (let i = 0; i < config.playersPerTeam; i++) {
-                const redKey = redKeyLabels[i];
-                const blueKey = blueKeyLabels[i];
-
-                // Get player sprites from matchData
-                let redSpriteSrc = '';
-                let blueSpriteSrc = '';
-
-                if (state.redPlayers && state.redPlayers[i]) {
-                    const redPlayerInfo = getPlayerInfo(state.redPlayers[i]);
-                    redSpriteSrc = redPlayerInfo ? redPlayerInfo.sprite : '';
-                }
-                if (state.bluePlayers && state.bluePlayers[i]) {
-                    const bluePlayerInfo = getPlayerInfo(state.bluePlayers[i]);
-                    blueSpriteSrc = bluePlayerInfo ? bluePlayerInfo.sprite : '';
-                }
+                const redKey = config.keys.red[i];
+                const blueKey = config.keys.blue[i];
 
                 redPlayersHTML += `
                     <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
                         <div class="player-sprite" id="sprite-red-${i}" data-team="red" data-player="${i}">
-                            ${redSpriteSrc ? `<img src="${redSpriteSrc}" alt="Player ${i+1}">` : ''}
+                            ${playerSprites[i]}
                         </div>
-                        <div class="player-key-indicator" id="key-indicator-${redKey.toLowerCase()}">${redKey}</div>
+                        <div class="player-key-indicator" id="key-indicator-${redKey}">${redKeyLabels[i]}</div>
                     </div>
                 `;
                 bluePlayersHTML += `
                     <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
                         <div class="player-sprite" id="sprite-blue-${i}" data-team="blue" data-player="${i}">
-                            ${blueSpriteSrc ? `<img src="${blueSpriteSrc}" alt="Player ${i+1}">` : ''}
+                            ${playerSprites[i]}
                         </div>
-                        <div class="player-key-indicator" id="key-indicator-${blueKey.toLowerCase()}">${blueKey}</div>
+                        <div class="player-key-indicator" id="key-indicator-${blueKey}">${blueKeyLabels[i]}</div>
                     </div>
                 `;
             }
@@ -1252,7 +1236,6 @@
                 teamState.windForce = { x: 0, y: 0 };
                 teamState.startTime = Date.now();
                 teamState.deadZones = [];
-                teamState.keysPressed = {};
 
                 // Reset visuals
                 const zoneEl = document.getElementById(`focus-zone-${team}`);
@@ -1273,22 +1256,17 @@
                 document.getElementById(`hero-${team}`).textContent = '😤';
                 document.getElementById(`arena-${team}`).classList.remove('inactive');
                 document.getElementById(`timer-${team}`).textContent = '0.00';
-                document.getElementById(`${team}-player-num`).textContent = teamState.currentPlayer + 1;
 
-                // Update player sprites - mark current as active
+                // Mark all player sprites as active (all play together)
                 for (let i = 0; i < config.playersPerTeam; i++) {
                     const sprite = document.getElementById(`sprite-${team}-${i}`);
-                    if (i === teamState.currentPlayer) {
-                        sprite.classList.add('active');
-                    } else {
-                        sprite.classList.remove('active');
-                    }
+                    sprite.classList.add('active');
                 }
 
                 // Clear any existing dead zones
                 document.querySelectorAll(`#arena-${team} .dead-zone`).forEach(el => el.remove());
 
-                // Update player box
+                // Update player box for current round
                 document.getElementById(`player-box-${team}-${teamState.currentPlayer}`).classList.add('active');
             });
 
@@ -1298,7 +1276,6 @@
         // Check if reticle is in zone
         function isInZone(team) {
             const teamState = state.teams[team];
-            // Add buffer to match visual appearance (border + glow effect)
             const radius = (teamState.zoneSize / 2) + 18;
 
             const dx = teamState.reticle.x - teamState.zoneCenter.x;
@@ -1316,7 +1293,6 @@
             const dy = teamState.reticle.y - teamState.zoneCenter.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
 
-            // Perfect zone visual is 50px diameter, add small buffer
             return distance <= (config.perfectRadius + 5);
         }
 
@@ -1329,7 +1305,6 @@
                 const dy = teamState.reticle.y - deadZone.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
 
-                // Make collision slightly smaller than visual for fairness
                 if (distance <= (deadZone.size / 2) - 8) {
                     return true;
                 }
@@ -1360,6 +1335,36 @@
                 reticleEl.classList.add('inside');
             } else {
                 reticleEl.classList.add('outside');
+            }
+        }
+
+        // NEW: Handle key click (single impulse movement)
+        function handleKeyClick(team, direction) {
+            const teamState = state.teams[team];
+            
+            if (!state.isRunning || !teamState.isActive || teamState.isFallen) return;
+            
+            // Apply a small impulse in the direction
+            switch(direction) {
+                case 'up':
+                    teamState.velocity.y -= config.reticleMovePerClick;
+                    break;
+                case 'down':
+                    teamState.velocity.y += config.reticleMovePerClick;
+                    break;
+                case 'left':
+                    teamState.velocity.x -= config.reticleMovePerClick;
+                    break;
+                case 'right':
+                    teamState.velocity.x += config.reticleMovePerClick;
+                    break;
+            }
+            
+            // Clamp velocity to prevent excessive speed
+            const speed = Math.sqrt(teamState.velocity.x ** 2 + teamState.velocity.y ** 2);
+            if (speed > config.reticleMaxSpeed) {
+                teamState.velocity.x = (teamState.velocity.x / speed) * config.reticleMaxSpeed;
+                teamState.velocity.y = (teamState.velocity.y / speed) * config.reticleMaxSpeed;
             }
         }
 
@@ -1399,6 +1404,61 @@
             } else if (teamState.zoneSize < 100) {
                 zoneEl.classList.add('warning');
             }
+        }
+
+        // Update reticle physics (movement based on velocity)
+        function updateReticlePhysics(team) {
+            const teamState = state.teams[team];
+            
+            // Apply wind force (reduced impact)
+            teamState.velocity.x += teamState.windForce.x * 0.05;
+            teamState.velocity.y += teamState.windForce.y * 0.05;
+            
+            // Apply inertia (friction)
+            teamState.velocity.x *= config.reticleInertia;
+            teamState.velocity.y *= config.reticleInertia;
+            
+            // Update position based on velocity
+            teamState.reticle.x += teamState.velocity.x;
+            teamState.reticle.y += teamState.velocity.y;
+            
+            // Clamp to bounds (500x350 area)
+            teamState.reticle.x = Math.max(20, Math.min(480, teamState.reticle.x));
+            teamState.reticle.y = Math.max(20, Math.min(330, teamState.reticle.y));
+            
+            // Bounce off walls
+            if (teamState.reticle.x <= 20 || teamState.reticle.x >= 480) {
+                teamState.velocity.x *= -0.5;
+            }
+            if (teamState.reticle.y <= 20 || teamState.reticle.y >= 330) {
+                teamState.velocity.y *= -0.5;
+            }
+            
+            updateReticle(team);
+        }
+
+        // Update zone movement
+        function updateZoneMovement(team) {
+            const teamState = state.teams[team];
+
+            // Move zone center toward target
+            const dx = teamState.zoneTargetCenter.x - teamState.zoneCenter.x;
+            const dy = teamState.zoneTargetCenter.y - teamState.zoneCenter.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < 5) {
+                // Reached target, set new target
+                teamState.zoneTargetCenter = {
+                    x: config.zoneMoveBounds.minX + Math.random() * (config.zoneMoveBounds.maxX - config.zoneMoveBounds.minX),
+                    y: config.zoneMoveBounds.minY + Math.random() * (config.zoneMoveBounds.maxY - config.zoneMoveBounds.minY)
+                };
+            } else {
+                // Move toward target
+                teamState.zoneCenter.x += (dx / distance) * config.zoneMoveSpeed;
+                teamState.zoneCenter.y += (dy / distance) * config.zoneMoveSpeed;
+            }
+
+            updateZoneDisplay(team);
         }
 
         // Trigger wind gust
@@ -1486,8 +1546,8 @@
             const teamState = state.teams[team];
 
             const size = config.deadZoneSize.min + Math.random() * (config.deadZoneSize.max - config.deadZoneSize.min);
-            const x = 80 + Math.random() * 340;  // Random X in larger area
-            const y = 60 + Math.random() * 230;  // Random Y in larger area
+            const x = 80 + Math.random() * 340;
+            const y = 60 + Math.random() * 230;
 
             const deadZone = { x, y, size };
             teamState.deadZones.push(deadZone);
@@ -1540,6 +1600,12 @@
             document.getElementById(`hero-${team}`).classList.add('falling');
             document.getElementById(`arena-${team}`).classList.add('inactive');
 
+            // Remove active class from all player sprites
+            for (let i = 0; i < config.playersPerTeam; i++) {
+                const sprite = document.getElementById(`sprite-${team}-${i}`);
+                sprite.classList.remove('active');
+            }
+
             // Check if both teams done
             checkRoundComplete();
         }
@@ -1556,11 +1622,12 @@
                     // All rounds done
                     setTimeout(() => endGame(), 1500);
                 } else {
-                    // Next round
-                    ['red', 'blue'].forEach(team => {
-                        state.teams[team].currentPlayer++;
-                    });
-                    setTimeout(() => showRoundAnnouncement(), 1500);
+                    // Next round - increment round counter for both teams
+                    setTimeout(() => {
+                        state.teams.red.currentPlayer++;
+                        state.teams.blue.currentPlayer++;
+                        showRoundAnnouncement();
+                    }, 1500);
                 }
             }
         }
@@ -1573,11 +1640,11 @@
                     <div class="round-players">
                         <div class="round-player red">
                             <div class="round-player-icon">🔴</div>
-                            <div class="round-player-label">RED PLAYER ${state.currentRound + 1}</div>
+                            <div class="round-player-label">RED TEAM<br>ALL 4 PLAYERS</div>
                         </div>
                         <div class="round-player blue">
                             <div class="round-player-icon">🔵</div>
-                            <div class="round-player-label">BLUE PLAYER ${state.currentRound + 1}</div>
+                            <div class="round-player-label">BLUE TEAM<br>ALL 4 PLAYERS</div>
                         </div>
                     </div>
                     <div class="countdown" id="countdown">3</div>
@@ -1600,99 +1667,6 @@
             initRound();
             initPlayersRow(); // Ensure sprites update for new round
             startGameLoop();
-        }
-
-        // Update reticle physics
-        function updateReticlePhysics(team) {
-            const teamState = state.teams[team];
-            const keyMap = config.keyMap[team];
-            
-            // Map actual keys to directions
-            const directions = { up: false, down: false, left: false, right: false };
-            
-            for (const key in teamState.keysPressed) {
-                if (teamState.keysPressed[key]) {
-                    const direction = keyMap[key.toLowerCase().replace('key', '')] || keyMap[key.toLowerCase()]; // Try to match by char or code
-                    
-                    // Fallback for code-based mapping in config
-                    for (const [k, dir] of Object.entries(keyMap)) {
-                        if (('Key' + k.toUpperCase()) === key || k === key) {
-                            directions[dir] = true;
-                        }
-                    }
-                }
-            }
-
-            // Apply keyboard input to velocity
-            if (directions.up) {
-                teamState.velocity.y -= config.reticleSpeed;
-            }
-            if (directions.down) {
-                teamState.velocity.y += config.reticleSpeed;
-            }
-            if (directions.left) {
-                teamState.velocity.x -= config.reticleSpeed;
-            }
-            if (directions.right) {
-                teamState.velocity.x += config.reticleSpeed;
-            }
-
-            // Apply wind force (reduced impact)
-            teamState.velocity.x += teamState.windForce.x * 0.05;
-            teamState.velocity.y += teamState.windForce.y * 0.05;
-
-            // Apply inertia (friction)
-            teamState.velocity.x *= config.reticleInertia;
-            teamState.velocity.y *= config.reticleInertia;
-
-            // Clamp velocity
-            const speed = Math.sqrt(teamState.velocity.x ** 2 + teamState.velocity.y ** 2);
-            if (speed > config.reticleMaxSpeed) {
-                teamState.velocity.x = (teamState.velocity.x / speed) * config.reticleMaxSpeed;
-                teamState.velocity.y = (teamState.velocity.y / speed) * config.reticleMaxSpeed;
-            }
-
-            // Update position
-            teamState.reticle.x += teamState.velocity.x;
-            teamState.reticle.y += teamState.velocity.y;
-
-            // Clamp to bounds (500x350 area)
-            teamState.reticle.x = Math.max(20, Math.min(480, teamState.reticle.x));
-            teamState.reticle.y = Math.max(20, Math.min(330, teamState.reticle.y));
-
-            // Bounce off walls
-            if (teamState.reticle.x <= 20 || teamState.reticle.x >= 480) {
-                teamState.velocity.x *= -0.5;
-            }
-            if (teamState.reticle.y <= 20 || teamState.reticle.y >= 330) {
-                teamState.velocity.y *= -0.5;
-            }
-
-            updateReticle(team);
-        }
-
-        // Update zone movement
-        function updateZoneMovement(team) {
-            const teamState = state.teams[team];
-
-            // Move zone center toward target
-            const dx = teamState.zoneTargetCenter.x - teamState.zoneCenter.x;
-            const dy = teamState.zoneTargetCenter.y - teamState.zoneCenter.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-
-            if (distance < 5) {
-                // Reached target, set new target
-                teamState.zoneTargetCenter = {
-                    x: config.zoneMoveBounds.minX + Math.random() * (config.zoneMoveBounds.maxX - config.zoneMoveBounds.minX),
-                    y: config.zoneMoveBounds.minY + Math.random() * (config.zoneMoveBounds.maxY - config.zoneMoveBounds.minY)
-                };
-            } else {
-                // Move toward target
-                teamState.zoneCenter.x += (dx / distance) * config.zoneMoveSpeed;
-                teamState.zoneCenter.y += (dy / distance) * config.zoneMoveSpeed;
-            }
-
-            updateZoneDisplay(team);
         }
 
         // Game loop
@@ -1768,51 +1742,51 @@
             requestAnimationFrame(gameLoop);
         }
 
-        // Handle keyboard input
+        // UPDATED: Handle keyboard input (click-based)
         function handleKeyDown(e) {
             const key = e.key.toLowerCase();
-
+            
+            // Prevent default to avoid key repeat
+            e.preventDefault();
+            
+            // Check if key is in cooldown (prevent auto-repeat)
+            if (keyCooldown[key]) return;
+            
+            // Set cooldown for this key (300ms)
+            keyCooldown[key] = true;
+            setTimeout(() => {
+                delete keyCooldown[key];
+            }, 300);
+            
             ['red', 'blue'].forEach(team => {
                 const keys = config.keys[team];
-                const teamState = state.teams[team];
-
+                const keyMap = config.keyMap[team];
+                
                 // Check if this key belongs to this team
-                if (keys.includes(key)) {
-                    e.preventDefault();
-                    // Store the key code directly (e.g. 'keyw', 'keyi') or the char if simpler
-                    // Using 'key' + char to match your config logic if needed, but config.keys has chars
-                    teamState.keysPressed['Key' + key.toUpperCase()] = true; 
-                    // Also store just the char for flexibility
-                    teamState.keysPressed[key] = true;
-
-                    // Visual feedback - glow effect on player list keys
+                if (keys.includes(key) && keyMap[key]) {
+                    const direction = keyMap[key];
+                    
+                    // Apply movement impulse
+                    handleKeyClick(team, direction);
+                    
+                    // Visual feedback
                     const keyEl = document.getElementById(`key-indicator-${key}`);
                     if (keyEl) {
-                        keyEl.classList.add('pressed');
-                        keyEl.classList.add(team); // Add team class for color
+                        keyEl.classList.add('pressed', team);
+                        
+                        // Remove pressed class after short time
+                        setTimeout(() => {
+                            keyEl.classList.remove('pressed', 'red', 'blue');
+                        }, 150);
                     }
                 }
             });
         }
 
         function handleKeyUp(e) {
-            const key = e.key.toLowerCase();
-
-            ['red', 'blue'].forEach(team => {
-                const keys = config.keys[team];
-                const teamState = state.teams[team];
-
-                if (keys.includes(key)) {
-                    teamState.keysPressed['Key' + key.toUpperCase()] = false;
-                    teamState.keysPressed[key] = false;
-
-                    // Visual feedback
-                    const keyEl = document.getElementById(`key-indicator-${key}`);
-                    if (keyEl) {
-                        keyEl.classList.remove('pressed', 'red', 'blue');
-                    }
-                }
-            });
+            // We don't need to do anything on keyup since we're using click-based movement
+            // But we still prevent default
+            e.preventDefault();
         }
 
         // Get match data from localStorage (set by game-flow.html)
@@ -1821,13 +1795,6 @@
             const stored = localStorage.getItem('currentMatch');
             if (stored) {
                 matchData = JSON.parse(stored);
-                // Load player data from matchData
-                if (matchData.redPlayers) {
-                    state.redPlayers = matchData.redPlayers;
-                }
-                if (matchData.bluePlayers) {
-                    state.bluePlayers = matchData.bluePlayers;
-                }
             }
         } catch (e) {
             console.log('No match data found, running in standalone mode');
@@ -1903,17 +1870,7 @@
         // Start countdown
         async function startCountdown() {
             gameOverlay.innerHTML = '<div class="countdown" id="countdown">3</div>';
-
-            // Play countdown audio FIRST (louder than background)
-            audioManager.playCountdown().catch(() => {
-                console.log('Countdown audio not available');
-            });
-
-            // Start background music with slight delay (500ms) so countdown is heard
-            setTimeout(() => {
-                audioManager.playBackgroundMusic('gameplay', true);
-            }, 4000);
-
+            
             for (let i = 3; i >= 1; i--) {
                 document.getElementById('countdown').textContent = i;
                 document.getElementById('countdown').style.animation = 'none';
@@ -1921,11 +1878,11 @@
                 document.getElementById('countdown').style.animation = 'countPulse 1s ease-in-out';
                 await sleep(1000);
             }
-
+            
             document.getElementById('countdown').textContent = 'HANG!';
             document.getElementById('countdown').style.color = 'var(--team-red)';
             await sleep(500);
-
+            
             gameOverlay.classList.add('hidden');
             initRound();
             initPlayersRow(); // Ensure sprites are visible
@@ -1935,6 +1892,17 @@
         function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
         function devSkip() {
+            // Simulate all rounds completed
+            ['red', 'blue'].forEach(team => {
+                const teamState = state.teams[team];
+                for (let i = teamState.currentPlayer; i < config.totalRounds; i++) {
+                    teamState.times[i] = 15 + Math.random() * 10; // Random times between 15-25 seconds
+                }
+                teamState.totalTime = teamState.times.reduce((a, b) => a + b, 0);
+                teamState.isFallen = true;
+                teamState.isActive = false;
+            });
+            state.currentRound = config.totalRounds;
             endGame();
         }
 
@@ -1943,7 +1911,7 @@
             state.currentRound = 0;
             state.teams.red = {
                 currentPlayer: 0,
-                times: [0, 0],
+                times: [0, 0, 0], // Times for 3 rounds
                 totalTime: 0,
                 reticle: { x: 250, y: 175 },
                 velocity: { x: 0, y: 0 },
@@ -1955,12 +1923,11 @@
                 isFallen: false,
                 windForce: { x: 0, y: 0 },
                 startTime: 0,
-                deadZones: [],
-                keysPressed: {}
+                deadZones: []
             };
             state.teams.blue = {
                 currentPlayer: 0,
-                times: [0, 0],
+                times: [0, 0, 0], // Times for 3 rounds
                 totalTime: 0,
                 reticle: { x: 250, y: 175 },
                 velocity: { x: 0, y: 0 },
@@ -1972,14 +1939,13 @@
                 isFallen: false,
                 windForce: { x: 0, y: 0 },
                 startTime: 0,
-                deadZones: [],
-                keysPressed: {}
+                deadZones: []
             };
 
             // Reset displays
             ['red', 'blue'].forEach(team => {
                 document.getElementById(`total-${team}`).textContent = '00:00.00';
-                for (let i = 0; i < config.playersPerTeam; i++) {
+                for (let i = 0; i < config.totalRounds; i++) {
                     document.getElementById(`time-${team}-${i}`).textContent = '--:--';
                     document.getElementById(`player-box-${team}-${i}`).classList.remove('active', 'done');
                 }
@@ -1993,9 +1959,9 @@
             gameOverlay.innerHTML = `
                 <div class="overlay-title">HANGING ENDURANCE</div>
                 <div class="overlay-subtitle">
-                    2 vs 2 EXTREME FOCUS TEST<br>
-                    WASD vs ARROWS • MOVING ZONES • WIND CHAOS<br>
-                    LONGEST COMBINED TIME WINS!
+                    4 vs 4 TEAM COORDINATION CHALLENGE • 3 ROUNDS<br>
+                    W-A-S-D vs I-J-K-L • ONE KEY PER PLAYER • ALL PLAY TOGETHER<br>
+                    COMMUNICATE TO STAY IN ZONE! RAPID CLICKS MOVE CURSOR!
                 </div>
                 <button class="start-btn" id="start-btn">START MATCH</button>
             `;

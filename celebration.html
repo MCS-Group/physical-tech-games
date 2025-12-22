@@ -49,8 +49,8 @@
             position: relative;
             z-index: 10;
             text-align: center;
-            padding: 40px;
-            max-height: calc(100vh - 120px);
+            padding: 20px; /* Reduced from 40px */
+            max-height: calc(100vh - 40px); /* More space for grid */
             overflow: hidden;
         }
 
@@ -60,9 +60,9 @@
         }
 
         .trophy {
-            font-size: 6rem;
+            font-size: 5rem; /* Reduced from 6rem */
             animation: trophyBounce 1s ease-in-out infinite;
-            filter: drop-shadow(0 0 50px var(--gold-glow));
+            filter: drop-shadow(0 0 40px var(--gold-glow));
         }
 
         @keyframes trophyBounce {
@@ -73,14 +73,14 @@
         /* Title */
         .champion-title {
             font-family: 'Black Ops One', cursive;
-            font-size: 3.5rem;
+            font-size: 2.5rem; /* Reduced from 3.5rem */
             background: linear-gradient(180deg, #fff 0%, var(--gold) 50%, #b8860b 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 5px;
             animation: titleGlow 1.5s ease-in-out infinite alternate;
-            letter-spacing: 10px;
+            letter-spacing: 8px; /* Reduced from 10px */
         }
 
         @keyframes titleGlow {
@@ -90,34 +90,39 @@
 
         .champion-subtitle {
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.8rem;
+            font-size: 0.7rem; /* Reduced from 0.8rem */
             color: var(--gold);
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px var(--gold-glow);
+            margin-bottom: 15px; /* Reduced from 20px */
+            text-shadow: 0 0 15px var(--gold-glow);
         }
 
         /* Team name */
         .team-name {
             font-family: 'Black Ops One', cursive;
-            font-size: 2rem;
+            font-size: 1.8rem; /* Reduced from 2rem */
             color: white;
-            margin-bottom: 20px;
-            text-shadow: 0 5px 30px rgba(0,0,0,0.5);
+            margin-bottom: 15px; /* Reduced from 20px */
+            text-shadow: 0 5px 20px rgba(0,0,0,0.5);
         }
 
         /* Champions grid */
         .champions-grid {
             display: flex;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
             justify-content: center;
-            gap: 15px;
-            max-width: 900px;
-            margin-bottom: 30px;
+            gap: 10px; /* Reduced from 20px */
+            max-width: 90vw; /* Use viewport width */
+            margin: 20px auto 30px; /* Adjusted margins */
+            overflow-x: auto;
+            padding: 10px;
+            height: 380px; /* Fixed height for consistent layout */
         }
 
         .champion-member {
             text-align: center;
+            flex: 0 0 auto;
             animation: memberAppear 0.5s ease-out backwards;
+            width: 140px; /* Reduced from implicit 160px + margins */
         }
 
         @keyframes memberAppear {
@@ -126,53 +131,64 @@
         }
 
         .member-sprite {
-            width: 90px;
-            height: 90px;
+            width: 120px; /* Reduced from 160px */
+            height: 220px; /* Adjusted for new width */
             background: linear-gradient(180deg, #2a2a3a, #1a1a2a);
             border: 3px solid var(--gold);
-            border-radius: 15px;
-            margin-bottom: 10px;
+            border-radius: 12px; /* Slightly smaller */
+            margin-bottom: 10px; /* Reduced */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            box-shadow: 0 0 20px var(--gold-glow), 0 10px 20px rgba(0,0,0,0.5);
-            animation: memberFloat 2s ease-in-out infinite;
+            font-size: 3rem; /* Reduced */
+            box-shadow: 0 0 8px var(--gold-glow), 0 10px 20px rgba(0,0,0,0.6);
+            animation: memberFloat 3s ease-in-out infinite;
             overflow: hidden;
         }
 
         .member-sprite img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover; /* Cover mode */
+            object-position: top center; /* Focus on head */
         }
 
         @keyframes memberFloat {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-10px); }
         }
 
         .member-name {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            color: var(--gold);
-            text-shadow: 0 0 10px var(--gold-glow);
+            font-family: 'Black Ops One', cursive;
+            font-size: 1rem; /* Reduced from 1.2rem */
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(to bottom, #ffd700 0%, #ffaa00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 8px var(--gold-glow));
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px; /* Match sprite width */
         }
 
         .member-dept {
-            font-size: 0.6rem;
-            color: #888;
-            margin-top: 5px;
+            font-size: 0.6rem; /* Slightly smaller */
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 1px; /* Reduced */
         }
-
         /* Crown on first member */
-        .champion-member:nth-child(5) .member-sprite::before {
+        /* .champion-member:nth-child(5) .member-sprite::before {
             content: '👑';
             position: absolute;
             top: -30px;
             font-size: 2rem;
             animation: crownFloat 1.5s ease-in-out infinite;
-        }
+        } */
 
         @keyframes crownFloat {
             0%, 100% { transform: translateY(0) rotate(-5deg); }
@@ -182,19 +198,23 @@
         /* Actions */
         .celebration-actions {
             display: flex;
-            gap: 20px;
+            justify-content: center;
+            gap: 15px; /* Reduced from 20px */
+            margin-top: 10px;
+            position: relative;
+            z-index: 20;
         }
 
         .action-btn {
             font-family: 'Black Ops One', cursive;
-            font-size: 1.2rem;
-            padding: 18px 50px;
+            font-size: 1rem; /* Reduced from 1.2rem */
+            padding: 15px 40px; /* Reduced from 18px 50px */
             border: none;
-            border-radius: 12px;
+            border-radius: 10px; /* Slightly smaller */
             cursor: pointer;
             transition: all 0.2s ease;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1px; /* Reduced from 2px */
         }
 
         .action-btn.primary {
@@ -256,6 +276,7 @@
 
         /* Stats banner */
         .stats-banner {
+            display: none; /* Hidden as requested */
             position: fixed;
             bottom: 0;
             left: 0;
@@ -302,36 +323,167 @@
             color: #666;
             margin-bottom: 30px;
         }
+
+        /* Audio Controls */
+        .audio-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+        }
+
+        .audio-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px var(--gold-glow);
+        }
+
+        .audio-icon:hover {
+            background: rgba(255, 215, 0, 0.4);
+            transform: scale(1.1);
+        }
+
+        .audio-icon.muted::before {
+            content: '🔇';
+            position: absolute;
+        }
+
+        .audio-sliders {
+            background: rgba(10, 10, 18, 0.95);
+            border: 2px solid var(--gold);
+            border-radius: 15px;
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            opacity: 0;
+            transform: translateX(20px);
+            pointer-events: none;
+            transition: all 0.3s;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            min-width: 200px;
+        }
+
+        .audio-controls:hover .audio-sliders,
+        .audio-sliders:hover {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: all;
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .slider-group label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            color: var(--gold);
+            text-transform: uppercase;
+        }
+
+        .slider-group input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #333 0%, var(--gold) 100%);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--gold);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--gold-glow);
+        }
+
+        .slider-group input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: var(--gold);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px var(--gold-glow);
+        }
     </style>
 </head>
 <body>
     <div class="bg-celebration"></div>
 
+    <!-- Audio Controls -->
+    <div class="audio-controls" id="audioControls">
+        <div class="audio-icon" id="audioIcon">🔊</div>
+        <div class="audio-sliders" id="audioSliders">
+            <div class="slider-group">
+                <label>Music</label>
+                <input type="range" id="musicVolume" min="0" max="100" value="30">
+            </div>
+            <div class="slider-group">
+                <label>SFX</label>
+                <input type="range" id="sfxVolume" min="0" max="100" value="50">
+            </div>
+        </div>
+    </div>
+
     <div class="celebration-content" id="celebrationContent">
         <!-- Content will be generated by JS -->
     </div>
 
-    <div class="stats-banner" id="statsBanner">
-        <div class="stat-item">
-            <div class="stat-value">144</div>
-            <div class="stat-label">TOTAL PLAYERS</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value">8</div>
-            <div class="stat-label">MATCHES PLAYED</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="gamesPlayed">4</div>
-            <div class="stat-label">GAMES COMPLETED</div>
-        </div>
-    </div>
-
     <script src="players.js"></script>
     <script src="game-state.js"></script>
+    <script src="audio-manager.js"></script>
     <script>
         const content = document.getElementById('celebrationContent');
+        const audioIcon = document.getElementById('audioIcon');
+        const musicVolumeSlider = document.getElementById('musicVolume');
+        const sfxVolumeSlider = document.getElementById('sfxVolume');
+
+        // Initialize audio controls
+        function initAudioControls() {
+            audioManager.initialize();
+
+            // Audio icon toggle mute
+            audioIcon.addEventListener('click', () => {
+                const isMuted = audioManager.toggleMute();
+                audioIcon.classList.toggle('muted', isMuted);
+            });
+
+            // Music volume slider
+            musicVolumeSlider.addEventListener('input', (e) => {
+                audioManager.setBgMusicVolume(e.target.value / 100);
+            });
+
+            // SFX volume slider
+            sfxVolumeSlider.addEventListener('input', (e) => {
+                audioManager.setSfxVolume(e.target.value / 100);
+            });
+
+            // Start celebration music
+            audioManager.playBackgroundMusic('celebration');
+        }
 
         function init() {
+            // Initialize audio
+            initAudioControls();
             const state = getState();
 
             if (state.bracket.champions) {
@@ -376,11 +528,6 @@
                 <h2 class="team-name">${team.name}</h2>
                 <div class="champions-grid">
                     ${membersHtml}
-                </div>
-                <div class="celebration-actions">
-                    <button class="action-btn primary" onclick="celebrateMore()">🎉 CELEBRATE!</button>
-                    <button class="action-btn secondary" onclick="viewScoreboard()">📊 SCOREBOARD</button>
-                    <button class="action-btn secondary" onclick="goHome()">🏠 HOME</button>
                 </div>
             `;
         }

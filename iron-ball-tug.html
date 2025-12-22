@@ -514,9 +514,31 @@
         }
         @keyframes fall { to { transform: translateY(100vh); opacity: 0; } }
 
+        .dev-skip-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid #444;
+            color: #444;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            z-index: 9999;
+            border-radius: 4px;
+        }
+        .dev-skip-btn:hover {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border-color: white;
+        }
+
     </style>
 </head>
 <body>
+    <button class="dev-skip-btn" onclick="devSkip()">DEV: SKIP</button>
+
     <div class="game-wrapper">
         <div class="header">
             <div class="title">IRON BALL TUG</div>
@@ -593,13 +615,13 @@
             <div class="control-box red">
                 <div style="color: var(--team-red); font-family: 'Black Ops One'; margin-bottom: 10px;">RED CONTROLS</div>
                 <div class="key-row">
-                    <div class="key" id="key-q">Q</div><div class="key" id="key-w">W</div>
+                    <div class="key" id="key-q">Q</div><div class="key" id="key-a">A</div>
                 </div>
                 <div class="key-row">
-                    <div class="key" id="key-a">A</div><div class="key" id="key-s">S</div>
+                    <div class="key" id="key-w">W</div><div class="key" id="key-s">S</div>
                 </div>
                 <div class="key-row">
-                    <div class="key" id="key-z">Z</div><div class="key" id="key-x">X</div>
+                    <div class="key" id="key-e">E</div><div class="key" id="key-d">D</div>
                 </div>
                 <div class="burst-instruction">SPACE FOR BURST</div>
             </div>
@@ -607,13 +629,13 @@
             <div class="control-box blue">
                 <div style="color: var(--team-blue); font-family: 'Black Ops One'; margin-bottom: 10px;">BLUE CONTROLS</div>
                 <div class="key-row">
-                    <div class="key" id="key-i">I</div><div class="key" id="key-o">O</div>
+                    <div class="key" id="key-u">U</div><div class="key" id="key-j">J</div>
                 </div>
                 <div class="key-row">
-                    <div class="key" id="key-k">K</div><div class="key" id="key-l">L</div>
+                    <div class="key" id="key-i">I</div><div class="key" id="key-k">K</div>
                 </div>
                 <div class="key-row">
-                    <div class="key" id="key-dot">.</div><div class="key" id="key-slash">/</div>
+                    <div class="key" id="key-o">O</div><div class="key" id="key-l">L</div>
                 </div>
                 <div class="burst-instruction">ENTER FOR BURST</div>
             </div>
@@ -631,13 +653,17 @@
         <button class="start-btn" onclick="startMatch()">START MATCH</button>
     </div>
 
+    <script src="audio-manager.js"></script>
     <script>
+        // Initialize audio manager (music will start on button click)
+        audioManager.initialize();
+
         // CONFIG & STATE
         const config = {
             weights: [100, 180, 260],
             keys: {
-                red: { pairs: [['q', 'w'], ['a', 's'], ['z', 'x']], burst: ' ' },
-                blue: { pairs: [['i', 'o'], ['k', 'l'], ['.', '/']], burst: 'Enter' }
+                red: { pairs: [['q', 'a'], ['w', 's'], ['e', 'd']], burst: ' ' },
+                blue: { pairs: [['u', 'j'], ['i', 'k'], ['o', 'l']], burst: 'Enter' }
             },
             pullPower: 0.35,
             rhythmBonus: 1.5,
@@ -686,6 +712,17 @@
         async function showCountdown() {
             overlay.classList.remove('hidden');
             overlay.innerHTML = '<div class="countdown">3</div>';
+
+            // Play countdown audio FIRST (louder than background)
+            audioManager.playCountdown().catch(() => {
+                console.log('Countdown audio not available');
+            });
+
+            // Start background music with slight delay (500ms) so countdown is heard
+            setTimeout(() => {
+                audioManager.playBackgroundMusic('gameplay', true);
+            }, 4000);
+
             await wait(1000);
             overlay.querySelector('.countdown').textContent = '2';
             await wait(1000);
@@ -824,8 +861,8 @@
             state.keys[e.key.toLowerCase()] = false;
             // Visual reset
             const map = {
-                'q':'key-q', 'w':'key-w', 'a':'key-a', 's':'key-s', 'z':'key-z', 'x':'key-x',
-                'i':'key-i', 'o':'key-o', 'k':'key-k', 'l':'key-l', '.':'key-dot', '/':'key-slash'
+                'q':'key-q', 'a':'key-a', 'w':'key-w', 's':'key-s', 'e':'key-e', 'd':'key-d',
+                'u':'key-u', 'j':'key-j', 'i':'key-i', 'k':'key-k', 'o':'key-o', 'l':'key-l'
             };
             if(map[e.key.toLowerCase()]) {
                 document.getElementById(map[e.key.toLowerCase()]).classList.remove('pressed', 'red', 'blue');
@@ -834,7 +871,7 @@
 
         function handlePull(team, pairIdx, key) {
             // Visual
-            const keyId = key === '.' ? 'key-dot' : key === '/' ? 'key-slash' : `key-${key}`;
+            const keyId = key === 'o' ? 'key-o' : key === 'l' ? 'key-l' : `key-${key}`;
             const keyEl = document.getElementById(keyId);
             if(keyEl) keyEl.classList.add('pressed', team);
 
@@ -902,6 +939,10 @@
         }
 
         function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        function devSkip() {
+            endGame('red');
+        }
 
     </script>
 </body>
