@@ -1317,19 +1317,19 @@
             gateSequenceLength: 12,
             keys: {
                 red: {
-                    up: 'KeyW', down: 'KeyS', left: 'KeyA', right: 'KeyD',
-                    movement: ['KeyW', 'KeyA', 'KeyS', 'KeyD'],  // Only movement keys
-                    all: ['KeyW', 'KeyA', 'KeyS', 'KeyD']        // Same as movement for sequences
+                    up: 'w', down: 's', left: 'a', right: 'd',
+                    movement: ['w', 'a', 's', 'd'],  // Only movement keys
+                    all: ['w', 'a', 's', 'd']        // Same as movement for sequences
                 },
                 blue: {
-                    up: 'KeyI', down: 'KeyK', left: 'KeyJ', right: 'KeyL',
-                    movement: ['KeyI', 'KeyJ', 'KeyK', 'KeyL'],  // Only movement keys
-                    all: ['KeyI', 'KeyJ', 'KeyK', 'KeyL']        // Same as movement for sequences
+                    up: 'i', down: 'k', left: 'j', right: 'l',
+                    movement: ['i', 'j', 'k', 'l'],  // Only movement keys
+                    all: ['i', 'j', 'k', 'l']        // Same as movement for sequences
                 }
             },
             keyLabels: {
-                red: { 'KeyW': 'W', 'KeyA': 'A', 'KeyS': 'S', 'KeyD': 'D' },
-                blue: { 'KeyI': 'I', 'KeyJ': 'J', 'KeyK': 'K', 'KeyL': 'L' }
+                red: { 'w': 'W', 'a': 'A', 's': 'S', 'd': 'D' },
+                blue: { 'i': 'I', 'j': 'J', 'k': 'K', 'l': 'L' }
             }
         };
 
@@ -1751,47 +1751,50 @@
 
         function handleKeyDown(e) {
             if (!state.isRunning) return;
-            
-            if (state.keysPressed[e.code]) return;
-            state.keysPressed[e.code] = true;
 
-            updateKeyVisual(e.code, true);
+            const key = e.key.toLowerCase();
+
+            if (state.keysPressed[key]) return;
+            state.keysPressed[key] = true;
+
+            updateKeyVisual(key, true);
 
             if (state.teams.red.inSequence) {
-                if (config.keys.red.all.includes(e.code)) {
-                    handleSequenceKey('red', e.code);
+                if (config.keys.red.all.includes(key)) {
+                    handleSequenceKey('red', key);
                 }
             } else {
-                if (e.code === config.keys.red.up) handleMovementKey('red', 'up');
-                else if (e.code === config.keys.red.down) handleMovementKey('red', 'down');
-                else if (e.code === config.keys.red.left) handleMovementKey('red', 'left');
-                else if (e.code === config.keys.red.right) handleMovementKey('red', 'right');
+                if (key === config.keys.red.up) handleMovementKey('red', 'up');
+                else if (key === config.keys.red.down) handleMovementKey('red', 'down');
+                else if (key === config.keys.red.left) handleMovementKey('red', 'left');
+                else if (key === config.keys.red.right) handleMovementKey('red', 'right');
             }
 
             if (state.teams.blue.inSequence) {
-                if (config.keys.blue.all.includes(e.code)) {
-                    handleSequenceKey('blue', e.code);
+                if (config.keys.blue.all.includes(key)) {
+                    handleSequenceKey('blue', key);
                 }
             } else {
-                if (e.code === config.keys.blue.up) handleMovementKey('blue', 'up');
-                else if (e.code === config.keys.blue.down) handleMovementKey('blue', 'down');
-                else if (e.code === config.keys.blue.left) handleMovementKey('blue', 'left');
-                else if (e.code === config.keys.blue.right) handleMovementKey('blue', 'right');
+                if (key === config.keys.blue.up) handleMovementKey('blue', 'up');
+                else if (key === config.keys.blue.down) handleMovementKey('blue', 'down');
+                else if (key === config.keys.blue.left) handleMovementKey('blue', 'left');
+                else if (key === config.keys.blue.right) handleMovementKey('blue', 'right');
             }
         }
 
         function handleKeyUp(e) {
-            state.keysPressed[e.code] = false;
-            updateKeyVisual(e.code, false);
+            const key = e.key.toLowerCase();
+            state.keysPressed[key] = false;
+            updateKeyVisual(key, false);
         }
 
-        function updateKeyVisual(code, pressed) {
+        function updateKeyVisual(key, pressed) {
             const keyMap = {
-                'KeyW': 'key-red-w', 'KeyA': 'key-red-a', 'KeyS': 'key-red-s', 'KeyD': 'key-red-d',
-                'KeyI': 'key-blue-i', 'KeyJ': 'key-blue-j', 'KeyK': 'key-blue-k', 'KeyL': 'key-blue-l'
+                'w': 'key-red-w', 'a': 'key-red-a', 's': 'key-red-s', 'd': 'key-red-d',
+                'i': 'key-blue-i', 'j': 'key-blue-j', 'k': 'key-blue-k', 'l': 'key-blue-l'
             };
-            
-            const keyId = keyMap[code];
+
+            const keyId = keyMap[key];
             if (keyId) {
                 const el = document.getElementById(keyId);
                 if (pressed) el.classList.add('pressed');
