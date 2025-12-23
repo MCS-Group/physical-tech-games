@@ -1,0 +1,96 @@
+PHYSICAL: TECH - Audio Recording Checklist
+===========================================
+
+Place all MP3 files in this folder: assets/audio/
+
+PRIORITY 1 - VOICE-OVERS (Must Have):
+--------------------------------------
+
+GAME INTROS (4 files):
+☐ game-intro-1.mp3 - "GAME ONE! WALL PUSHING MATCH!..."
+☐ game-intro-2.mp3 - "GAME TWO! HANGING ENDURANCE!..."
+☐ game-intro-3.mp3 - "GAME THREE! IRON BALL TUG!..."
+☐ game-intro-4.mp3 - "THE FINAL BATTLE! CASTLE CONQUEST!..."
+
+COUNTDOWN (1 file):
+☐ sfx-countdown.mp3 - "THREE... TWO... ONE... GO!"
+
+COMBINED TEAM VICTORIES (8 files) - For Games 1-3:
+☐ victory-team-1-2.mp3 - "ШИРЭЭ ONE AND TWO VICTORIOUS!"
+☐ victory-team-3-4.mp3 - "ШИРЭЭ THREE AND FOUR VICTORIOUS!"
+☐ victory-team-5-6.mp3 - "ШИРЭЭ FIVE AND SIX VICTORIOUS!"
+☐ victory-team-7-8.mp3 - "ШИРЭЭ SEVEN AND EIGHT VICTORIOUS!"
+☐ victory-team-9-10.mp3 - "ШИРЭЭ NINE AND TEN VICTORIOUS!"
+☐ victory-team-11-12.mp3 - "ШИРЭЭ ELEVEN AND TWELVE VICTORIOUS!"
+☐ victory-team-13-14.mp3 - "ШИРЭЭ THIRTEEN AND FOURTEEN VICTORIOUS!"
+☐ victory-team-15-16.mp3 - "ШИРЭЭ FIFTEEN AND SIXTEEN VICTORIOUS!"
+
+ORIGINAL TEAM VICTORIES (16 files) - For Game 4:
+☐ victory-team-1.mp3 - "ШИРЭЭ ONE WINS!"
+☐ victory-team-2.mp3 - "ШИРЭЭ TWO WINS!"
+☐ victory-team-3.mp3 - "ШИРЭЭ THREE WINS!"
+☐ victory-team-4.mp3 - "ШИРЭЭ FOUR WINS!"
+☐ victory-team-5.mp3 - "ШИРЭЭ FIVE WINS!"
+☐ victory-team-6.mp3 - "ШИРЭЭ SIX WINS!"
+☐ victory-team-7.mp3 - "ШИРЭЭ SEVEN WINS!"
+☐ victory-team-8.mp3 - "ШИРЭЭ EIGHT WINS!"
+☐ victory-team-9.mp3 - "ШИРЭЭ NINE WINS!"
+☐ victory-team-10.mp3 - "ШИРЭЭ TEN WINS!"
+☐ victory-team-11.mp3 - "ШИРЭЭ ELEVEN WINS!"
+☐ victory-team-12.mp3 - "ШИРЭЭ TWELVE WINS!"
+☐ victory-team-13.mp3 - "ШИРЭЭ THIRTEEN WINS!"
+☐ victory-team-14.mp3 - "ШИРЭЭ FOURTEEN WINS!"
+☐ victory-team-15.mp3 - "ШИРЭЭ FIFTEEN WINS!"
+☐ victory-team-16.mp3 - "ШИРЭЭ SIXTEEN WINS!"
+
+CHAMPIONSHIP ANNOUNCEMENTS (16 files) - Final Victory:
+☐ championship-team-1.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ ONE! CONGRATULATIONS!"
+☐ championship-team-2.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ TWO! CONGRATULATIONS!"
+☐ championship-team-3.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ THREE! CONGRATULATIONS!"
+☐ championship-team-4.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ FOUR! CONGRATULATIONS!"
+☐ championship-team-5.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ FIVE! CONGRATULATIONS!"
+☐ championship-team-6.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ SIX! CONGRATULATIONS!"
+☐ championship-team-7.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ SEVEN! CONGRATULATIONS!"
+☐ championship-team-8.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ EIGHT! CONGRATULATIONS!"
+☐ championship-team-9.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ NINE! CONGRATULATIONS!"
+☐ championship-team-10.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ TEN! CONGRATULATIONS!"
+☐ championship-team-11.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ ELEVEN! CONGRATULATIONS!"
+☐ championship-team-12.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ TWELVE! CONGRATULATIONS!"
+☐ championship-team-13.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ THIRTEEN! CONGRATULATIONS!"
+☐ championship-team-14.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ FOURTEEN! CONGRATULATIONS!"
+☐ championship-team-15.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ FIFTEEN! CONGRATULATIONS!"
+☐ championship-team-16.mp3 - "THE CHAMPIONS OF PHYSICAL TECH ARE... ШИРЭЭ SIXTEEN! CONGRATULATIONS!"
+
+TOTAL ESSENTIAL: 45 voice files
+
+===========================================
+
+PRIORITY 2 - BACKGROUND MUSIC (Optional):
+------------------------------------------
+☐ bg-hub.mp3 - Tournament hub music
+☐ bg-game-flow.mp3 - Match setup music
+☐ bg-gameplay.mp3 - Game action music (YOU HAVE THIS!)
+☐ bg-celebration.mp3 - Championship celebration music
+
+===========================================
+
+PRIORITY 3 - SOUND EFFECTS (Optional):
+---------------------------------------
+☐ sfx-button-click.mp3
+☐ sfx-card-reveal.mp3
+☐ sfx-shuffle.mp3
+☐ sfx-player-select.mp3
+☐ sfx-match-start.mp3
+☐ sfx-victory.mp3
+☐ sfx-fanfare.mp3
+
+===========================================
+
+NOTES:
+- All files are MP3 format
+- 128kbps or higher bitrate recommended
+- Normalize volume levels for consistency
+- Missing files will trigger procedural fallback sounds
+- See AUDIO-RECORDING-GUIDE.md for detailed scripts
+
+===========================================

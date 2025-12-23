@@ -1661,6 +1661,9 @@
             // recordMatchResult(winner); // Moved to continueFlow
             createConfetti(isRed ? 'red' : 'blue');
             showScreen('resultScreen');
+
+            // Play victory sound
+            audioManager.playSoundEffect('victory');
         }
 
         // Continue flow
