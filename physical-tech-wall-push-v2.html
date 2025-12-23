@@ -511,6 +511,13 @@
             font-weight: bold;
         }
 
+        .player-character-clicks {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.45rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
         /* Power meters */
         .power-display {
             display: flex;
@@ -810,7 +817,6 @@
                 <div class="power-meter red">
                     <div class="power-label">
                         <span>TEAM RED POWER</span>
-                        <span id="clicks-red">0 clicks</span>
                     </div>
                     <div class="power-bar-container">
                         <div class="power-bar" id="power-red" style="width: 0%"></div>
@@ -819,7 +825,6 @@
                 <div class="power-meter blue">
                     <div class="power-label">
                         <span>TEAM BLUE POWER</span>
-                        <span id="clicks-blue">0 clicks</span>
                     </div>
                     <div class="power-bar-container">
                         <div class="power-bar" id="power-blue" style="width: 0%"></div>
@@ -877,8 +882,8 @@
         const config = {
             blocks: [
                 { weight: 100, class: 'light', clicksToMove: 3, label: '100KG' },   // Need 3 net alternating clicks to move
-                { weight: 200, class: 'medium', clicksToMove: 6, label: '200KG' },  // Need 6 net alternating clicks
-                { weight: 300, class: 'heavy', clicksToMove: 10, label: '300KG' }   // Need 10 net alternating clicks
+                { weight: 300, class: 'heavy', clicksToMove: 10, label: '300KG' },  // Need 10 net alternating clicks
+                { weight: 200, class: 'medium', clicksToMove: 6, label: '200KG' }   // Need 6 net alternating clicks
             ],
             keyMappings: {
                 red: [
@@ -903,6 +908,7 @@
             totalTime: 60,
             blocks: [],
             clicks: { red: 0, blue: 0 },
+            playerClicks: { red: [0, 0, 0], blue: [0, 0, 0] },
             lastKeyPressed: { red: [{}, {}, {}], blue: [{}, {}, {}] },
             pushProgress: { red: [0, 0, 0], blue: [0, 0, 0] },
             keysPressed: {},
@@ -923,6 +929,7 @@
             battlefield.querySelectorAll('.block-lane').forEach(el => el.remove());
             state.blocks = [];
             state.clicks = { red: 0, blue: 0 };
+            state.playerClicks = { red: [0, 0, 0], blue: [0, 0, 0] };
             state.pushProgress = { red: [0, 0, 0], blue: [0, 0, 0] };
             state.lastKeyPressed = { red: [{}, {}, {}], blue: [{}, {}, {}] };
 
@@ -983,8 +990,6 @@
             });
 
             updateScoreDisplay();
-            document.getElementById('clicks-red').textContent = '0 clicks';
-            document.getElementById('clicks-blue').textContent = '0 clicks';
         }
 
         // Render player characters
@@ -1026,6 +1031,7 @@
                         <div class="player-sprite">${redPlayerSprite}</div>
                         <div class="player-character-name">${redPlayerName}</div>
                         <div class="player-character-keys">${redKeys[0].toUpperCase()} + ${redKeys[1].toUpperCase()}</div>
+                        <div class="player-character-clicks" id="player-clicks-red-${i}">0 clicks</div>
                     </div>
                 `;
 
@@ -1034,6 +1040,7 @@
                         <div class="player-sprite">${bluePlayerSprite}</div>
                         <div class="player-character-name">${bluePlayerName}</div>
                         <div class="player-character-keys">${blueKeys[0].toUpperCase()} + ${blueKeys[1].toUpperCase()}</div>
+                        <div class="player-character-clicks" id="player-clicks-blue-${i}">0 clicks</div>
                     </div>
                 `;
             }
@@ -1077,7 +1084,8 @@
                         if (lastKey.key !== undefined && lastKey.key !== keyIndex) {
                             // Successful alternating press!
                             state.clicks[team]++;
-                            
+                            state.playerClicks[team][blockIndex]++;
+
                             // Add to push progress
                             if (team === 'red') {
                                 state.pushProgress.red[blockIndex]++;
@@ -1127,9 +1135,14 @@
                 });
             });
 
-            // Update click displays
-            document.getElementById('clicks-red').textContent = `${state.clicks.red} clicks`;
-            document.getElementById('clicks-blue').textContent = `${state.clicks.blue} clicks`;
+            // Update individual player click displays
+            for (let i = 0; i < 3; i++) {
+                const redClickEl = document.getElementById(`player-clicks-red-${i}`);
+                const blueClickEl = document.getElementById(`player-clicks-blue-${i}`);
+                if (redClickEl) redClickEl.textContent = `${state.playerClicks.red[i]} clicks`;
+                if (blueClickEl) blueClickEl.textContent = `${state.playerClicks.blue[i]} clicks`;
+            }
+
             updatePowerBars();
         }
 
@@ -1168,9 +1181,9 @@
         function updateBlockZone(block) {
             block.element.classList.remove('in-red-zone', 'in-blue-zone');
             if (block.position < 50) {
-                block.element.classList.add('in-red-zone');
-            } else if (block.position > 50) {
                 block.element.classList.add('in-blue-zone');
+            } else if (block.position > 50) {
+                block.element.classList.add('in-red-zone');
             }
         }
 

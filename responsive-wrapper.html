@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHYSICAL: TECH Tournament</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Press+Start+2P&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Main responsive container */
+        .responsive-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            background: #000;
+        }
+
+        /* Side panels - hidden by default, shown on wide screens */
+        .side-panel {
+            height: 100vh;
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Left panel */
+        .side-panel.left {
+            background: linear-gradient(
+                90deg,
+                #000000 0%,
+                #1a0a0a 20%,
+                rgba(255, 45, 85, 0.15) 80%,
+                rgba(255, 45, 85, 0.25) 100%
+            );
+        }
+
+        /* Right panel */
+        .side-panel.right {
+            background: linear-gradient(
+                270deg,
+                #000000 0%,
+                #0a0a1a 20%,
+                rgba(0, 212, 255, 0.15) 80%,
+                rgba(0, 212, 255, 0.25) 100%
+            );
+        }
+
+        /* Animated background effects */
+        .side-panel::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .side-panel.left::before {
+            background:
+                radial-gradient(ellipse at 80% 20%, rgba(255, 45, 85, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(255, 45, 85, 0.2) 0%, transparent 50%);
+            animation: pulseRed 4s ease-in-out infinite;
+        }
+
+        .side-panel.right::before {
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 80%, rgba(0, 212, 255, 0.2) 0%, transparent 50%);
+            animation: pulseBlue 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseRed {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes pulseBlue {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Panel logos */
+        .panel-logo {
+            font-family: 'Black Ops One', cursive;
+            font-size: 3rem;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            letter-spacing: 10px;
+            opacity: 0.15;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .side-panel.left .panel-logo {
+            color: #ff2d55;
+        }
+
+        .side-panel.right .panel-logo {
+            color: #00d4ff;
+        }
+
+        /* Center game area - always 1792x1024 */
+        .game-area {
+            width: 1792px;
+            height: 1024px;
+            position: relative;
+            background: #000;
+            flex-shrink: 0; /* Don't shrink the game area */
+        }
+
+        /* Game iframe */
+        .game-frame {
+            width: 1792px;
+            height: 1024px;
+            border: none;
+            display: block;
+            background: #000;
+        }
+
+        /* Divider lines - only visible when side panels are shown */
+        .divider {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(
+                180deg,
+                transparent 0%,
+                rgba(255, 215, 0, 0.3) 20%,
+                rgba(255, 215, 0, 0.5) 50%,
+                rgba(255, 215, 0, 0.3) 80%,
+                transparent 100%
+            );
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            z-index: 10;
+            display: none; /* Hidden by default */
+            top: 0;
+        }
+
+        .divider.left {
+            left: 0;
+        }
+
+        .divider.right {
+            right: 0;
+        }
+
+        /* Screen size indicator (dev mode - remove for production) */
+        .screen-indicator {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffd700;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            border: 2px solid #ffd700;
+            z-index: 9999;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .screen-indicator.show {
+            opacity: 1;
+        }
+
+        /* RESPONSIVE BREAKPOINTS */
+
+        /* Wide screens (3328px+) - Show side panels at 768px each */
+        @media (min-width: 3328px) {
+            .side-panel {
+                display: flex;
+                width: 768px;
+            }
+
+            .divider {
+                display: block;
+            }
+
+            .game-area {
+                position: relative;
+            }
+
+            .divider.left {
+                left: 768px;
+            }
+
+            .divider.right {
+                right: 768px;
+            }
+        }
+
+        /* Medium-wide screens (2560px - 3327px) - Show smaller side panels */
+        @media (min-width: 2560px) and (max-width: 3327px) {
+            .side-panel {
+                display: flex;
+                width: calc((100vw - 1792px) / 2);
+            }
+
+            .divider {
+                display: block;
+            }
+
+            .game-area {
+                position: relative;
+            }
+
+            .divider.left {
+                left: calc((100vw - 1792px) / 2);
+            }
+
+            .divider.right {
+                right: calc((100vw - 1792px) / 2);
+            }
+        }
+
+        /* Standard screens (up to 2559px) - No side panels, just center the game */
+        @media (max-width: 2559px) {
+            .responsive-container {
+                justify-content: center;
+            }
+
+            .side-panel {
+                display: none;
+            }
+
+            .divider {
+                display: none;
+            }
+
+            .game-area {
+                margin: 0 auto;
+            }
+        }
+
+        /* For smaller screens, scale down the game to fit */
+        @media (max-width: 1792px) {
+            .game-area {
+                transform-origin: center center;
+                transform: scale(calc(100vw / 1792));
+            }
+
+            .game-frame {
+                transform-origin: center center;
+            }
+        }
+
+        @media (max-height: 1024px) {
+            .game-area {
+                transform-origin: center center;
+                transform: scale(calc(100vh / 1024));
+            }
+        }
+
+        /* If both width and height need scaling, use the smaller scale */
+        @media (max-width: 1792px) and (max-height: 1024px) {
+            .game-area {
+                transform: scale(min(calc(100vw / 1792), calc(100vh / 1024)));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Screen size indicator (shows current mode) -->
+    <div class="screen-indicator" id="screenIndicator">
+        <span id="modeText">Loading...</span>
+    </div>
+
+    <div class="responsive-container">
+        <!-- Left side panel (only visible on wide screens) -->
+        <div class="side-panel left">
+            <div class="panel-logo">TEAM RED</div>
+        </div>
+
+        <!-- Left divider -->
+        <div class="divider left"></div>
+
+        <!-- Center game area (always visible, always 1792x1024) -->
+        <div class="game-area">
+            <iframe id="gameFrame" class="game-frame" src="index.html"></iframe>
+        </div>
+
+        <!-- Right divider -->
+        <div class="divider right"></div>
+
+        <!-- Right side panel (only visible on wide screens) -->
+        <div class="side-panel right">
+            <div class="panel-logo">TEAM BLUE</div>
+        </div>
+    </div>
+
+    <script>
+        // Update screen mode indicator
+        function updateScreenIndicator() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const indicator = document.getElementById('screenIndicator');
+            const modeText = document.getElementById('modeText');
+
+            let mode = '';
+            let color = '#ffd700';
+
+            if (width >= 3328) {
+                mode = `EVENT MODE - ${width}×${height} - Full Side Panels (768px each)`;
+                color = '#00ff00';
+            } else if (width >= 2560) {
+                mode = `WIDE MODE - ${width}×${height} - Adaptive Side Panels`;
+                color = '#00d4ff';
+            } else if (width >= 1792) {
+                mode = `NORMAL MODE - ${width}×${height} - Game Only (No Panels)`;
+                color = '#ffd700';
+            } else {
+                mode = `COMPACT MODE - ${width}×${height} - Scaled to Fit`;
+                color = '#ff9900';
+            }
+
+            modeText.textContent = mode;
+            indicator.style.borderColor = color;
+            indicator.style.color = color;
+
+            // Show indicator for 3 seconds on resize
+            indicator.classList.add('show');
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+
+            console.log('=== PHYSICAL: TECH Display Mode ===');
+            console.log('Screen:', width, '×', height);
+            console.log('Mode:', mode);
+            console.log('===================================');
+        }
+
+        // Listen for navigation events from the game iframe
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'navigate') {
+                document.getElementById('gameFrame').src = event.data.url;
+            }
+        });
+
+        // Update indicator on load and resize
+        updateScreenIndicator();
+        window.addEventListener('resize', updateScreenIndicator);
+
+        // Optional: Enter fullscreen on click (for event mode)
+        let fullscreenRequested = false;
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'F11') {
+                e.preventDefault();
+                if (!fullscreenRequested) {
+                    if (document.documentElement.requestFullscreen) {
+                        document.documentElement.requestFullscreen();
+                        fullscreenRequested = true;
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                        fullscreenRequested = false;
+                    }
+                }
+            }
+        });
+
+        // Monitor fullscreen state
+        document.addEventListener('fullscreenchange', () => {
+            setTimeout(updateScreenIndicator, 100);
+        });
+
+        // Hide indicator after 5 seconds on first load
+        setTimeout(() => {
+            document.getElementById('screenIndicator').classList.remove('show');
+        }, 5000);
+    </script>
+</body>
+</html>

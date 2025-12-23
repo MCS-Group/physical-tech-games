@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHYSICAL: TECH - Fullscreen Display</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 3328px;
+            height: 1024px;
+            overflow: hidden;
+            background: #000;
+            position: relative;
+        }
+
+        /* Main container with 3 sections */
+        .fullscreen-container {
+            width: 3328px;
+            height: 1024px;
+            display: flex;
+            position: relative;
+        }
+
+        /* Left decorative panel - 768px */
+        .side-panel.left {
+            width: 768px;
+            height: 1024px;
+            background: linear-gradient(
+                90deg,
+                #000000 0%,
+                #1a0a0a 20%,
+                rgba(255, 45, 85, 0.15) 80%,
+                rgba(255, 45, 85, 0.25) 100%
+            );
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Right decorative panel - 768px */
+        .side-panel.right {
+            width: 768px;
+            height: 1024px;
+            background: linear-gradient(
+                270deg,
+                #000000 0%,
+                #0a0a1a 20%,
+                rgba(0, 212, 255, 0.15) 80%,
+                rgba(0, 212, 255, 0.25) 100%
+            );
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background effects for side panels */
+        .side-panel::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .side-panel.left::before {
+            background:
+                radial-gradient(ellipse at 80% 20%, rgba(255, 45, 85, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(255, 45, 85, 0.2) 0%, transparent 50%);
+            animation: pulseRed 4s ease-in-out infinite;
+        }
+
+        .side-panel.right::before {
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 80%, rgba(0, 212, 255, 0.2) 0%, transparent 50%);
+            animation: pulseBlue 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseRed {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes pulseBlue {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Middle game area - 1792px */
+        .game-area {
+            width: 1792px;
+            height: 1024px;
+            position: relative;
+            background: #000;
+        }
+
+        /* iframe for the actual game */
+        .game-frame {
+            width: 1792px;
+            height: 1024px;
+            border: none;
+            display: block;
+            background: #000;
+        }
+
+        /* Vertical divider lines */
+        .divider {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(
+                180deg,
+                transparent 0%,
+                rgba(255, 215, 0, 0.3) 20%,
+                rgba(255, 215, 0, 0.5) 50%,
+                rgba(255, 215, 0, 0.3) 80%,
+                transparent 100%
+            );
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            z-index: 10;
+        }
+
+        .divider.left {
+            left: 768px;
+        }
+
+        .divider.right {
+            right: 768px;
+        }
+
+        /* Fullscreen hint */
+        .fullscreen-hint {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #ffd700;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            border: 2px solid #ffd700;
+            z-index: 9999;
+            animation: fadeOut 5s forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        /* Side panel decorative elements */
+        .panel-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Black Ops One', cursive;
+            font-size: 3rem;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            letter-spacing: 10px;
+            opacity: 0.15;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .side-panel.left .panel-logo {
+            color: #ff2d55;
+        }
+
+        .side-panel.right .panel-logo {
+            color: #00d4ff;
+        }
+
+        /* Load Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Press+Start+2P&display=swap');
+    </style>
+</head>
+<body>
+    <div class="fullscreen-container">
+        <!-- Left decorative panel (768px) -->
+        <div class="side-panel left">
+            <div class="panel-logo">TEAM RED</div>
+        </div>
+
+        <!-- Middle game area (1792px) -->
+        <div class="game-area">
+            <iframe id="gameFrame" class="game-frame" src="index.html"></iframe>
+        </div>
+
+        <!-- Right decorative panel (768px) -->
+        <div class="side-panel right">
+            <div class="panel-logo">TEAM BLUE</div>
+        </div>
+
+        <!-- Divider lines -->
+        <div class="divider left"></div>
+        <div class="divider right"></div>
+    </div>
+
+    <!-- Fullscreen hint -->
+    <div class="fullscreen-hint">
+        Press F11 for fullscreen mode
+    </div>
+
+    <script>
+        // Listen for navigation events from the game iframe
+        window.addEventListener('message', function(event) {
+            // If the game sends a navigation message, update the iframe source
+            if (event.data && event.data.type === 'navigate') {
+                document.getElementById('gameFrame').src = event.data.url;
+            }
+        });
+
+        // Optional: Auto-enter fullscreen on load (may require user interaction)
+        document.addEventListener('click', function enterFullscreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            }
+            // Remove listener after first click
+            document.removeEventListener('click', enterFullscreen);
+        }, { once: true });
+
+        // Monitor fullscreen state
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                console.log('✅ Fullscreen mode active (3328x1024)');
+            } else {
+                console.log('⚠️ Exited fullscreen mode');
+            }
+        });
+    </script>
+</body>
+</html>

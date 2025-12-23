@@ -822,6 +822,14 @@
             transform: scale(1.1);
         }
 
+        .player-character-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.45rem;
+            color: #ccc;
+            margin-bottom: 3px;
+            text-align: center;
+        }
+
         /* Arena key button (single key inside arena) */
         .arena-key-btn {
             position: absolute;
@@ -1185,32 +1193,42 @@
                 const redKey = redKeyLabels[i];
                 const blueKey = blueKeyLabels[i];
 
-                // Get player sprites from matchData
-                let redSpriteSrc = '';
-                let blueSpriteSrc = '';
-
+                // Get player info from matchData
+                let redPlayerSprite = '👤';
+                let redPlayerName = `Player ${i + 1}`;
                 if (state.redPlayers && state.redPlayers[i]) {
-                    const redPlayerInfo = getPlayerInfo(state.redPlayers[i]);
-                    redSpriteSrc = redPlayerInfo ? redPlayerInfo.sprite : '';
+                    const player = getPlayerInfo(state.redPlayers[i]);
+                    if (player) {
+                        redPlayerSprite = `<img src="assets/sprites/${player.sprite}" onerror="this.parentElement.innerHTML='👤'">`;
+                        redPlayerName = player.name;
+                    }
                 }
+
+                let bluePlayerSprite = '👤';
+                let bluePlayerName = `Player ${i + 1}`;
                 if (state.bluePlayers && state.bluePlayers[i]) {
-                    const bluePlayerInfo = getPlayerInfo(state.bluePlayers[i]);
-                    blueSpriteSrc = bluePlayerInfo ? bluePlayerInfo.sprite : '';
+                    const player = getPlayerInfo(state.bluePlayers[i]);
+                    if (player) {
+                        bluePlayerSprite = `<img src="assets/sprites/${player.sprite}" onerror="this.parentElement.innerHTML='👤'">`;
+                        bluePlayerName = player.name;
+                    }
                 }
 
                 redPlayersHTML += `
                     <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
                         <div class="player-sprite" id="sprite-red-${i}" data-team="red" data-player="${i}">
-                            ${redSpriteSrc ? `<img src="${redSpriteSrc}" alt="Player ${i+1}">` : ''}
+                            ${redPlayerSprite}
                         </div>
+                        <div class="player-character-name">${redPlayerName}</div>
                         <div class="player-key-indicator" id="key-indicator-${redKey.toLowerCase()}">${redKey}</div>
                     </div>
                 `;
                 bluePlayersHTML += `
                     <div style="display:flex;flex-direction:column;align-items:center;gap:5px;">
                         <div class="player-sprite" id="sprite-blue-${i}" data-team="blue" data-player="${i}">
-                            ${blueSpriteSrc ? `<img src="${blueSpriteSrc}" alt="Player ${i+1}">` : ''}
+                            ${bluePlayerSprite}
                         </div>
+                        <div class="player-character-name">${bluePlayerName}</div>
                         <div class="player-key-indicator" id="key-indicator-${blueKey.toLowerCase()}">${blueKey}</div>
                     </div>
                 `;
@@ -1265,6 +1283,7 @@
 
                 perfectZoneEl.style.left = '250px';
                 perfectZoneEl.style.top = '175px';
+                perfectZoneEl.style.display = 'block';
 
                 document.getElementById(`reticle-${team}`).style.left = '250px';
                 document.getElementById(`reticle-${team}`).style.top = '175px';
@@ -1392,6 +1411,13 @@
             // Update perfect zone (always centered with safe zone)
             perfectZoneEl.style.left = `${teamState.zoneCenter.x}px`;
             perfectZoneEl.style.top = `${teamState.zoneCenter.y}px`;
+
+            // Hide perfect zone when safe zone is too small (50px is perfect zone size)
+            if (teamState.zoneSize <= 50) {
+                perfectZoneEl.style.display = 'none';
+            } else {
+                perfectZoneEl.style.display = 'block';
+            }
 
             zoneEl.classList.remove('warning', 'danger');
             if (teamState.zoneSize < 60) {

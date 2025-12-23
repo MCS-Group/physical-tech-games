@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHYSICAL: TECH - Layout Test</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Press+Start+2P&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 3328px;
+            height: 1024px;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Press Start 2P', cursive;
+            color: #fff;
+        }
+
+        .test-container {
+            width: 3328px;
+            height: 1024px;
+            display: flex;
+            position: relative;
+        }
+
+        .section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #ffd700;
+            position: relative;
+        }
+
+        .left-section {
+            width: 768px;
+            height: 1024px;
+            background: linear-gradient(
+                90deg,
+                #000000 0%,
+                #1a0a0a 20%,
+                rgba(255, 45, 85, 0.15) 80%,
+                rgba(255, 45, 85, 0.25) 100%
+            );
+        }
+
+        .center-section {
+            width: 1792px;
+            height: 1024px;
+            background: #0a0a0a;
+        }
+
+        .right-section {
+            width: 768px;
+            height: 1024px;
+            background: linear-gradient(
+                270deg,
+                #000000 0%,
+                #0a0a1a 20%,
+                rgba(0, 212, 255, 0.15) 80%,
+                rgba(0, 212, 255, 0.25) 100%
+            );
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px currentColor;
+        }
+
+        .left-section .section-title {
+            color: #ff2d55;
+        }
+
+        .center-section .section-title {
+            color: #ffd700;
+        }
+
+        .right-section .section-title {
+            color: #00d4ff;
+        }
+
+        .dimension-info {
+            font-size: 1.5rem;
+            color: #ffd700;
+            margin: 10px 0;
+        }
+
+        .info-box {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .info-item {
+            margin: 15px 0;
+            font-size: 0.6rem;
+            line-height: 1.8;
+        }
+
+        .check-mark {
+            color: #00ff00;
+            font-size: 3rem;
+            margin: 20px 0;
+        }
+
+        .warning {
+            color: #ff9900;
+            font-size: 0.7rem;
+            margin-top: 30px;
+            padding: 15px;
+            background: rgba(255, 153, 0, 0.1);
+            border: 2px solid #ff9900;
+            border-radius: 8px;
+        }
+
+        /* Screen resolution display */
+        .resolution-display {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 30px;
+            border: 3px solid #ffd700;
+            border-radius: 10px;
+            z-index: 9999;
+        }
+
+        .resolution-title {
+            font-size: 0.7rem;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .resolution-value {
+            font-size: 1.5rem;
+            color: #fff;
+            text-align: center;
+        }
+
+        .status {
+            margin-top: 10px;
+            font-size: 0.6rem;
+            text-align: center;
+        }
+
+        .status.correct {
+            color: #00ff00;
+        }
+
+        .status.incorrect {
+            color: #ff2d55;
+        }
+
+        /* Measurement rulers */
+        .ruler-horizontal {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, #ffd700 0%, transparent 50%, #ffd700 100%);
+        }
+
+        .ruler-vertical {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(180deg, #ffd700 0%, transparent 50%, #ffd700 100%);
+        }
+
+        /* Corner markers */
+        .corner-marker {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid #ffd700;
+        }
+
+        .corner-marker.top-left {
+            top: 10px;
+            left: 10px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-marker.top-right {
+            top: 10px;
+            right: 10px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-marker.bottom-left {
+            bottom: 10px;
+            left: 10px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-marker.bottom-right {
+            bottom: 10px;
+            right: 10px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* Instructions */
+        .instructions {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 30px;
+            border: 2px solid #ffd700;
+            border-radius: 8px;
+            font-size: 0.5rem;
+            text-align: center;
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Screen resolution display -->
+    <div class="resolution-display">
+        <div class="resolution-title">CURRENT DISPLAY SIZE</div>
+        <div class="resolution-value" id="currentResolution">Loading...</div>
+        <div class="status" id="resolutionStatus">Checking...</div>
+    </div>
+
+    <!-- Test layout -->
+    <div class="test-container">
+        <!-- Left panel -->
+        <div class="section left-section">
+            <div class="section-title">LEFT PANEL</div>
+            <div class="dimension-info">768 × 1024</div>
+            <div class="info-item">Red Gradient<br>Background</div>
+            <div class="ruler-vertical"></div>
+        </div>
+
+        <!-- Center game area -->
+        <div class="section center-section">
+            <div class="section-title">GAME AREA</div>
+            <div class="dimension-info">1792 × 1024</div>
+
+            <div class="info-box">
+                <div class="check-mark">✓</div>
+                <div class="info-item">
+                    This is your game area<br><br>
+                    All game content displays here<br>
+                    (index.html, games 1-4, etc.)
+                </div>
+
+                <div class="info-item" style="margin-top: 30px; color: #ffd700;">
+                    <strong>Layout Test Checklist:</strong>
+                </div>
+
+                <div class="info-item" style="text-align: left; margin-top: 15px;">
+                    □ Can you see all three panels?<br>
+                    □ Is the center panel 1792px wide?<br>
+                    □ Are side panels visible?<br>
+                    □ No scrollbars visible?<br>
+                    □ Press F11 to test fullscreen
+                </div>
+
+                <div class="warning">
+                    If layout looks wrong, check:<br>
+                    • Browser zoom is 100% (Ctrl+0)<br>
+                    • Window size is 3328×1024<br>
+                    • No browser extensions affecting layout
+                </div>
+            </div>
+
+            <div class="ruler-horizontal"></div>
+            <div class="ruler-vertical"></div>
+        </div>
+
+        <!-- Right panel -->
+        <div class="section right-section">
+            <div class="section-title">RIGHT PANEL</div>
+            <div class="dimension-info">768 × 1024</div>
+            <div class="info-item">Blue Gradient<br>Background</div>
+            <div class="ruler-vertical"></div>
+        </div>
+
+        <!-- Corner markers -->
+        <div class="corner-marker top-left"></div>
+        <div class="corner-marker top-right"></div>
+        <div class="corner-marker bottom-left"></div>
+        <div class="corner-marker bottom-right"></div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="instructions">
+        Press F11 for fullscreen • If everything looks correct, you're ready for the event!
+    </div>
+
+    <script>
+        // Check and display current window size
+        function updateResolutionDisplay() {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const targetWidth = 3328;
+            const targetHeight = 1024;
+
+            document.getElementById('currentResolution').textContent = `${width} × ${height}`;
+
+            const statusEl = document.getElementById('resolutionStatus');
+            if (width === targetWidth && height === targetHeight) {
+                statusEl.textContent = '✓ PERFECT! Ready for event display';
+                statusEl.className = 'status correct';
+            } else {
+                statusEl.textContent = `⚠ Expected: ${targetWidth} × ${targetHeight}`;
+                statusEl.className = 'status incorrect';
+            }
+        }
+
+        // Update on load and resize
+        updateResolutionDisplay();
+        window.addEventListener('resize', updateResolutionDisplay);
+
+        // Log fullscreen changes
+        document.addEventListener('fullscreenchange', () => {
+            if (document.fullscreenElement) {
+                console.log('✅ Fullscreen mode active');
+                setTimeout(updateResolutionDisplay, 100);
+            } else {
+                console.log('⚠️ Exited fullscreen mode');
+                setTimeout(updateResolutionDisplay, 100);
+            }
+        });
+
+        // Key to show dimensions of each section
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'd' || e.key === 'D') {
+                console.log('=== LAYOUT DIMENSIONS ===');
+                console.log('Window size:', window.innerWidth, '×', window.innerHeight);
+                console.log('Expected:', '3328 × 1024');
+                console.log('Left panel: 768px');
+                console.log('Center panel: 1792px');
+                console.log('Right panel: 768px');
+                console.log('Total: 3328px');
+            }
+        });
+    </script>
+</body>
+</html>

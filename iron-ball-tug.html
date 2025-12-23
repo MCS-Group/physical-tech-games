@@ -443,6 +443,72 @@
         }
         .info-item span { color: var(--gold); }
 
+        /* Player Characters Row */
+        .players-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .team-players {
+            display: flex;
+            gap: 15px;
+        }
+
+        .team-players.blue {
+            flex-direction: row-reverse;
+        }
+
+        .player-character {
+            text-align: center;
+        }
+
+        .player-sprite {
+            width: 80px;
+            height: 100px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            border: 3px solid;
+            overflow: hidden;
+        }
+
+        .player-character.red .player-sprite {
+            background: linear-gradient(180deg, var(--team-red), #aa1133);
+            border-color: #ff6688;
+            box-shadow: 0 0 15px var(--team-red-glow);
+        }
+
+        .player-character.blue .player-sprite {
+            background: linear-gradient(180deg, var(--team-blue), #0088aa);
+            border-color: #66ddff;
+            box-shadow: 0 0 15px var(--team-blue-glow);
+        }
+
+        .player-sprite img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-character-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.45rem;
+            color: #ccc;
+            margin-bottom: 3px;
+        }
+
+        .player-character-keys {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            color: var(--gold);
+            font-weight: bold;
+        }
+
         /* Overlay */
         .game-overlay {
             position: fixed;
@@ -550,6 +616,7 @@
             <div class="info-item">WEIGHT: <span id="weight-display">100kg</span></div>
         </div>
 
+        <!-- Player Characters Row -->
         <div class="scoreboard">
             <div class="team-panel red">
                 <div class="team-header">
@@ -558,10 +625,6 @@
                         <div class="round-dot" id="red-dot-0"></div>
                         <div class="round-dot" id="red-dot-1"></div>
                     </div>
-                </div>
-                <div class="burst-container">
-                    <div class="burst-label"><span>BURST</span><span>SPACE</span></div>
-                    <div class="burst-bar-bg"><div class="burst-bar" id="burst-red"></div></div>
                 </div>
             </div>
 
@@ -578,11 +641,10 @@
                         <div class="round-dot" id="blue-dot-1"></div>
                     </div>
                 </div>
-                <div class="burst-container">
-                    <div class="burst-label"><span>BURST</span><span>ENTER</span></div>
-                    <div class="burst-bar-bg"><div class="burst-bar" id="burst-blue"></div></div>
-                </div>
             </div>
+        </div>
+        <div class="players-row" id="players-row">
+            <!-- Will be populated by JavaScript -->
         </div>
 
         <div class="tug-arena">
@@ -623,7 +685,6 @@
                 <div class="key-row">
                     <div class="key" id="key-e">E</div><div class="key" id="key-d">D</div>
                 </div>
-                <div class="burst-instruction">SPACE FOR BURST</div>
             </div>
 
             <div class="control-box blue">
@@ -637,7 +698,6 @@
                 <div class="key-row">
                     <div class="key" id="key-o">O</div><div class="key" id="key-l">L</div>
                 </div>
-                <div class="burst-instruction">ENTER FOR BURST</div>
             </div>
         </div>
     </div>
@@ -646,31 +706,51 @@
     <div class="game-overlay" id="game-overlay">
         <div class="overlay-title">IRON BALL TUG</div>
         <div class="overlay-subtitle">
-            1 VS 1 TECH TUG-OF-WAR<br>
+            3 VS 3 TECH TUG-OF-WAR<br>
             ALTERNATE KEYS FOR RHYTHM BONUS<br>
-            FILL BURST METER FOR MEGA PULL
+            BEST OF 3 ROUNDS
         </div>
         <button class="start-btn" onclick="startMatch()">START MATCH</button>
     </div>
 
+    <script src="players.js"></script>
     <script src="audio-manager.js"></script>
     <script>
         // Initialize audio manager (music will start on button click)
         audioManager.initialize();
 
+        // Tournament integration - load match data
+        let matchData = null;
+        const playerData = { red: [], blue: [] };
+        try {
+            const stored = localStorage.getItem('currentMatch');
+            if (stored) {
+                matchData = JSON.parse(stored);
+                if (matchData.redPlayers) playerData.red = matchData.redPlayers;
+                if (matchData.bluePlayers) playerData.blue = matchData.bluePlayers;
+            }
+        } catch (e) {
+            console.log('No match data found, running standalone');
+        }
+
+        // Get player info helper
+        function getPlayerInfo(playerId) {
+            if (typeof PLAYERS !== 'undefined' && PLAYERS[playerId]) {
+                return PLAYERS[playerId];
+            }
+            return null;
+        }
+
         // CONFIG & STATE
         const config = {
             weights: [100, 180, 260],
             keys: {
-                red: { pairs: [['q', 'a'], ['w', 's'], ['e', 'd']], burst: ' ' },
-                blue: { pairs: [['u', 'j'], ['i', 'k'], ['o', 'l']], burst: 'Enter' }
+                red: { pairs: [['q', 'a'], ['w', 's'], ['e', 'd']] },
+                blue: { pairs: [['u', 'j'], ['i', 'k'], ['o', 'l']] }
             },
             pullPower: 0.35,
             rhythmBonus: 1.5,
-            burstMultiplier: 2.5,
-            burstDuration: 3000,
-            burstCharge: 2,
-            winThreshold: 15,
+            winThreshold: 5,
             roundsToWin: 2
         };
 
@@ -680,8 +760,6 @@
             time: 45,
             ballPos: 50, // 0-100
             wins: { red: 0, blue: 0 },
-            burst: { red: 0, blue: 0 },
-            burstActive: { red: false, blue: false },
             lastKeys: { red: {}, blue: {} },
             keys: {},
             roundHistory: []
@@ -695,6 +773,64 @@
         const ballText = document.getElementById('ball-text');
         const roundDisplay = document.getElementById('round-display');
         const weightDisplay = document.getElementById('weight-display');
+
+        // Render player characters
+        function renderPlayerControls() {
+            const playersRow = document.getElementById('players-row');
+
+            let redPlayersHTML = '';
+            let bluePlayersHTML = '';
+
+            for (let i = 0; i < 3; i++) {
+                const redKeys = config.keys.red.pairs[i];
+                const blueKeys = config.keys.blue.pairs[i];
+
+                // Get player info for red team
+                let redPlayerSprite = '👤';
+                let redPlayerName = `Player ${i + 1}`;
+                if (playerData.red && playerData.red[i]) {
+                    const player = getPlayerInfo(playerData.red[i]);
+                    if (player) {
+                        redPlayerSprite = `<img src="assets/sprites/${player.sprite}" onerror="this.parentElement.innerHTML='👤'">`;
+                        redPlayerName = player.name;
+                    }
+                }
+
+                // Get player info for blue team
+                let bluePlayerSprite = '👤';
+                let bluePlayerName = `Player ${i + 1}`;
+                if (playerData.blue && playerData.blue[i]) {
+                    const player = getPlayerInfo(playerData.blue[i]);
+                    if (player) {
+                        bluePlayerSprite = `<img src="assets/sprites/${player.sprite}" onerror="this.parentElement.innerHTML='👤'">`;
+                        bluePlayerName = player.name;
+                    }
+                }
+
+                // Build players row HTML
+                redPlayersHTML += `
+                    <div class="player-character red">
+                        <div class="player-sprite">${redPlayerSprite}</div>
+                        <div class="player-character-name">${redPlayerName}</div>
+                        <div class="player-character-keys">${redKeys[0].toUpperCase()} + ${redKeys[1].toUpperCase()}</div>
+                    </div>
+                `;
+
+                bluePlayersHTML += `
+                    <div class="player-character blue">
+                        <div class="player-sprite">${bluePlayerSprite}</div>
+                        <div class="player-character-name">${bluePlayerName}</div>
+                        <div class="player-character-keys">${blueKeys[0].toUpperCase()} + ${blueKeys[1].toUpperCase()}</div>
+                    </div>
+                `;
+            }
+
+            // Populate players row
+            playersRow.innerHTML = `
+                <div class="team-players red">${redPlayersHTML}</div>
+                <div class="team-players blue">${bluePlayersHTML}</div>
+            `;
+        }
 
         // CORE LOGIC
         function startMatch() {
@@ -737,10 +873,9 @@
         function startRound() {
             state.running = true;
             state.ballPos = 50;
-            state.burst = { red: 0, blue: 0 };
             state.time = 45;
             state.lastKeys = { red: {}, blue: {} };
-            
+
             updateUI();
             
             state.timerInterval = setInterval(() => {
@@ -824,17 +959,6 @@
                 document.getElementById(`red-dot-${i}`).className = `round-dot ${i < state.wins.red ? 'won' : ''}`;
                 document.getElementById(`blue-dot-${i}`).className = `round-dot ${i < state.wins.blue ? 'won' : ''}`;
             }
-
-            // Burst Bars
-            document.getElementById('burst-red').style.width = `${state.burst.red}%`;
-            document.getElementById('burst-blue').style.width = `${state.burst.blue}%`;
-            
-            // Burst Active Classes
-            if(state.burst.red >= 100) document.getElementById('burst-red').classList.add('ready');
-            else document.getElementById('burst-red').classList.remove('ready');
-            
-            if(state.burst.blue >= 100) document.getElementById('burst-blue').classList.add('ready');
-            else document.getElementById('burst-blue').classList.remove('ready');
         }
 
         // INPUT HANDLING
@@ -848,13 +972,11 @@
             config.keys.red.pairs.forEach((pair, idx) => {
                 if(pair.includes(k)) handlePull('red', idx, k);
             });
-            if(e.key === config.keys.red.burst) activateBurst('red');
 
             // Handle Blue Keys
             config.keys.blue.pairs.forEach((pair, idx) => {
                 if(pair.includes(k)) handlePull('blue', idx, k);
             });
-            if(e.key === config.keys.blue.burst) activateBurst('blue');
         });
 
         document.addEventListener('keyup', (e) => {
@@ -884,7 +1006,7 @@
             // Logic
             let power = config.pullPower;
             const weight = config.weights[Math.min(state.round-1, 2)];
-            
+
             // Rhythm check
             const pair = config.keys[team].pairs[pairIdx];
             const otherKey = pair[0] === key ? pair[1] : pair[0];
@@ -893,36 +1015,18 @@
             }
             state.lastKeys[team][pairIdx] = key;
 
-            // Burst check
-            if(state.burstActive[team]) power *= config.burstMultiplier;
-
             // Apply weight resistance
-            const realPower = power * (100 / weight); 
+            const realPower = power * (100 / weight);
 
             // Move Ball
             if(team === 'red') state.ballPos -= realPower;
             else state.ballPos += realPower;
-
-            // Charge Burst
-            state.burst[team] = Math.min(100, state.burst[team] + config.burstCharge);
 
             updateUI();
 
             // Win Condition
             if(state.ballPos <= config.winThreshold) endRound('red');
             if(state.ballPos >= 100 - config.winThreshold) endRound('blue');
-        }
-
-        function activateBurst(team) {
-            if(state.burst[team] < 100 || state.burstActive[team]) return;
-            state.burst[team] = 0;
-            state.burstActive[team] = true;
-            ball.classList.add('bursting');
-            setTimeout(() => {
-                state.burstActive[team] = false;
-                ball.classList.remove('bursting');
-            }, config.burstDuration);
-            updateUI();
         }
 
         function createParticles(winner) {
@@ -943,6 +1047,9 @@
         function devSkip() {
             endGame('red');
         }
+
+        // Initialize player controls on load
+        renderPlayerControls();
 
     </script>
 </body>

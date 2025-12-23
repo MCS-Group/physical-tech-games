@@ -87,6 +87,71 @@
             margin-top: 5px;
         }
 
+        /* Player Characters Row */
+        .players-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 20px 15px 20px;
+        }
+
+        .team-players {
+            display: flex;
+            gap: 12px;
+        }
+
+        .team-players.blue {
+            flex-direction: row-reverse;
+        }
+
+        .player-character {
+            text-align: center;
+        }
+
+        .player-sprite {
+            width: 70px;
+            height: 85px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            border: 3px solid;
+            overflow: hidden;
+        }
+
+        .player-character.red .player-sprite {
+            background: linear-gradient(180deg, var(--team-red), #aa1133);
+            border-color: #ff6688;
+            box-shadow: 0 0 12px rgba(255,45,85,0.5);
+        }
+
+        .player-character.blue .player-sprite {
+            background: linear-gradient(180deg, var(--team-blue), #0088aa);
+            border-color: #66ddff;
+            box-shadow: 0 0 12px rgba(0,212,255,0.5);
+        }
+
+        .player-sprite img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .player-character-name {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.4rem;
+            color: #ccc;
+            margin-bottom: 3px;
+        }
+
+        .player-character-key {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.6rem;
+            color: var(--gold);
+            font-weight: bold;
+        }
+
         .game-area {
             display: flex;
             gap: 15px;
@@ -1069,6 +1134,11 @@
             <div class="subtitle">GAME 4: CASTLE CONQUEST</div>
         </div>
 
+        <!-- Player Characters Row -->
+        <div class="players-row" id="players-row">
+            <!-- Will be populated by JavaScript -->
+        </div>
+
         <div class="game-area">
             <!-- Team Red Section -->
             <div class="team-section red">
@@ -1191,10 +1261,22 @@
         <button class="start-btn" id="start-btn">START CONQUEST</button>
     </div>
 
+    <script src="players.js"></script>
     <script src="audio-manager.js"></script>
     <script>
         // Initialize audio manager (music will start on button click)
         audioManager.initialize();
+
+        // Tournament integration - load match data
+        const playerData = { red: [], blue: [] };
+
+        // Get player info helper
+        function getPlayerInfo(playerId) {
+            if (typeof PLAYERS !== 'undefined' && PLAYERS[playerId]) {
+                return PLAYERS[playerId];
+            }
+            return null;
+        }
 
         // Pre-designed 20x20 maze
         const mazeTemplate = [
@@ -1265,7 +1347,7 @@
                     sequence: [],
                     sequenceIndex: 0,
                     finished: false,
-                    finishTime: nullqqqqqwwwwiiiijjjilijiljjl
+                    finishTime: null
                 },
                 blue: {
                     maze: mirrorMaze(mazeTemplate),
@@ -1293,9 +1375,67 @@
             return null;
         }
 
-        const timerEl = document.getElementById('timer');
-        const gameOverlay = document.getElementById('game-overlay');
-        const startBtn = document.getElementById('start-btn');
+        let timerEl, gameOverlay, startBtn;
+
+        // Render player characters
+        function renderPlayerControls() {
+            const playersRow = document.getElementById('players-row');
+
+            const keyDirections = {
+                red: ['W (UP)', 'A (LEFT)', 'S (DOWN)', 'D (RIGHT)'],
+                blue: ['I (UP)', 'J (LEFT)', 'K (DOWN)', 'L (RIGHT)']
+            };
+
+            let redPlayersHTML = '';
+            let bluePlayersHTML = '';
+
+            for (let i = 0; i < 4; i++) {
+                // Get player info for red team
+                let redPlayerSprite = '👤';
+                let redPlayerName = `Player ${i + 1}`;
+                if (playerData.red && playerData.red[i]) {
+                    const player = getPlayerInfo(playerData.red[i]);
+                    if (player) {
+                        redPlayerSprite = `<img src="assets/sprites/${player.sprite}" onerror="this.parentElement.innerHTML='👤'">`;
+                        redPlayerName = player.name;
+                    }
+                }
+
+                // Get player info for blue team
+                let bluePlayerSprite = '👤';
+                let bluePlayerName = `Player ${i + 1}`;
+                if (playerData.blue && playerData.blue[i]) {
+                    const player = getPlayerInfo(playerData.blue[i]);
+                    if (player) {
+                        bluePlayerSprite = `<img src="assets/sprites/${player.sprite}" onerror="this.parentElement.innerHTML='👤'">`;
+                        bluePlayerName = player.name;
+                    }
+                }
+
+                // Build players row HTML
+                redPlayersHTML += `
+                    <div class="player-character red">
+                        <div class="player-sprite">${redPlayerSprite}</div>
+                        <div class="player-character-name">${redPlayerName}</div>
+                        <div class="player-character-key">${keyDirections.red[i]}</div>
+                    </div>
+                `;
+
+                bluePlayersHTML += `
+                    <div class="player-character blue">
+                        <div class="player-sprite">${bluePlayerSprite}</div>
+                        <div class="player-character-name">${bluePlayerName}</div>
+                        <div class="player-character-key">${keyDirections.blue[i]}</div>
+                    </div>
+                `;
+            }
+
+            // Populate players row
+            playersRow.innerHTML = `
+                <div class="team-players red">${redPlayersHTML}</div>
+                <div class="team-players blue">${bluePlayersHTML}</div>
+            `;
+        }
 
         function renderMaze(team) {
             const mazeEl = document.getElementById(`maze-${team}`);
@@ -1766,6 +1906,9 @@
             const stored = localStorage.getItem('currentMatch');
             if (stored) {
                 matchData = JSON.parse(stored);
+                // Load player data
+                if (matchData.redPlayers) playerData.red = matchData.redPlayers;
+                if (matchData.bluePlayers) playerData.blue = matchData.bluePlayers;
             }
         } catch (e) {
             console.log('No match data found, running in standalone mode');
@@ -1857,10 +2000,19 @@
 
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('keyup', handleKeyUp);
+
+        // Initialize DOM elements and event listeners after DOM is loaded
+        timerEl = document.getElementById('timer');
+        gameOverlay = document.getElementById('game-overlay');
+        startBtn = document.getElementById('start-btn');
+
         startBtn.addEventListener('click', () => {
             initGame();
             startCountdown();
         });
+
+        // Render player controls
+        renderPlayerControls();
 
         initGame();
     </script>

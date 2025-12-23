@@ -1145,13 +1145,20 @@
             // Determine flow
             if (currentMatchups.length > 0) {
                 currentMatchIndex = existingResults.length;
-                
+
                 // Check if all matches are done
                 if (currentMatchIndex >= currentMatchups.length && currentMatchIndex >= config.matches) {
                     window.location.href = 'index.html';
                     return;
                 }
-                
+
+                // For Game 4, show intro screen first even if matchups exist
+                if (currentGame === 4 && !sessionStorage.getItem('game4IntroShown')) {
+                    sessionStorage.setItem('game4IntroShown', 'true');
+                    showScreen('introScreen');
+                    return;
+                }
+
                 // Show matchups screen directly
                 showMatchups();
                 return;
@@ -1235,12 +1242,12 @@
                 currentMatchups = generateMatchups(currentGame);
             }
 
-            // Game 4 Special Intro
-            if (currentGame === 4 && !sessionStorage.getItem('game4IntroPlayed')) {
+            // Game 4 Special Split Animation (after intro screen)
+            if (currentGame === 4 && !sessionStorage.getItem('game4SplitPlayed')) {
                 // Ensure we have matchups generated first so we know who is fighting
                 if (currentMatchups.length === 0) currentMatchups = generateMatchups(currentGame);
-                
-                sessionStorage.setItem('game4IntroPlayed', 'true');
+
+                sessionStorage.setItem('game4SplitPlayed', 'true');
                 renderMatchups(); // Render in background
                 playGame4Intro();
                 return;

@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHYSICAL: TECH - Scaled Layout Test</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Press+Start+2P&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a1a;
+            overflow: auto;
+            font-family: 'Press Start 2P', cursive;
+            color: #fff;
+            padding: 20px;
+        }
+
+        /* Container that holds the scaled version */
+        .scale-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 0;
+        }
+
+        /* The actual 3328x1024 layout - will be scaled down */
+        .fullscreen-layout {
+            width: 3328px;
+            height: 1024px;
+            transform-origin: top center;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+            border: 3px solid #ffd700;
+        }
+
+        .layout-container {
+            width: 3328px;
+            height: 1024px;
+            display: flex;
+            position: relative;
+            background: #000;
+        }
+
+        /* Side panels */
+        .side-panel {
+            height: 1024px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .side-panel.left {
+            width: 768px;
+            background: linear-gradient(
+                90deg,
+                #000000 0%,
+                #1a0a0a 20%,
+                rgba(255, 45, 85, 0.15) 80%,
+                rgba(255, 45, 85, 0.25) 100%
+            );
+        }
+
+        .side-panel.right {
+            width: 768px;
+            background: linear-gradient(
+                270deg,
+                #000000 0%,
+                #0a0a1a 20%,
+                rgba(0, 212, 255, 0.15) 80%,
+                rgba(0, 212, 255, 0.25) 100%
+            );
+        }
+
+        /* Animated effects */
+        .side-panel::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+            pointer-events: none;
+        }
+
+        .side-panel.left::before {
+            background:
+                radial-gradient(ellipse at 80% 20%, rgba(255, 45, 85, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(255, 45, 85, 0.2) 0%, transparent 50%);
+            animation: pulseRed 4s ease-in-out infinite;
+        }
+
+        .side-panel.right::before {
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(0, 212, 255, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 80%, rgba(0, 212, 255, 0.2) 0%, transparent 50%);
+            animation: pulseBlue 4s ease-in-out infinite;
+        }
+
+        @keyframes pulseRed {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes pulseBlue {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Game area */
+        .game-area {
+            width: 1792px;
+            height: 1024px;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Divider lines */
+        .divider {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(
+                180deg,
+                transparent 0%,
+                rgba(255, 215, 0, 0.3) 20%,
+                rgba(255, 215, 0, 0.5) 50%,
+                rgba(255, 215, 0, 0.3) 80%,
+                transparent 100%
+            );
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            z-index: 10;
+        }
+
+        .divider.left {
+            left: 768px;
+        }
+
+        .divider.right {
+            right: 768px;
+        }
+
+        /* Panel labels */
+        .panel-label {
+            font-size: 3rem;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            letter-spacing: 10px;
+            opacity: 0.15;
+            text-shadow: 0 0 20px currentColor;
+            position: absolute;
+        }
+
+        .side-panel.left .panel-label {
+            color: #ff2d55;
+        }
+
+        .side-panel.right .panel-label {
+            color: #00d4ff;
+        }
+
+        /* Info display in center */
+        .center-info {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px 60px;
+            border: 3px solid #ffd700;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 1200px;
+        }
+
+        .center-title {
+            font-size: 4rem;
+            color: #ffd700;
+            margin-bottom: 30px;
+            text-shadow: 0 0 30px #ffd700;
+        }
+
+        .dimension-display {
+            font-size: 2.5rem;
+            color: #fff;
+            margin: 20px 0;
+        }
+
+        .section-info {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+            gap: 30px;
+        }
+
+        .section-box {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .section-box.left {
+            border-color: #ff2d55;
+            color: #ff2d55;
+        }
+
+        .section-box.center {
+            border-color: #ffd700;
+            color: #ffd700;
+        }
+
+        .section-box.right {
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        .section-name {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .section-size {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        /* Info panel above layout */
+        .info-panel {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px 40px;
+            border: 3px solid #ffd700;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .info-title {
+            font-size: 1.5rem;
+            color: #ffd700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .info-content {
+            font-size: 0.7rem;
+            line-height: 2;
+            color: #fff;
+        }
+
+        .scale-info {
+            color: #00ff00;
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.8rem;
+        }
+
+        .warning-box {
+            background: rgba(255, 153, 0, 0.1);
+            border: 2px solid #ff9900;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.65rem;
+            line-height: 1.8;
+            color: #ff9900;
+        }
+
+        .check-mark {
+            color: #00ff00;
+            font-size: 2rem;
+            margin-right: 10px;
+        }
+
+        .instructions {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #ffd700;
+            padding: 20px 40px;
+            border-radius: 10px;
+            margin-top: 30px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 0.65rem;
+            line-height: 2;
+        }
+
+        .instructions-title {
+            font-size: 1rem;
+            color: #ffd700;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .step {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="info-panel">
+        <div class="info-title">
+            SCALED PREVIEW FOR TESTING ON REGULAR MONITOR
+        </div>
+        <div class="info-content">
+            <span class="check-mark">✓</span> You are viewing a SCALED-DOWN version of your 3328×1024 event display<br>
+            <span class="check-mark">✓</span> This fits on your Dell monitor so you can see the entire layout<br>
+            <span class="check-mark">✓</span> At the event, this will be FULL SIZE on your 3328×1024 screen
+        </div>
+        <div class="scale-info">
+            Scale: <span id="scaleValue">Calculating...</span>
+        </div>
+        <div class="warning-box">
+            ⚠️ NOTE: This is just for PREVIEW. On your actual event screen, everything will be full size and crystal clear!
+        </div>
+    </div>
+
+    <div class="scale-wrapper">
+        <div class="fullscreen-layout" id="fullscreenLayout">
+            <div class="layout-container">
+                <!-- Left panel -->
+                <div class="side-panel left">
+                    <div class="panel-label">TEAM RED</div>
+                </div>
+
+                <!-- Divider -->
+                <div class="divider left"></div>
+
+                <!-- Center game area -->
+                <div class="game-area">
+                    <div class="center-info">
+                        <div class="center-title">GAME AREA</div>
+                        <div class="dimension-display">3328 × 1024 Total Display</div>
+
+                        <div class="section-info">
+                            <div class="section-box left">
+                                <div class="section-name">LEFT</div>
+                                <div class="section-size">768px</div>
+                            </div>
+                            <div class="section-box center">
+                                <div class="section-name">CENTER</div>
+                                <div class="section-size">1792px</div>
+                            </div>
+                            <div class="section-box right">
+                                <div class="section-name">RIGHT</div>
+                                <div class="section-size">768px</div>
+                            </div>
+                        </div>
+
+                        <div style="font-size: 1.2rem; margin-top: 30px; color: #ffd700;">
+                            Your games will display<br>in this center area!
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="divider right"></div>
+
+                <!-- Right panel -->
+                <div class="side-panel right">
+                    <div class="panel-label">TEAM BLUE</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <div class="instructions-title">WHAT YOU'RE SEEING</div>
+        <div class="step">1. The layout above shows ALL THREE sections of your event display</div>
+        <div class="step">2. Left panel (768px wide) - Red gradient background</div>
+        <div class="step">3. Center panel (1792px wide) - Where your games will display</div>
+        <div class="step">4. Right panel (768px wide) - Blue gradient background</div>
+        <div class="step" style="margin-top: 20px; color: #ffd700;">
+            ✓ If you can see all three sections clearly, your layout is working perfectly!
+        </div>
+        <div class="step" style="margin-top: 20px; color: #00ff00;">
+            ✓ At your event, use "fullscreen-wrapper.html" and press F11 for the actual full-size display
+        </div>
+    </div>
+
+    <script>
+        // Calculate and apply scale to fit the layout on screen
+        function scaleLayout() {
+            const layout = document.getElementById('fullscreenLayout');
+            const wrapper = document.querySelector('.scale-wrapper');
+
+            // Get available space (minus padding)
+            const availableWidth = window.innerWidth - 100; // 50px padding on each side
+            const availableHeight = window.innerHeight - 400; // Space for info panels
+
+            // Original size
+            const originalWidth = 3328;
+            const originalHeight = 1024;
+
+            // Calculate scale factors
+            const scaleX = availableWidth / originalWidth;
+            const scaleY = availableHeight / originalHeight;
+
+            // Use the smaller scale to fit both dimensions
+            const scale = Math.min(scaleX, scaleY, 0.5); // Max 50% to ensure it's readable
+
+            // Apply scale
+            layout.style.transform = `scale(${scale})`;
+
+            // Update scale display
+            const percentage = Math.round(scale * 100);
+            document.getElementById('scaleValue').textContent = `${percentage}% of actual size`;
+
+            console.log('Scale applied:', percentage + '%');
+            console.log('Actual event size will be: 3328 × 1024 (100%)');
+        }
+
+        // Apply scale on load and resize
+        scaleLayout();
+        window.addEventListener('resize', scaleLayout);
+
+        // Log helpful info
+        console.log('===========================================');
+        console.log('PHYSICAL: TECH - Layout Test');
+        console.log('===========================================');
+        console.log('What you see: Scaled down version for preview');
+        console.log('Event display: Full size 3328 × 1024');
+        console.log('Your monitor:', window.innerWidth, '×', window.innerHeight);
+        console.log('===========================================');
+        console.log('Next step: Use fullscreen-wrapper.html at event');
+        console.log('===========================================');
+    </script>
+</body>
+</html>
