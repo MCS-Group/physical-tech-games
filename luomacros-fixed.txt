@@ -1,0 +1,129 @@
+-- Device assignments
+lmc_assign_keyboard('PILLOW1')
+lmc_device_set_name('PILLOW1', 4918225)
+lmc_assign_keyboard('PILLOW2')
+lmc_device_set_name('PILLOW2', 21955397)
+lmc_assign_keyboard('PILLOW3')
+lmc_device_set_name('PILLOW3', 97913507)
+lmc_assign_keyboard('PILLOW4')
+lmc_device_set_name('PILLOW4', 6163461)
+lmc_assign_keyboard('PILLOW5')
+lmc_device_set_name('PILLOW5', 262261)
+lmc_assign_keyboard('PILLOW6')
+lmc_device_set_name('PILLOW6', 196681)
+lmc_assign_keyboard('PILLOW7')
+lmc_device_set_name('PILLOW7', 983667)
+lmc_assign_keyboard('PILLOW8')
+lmc_device_set_name('PILLOW8', 196727)
+lmc_assign_keyboard('PILLOW9')
+lmc_device_set_name('PILLOW9', 5311389)
+lmc_assign_keyboard('PILLOW10')
+lmc_device_set_name('PILLOW10', 7015221)
+lmc_assign_keyboard('PILLOW11')
+lmc_device_set_name('PILLOW11', 5049403)
+lmc_assign_keyboard('PILLOW12')
+lmc_device_set_name('PILLOW12', 244122307)
+
+-- FIXED: direction logic is inverted
+-- direction == 1 means pillow is PRESSED (send KEYDOWN)
+-- direction == 0 means pillow is RELEASED (send KEYUP)
+
+lmc_set_handler('PILLOW1', function(button, direction)
+    if direction == 1 then
+        lmc_send_input(81, 0, 0)  -- Q key DOWN
+    else
+        lmc_send_input(81, 0, 2)  -- Q key UP
+    end
+end)
+
+lmc_set_handler('PILLOW2', function(button, direction)
+    if direction == 1 then
+        lmc_send_input(65, 0, 0)  -- A key DOWN
+    else
+        lmc_send_input(65, 0, 2)  -- A key UP
+    end
+end)
+
+lmc_set_handler('PILLOW3', function(button, direction)
+    if direction == 1 then
+        lmc_send_input(87, 0, 0)  -- W key DOWN
+    else
+        lmc_send_input(87, 0, 2)  -- W key UP
+    end
+end)
+
+lmc_set_handler('PILLOW4', function(button, direction)
+    if direction == 1 then
+        lmc_send_input(83, 0, 0)  -- S key DOWN
+    else
+        lmc_send_input(83, 0, 2)  -- S key UP
+    end
+end)
+
+lmc_set_handler('PILLOW5', function(button, direction)
+    if direction == 1 then
+        lmc_send_input(69, 0, 0)  -- E key DOWN
+    else
+        lmc_send_input(69, 0, 2)  -- E key UP
+    end
+end)
+
+lmc_set_handler('PILLOW6', function(button, direction)
+    if direction == 1 then
+        lmc_send_input(68, 0, 0)  -- D key DOWN
+    else
+        lmc_send_input(68, 0, 2)  -- D key UP
+    end
+end)
+
+lmc_set_handler('PILLOW7', function(button, direction)
+    if direction == 1 then
+        lmc_send_input(85, 0, 0)  -- U key DOWN
+    else
+        lmc_send_input(85, 0, 2)  -- U key UP
+    end
+end)
+
+lmc_set_handler('PILLOW8', function(button, direction)
+    if direction == 1 then
+        lmc_send_input(74, 0, 0)  -- J key DOWN
+    else
+        lmc_send_input(74, 0, 2)  -- J key UP
+    end
+end)
+
+lmc_set_handler('PILLOW9', function(button, direction)
+    if direction == 1 then
+        lmc_send_input(73, 0, 0)  -- I key DOWN
+    else
+        lmc_send_input(73, 0, 2)  -- I key UP
+    end
+end)
+
+lmc_set_handler('PILLOW10', function(button, direction)
+    if direction == 1 then
+        lmc_send_input(75, 0, 0)  -- K key DOWN
+    else
+        lmc_send_input(75, 0, 2)  -- K key UP
+    end
+end)
+
+lmc_set_handler('PILLOW11', function(button, direction)
+    if direction == 1 then
+        lmc_send_input(79, 0, 0)  -- O key DOWN
+    else
+        lmc_send_input(79, 0, 2)  -- O key UP
+    end
+end)
+
+lmc_set_handler('PILLOW12', function(button, direction)
+    if direction == 1 then
+        lmc_send_input(76, 0, 0)  -- L key DOWN
+    else
+        lmc_send_input(76, 0, 2)  -- L key UP
+    end
+end)
+
+print('Ready! Pillows configured correctly for both Game 1 & Game 2')
+print('Press and HOLD = continuous key press (Game 2)')
+print('Quick TAP = single key press (Game 1)')

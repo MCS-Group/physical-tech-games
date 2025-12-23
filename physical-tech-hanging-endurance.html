@@ -1112,9 +1112,7 @@
             gripRecoveryRate: 8,       // per second when inside (faster!)
             perfectRecoveryRate: 12,   // When very centered (bonus!)
             perfectRadius: 25,         // Radius for perfect recovery (slightly bigger)
-            reticleSpeed: 1.5,         // Movement speed with keys (easier - was 2.5)
-            reticleInertia: 0.88,      // Momentum (lower = more slippery)
-            reticleMaxSpeed: 6,        // Max velocity
+            reticleSpeed: 1.5,         // Movement speed with keys (constant speed, no acceleration)
             deadZoneSpawnInterval: { min: 10000, max: 18000 }, // Less frequent
             deadZoneSize: { min: 25, max: 40 },
             deadZoneDuration: 5000,    // Shorter duration
@@ -1143,7 +1141,6 @@
                     times: [0, 0, 0, 0],
                     totalTime: 0,
                     reticle: { x: 250, y: 175 },
-                    velocity: { x: 0, y: 0 },
                     zoneCenter: { x: 250, y: 175 },
                     zoneTargetCenter: { x: 250, y: 175 },
                     zoneSize: config.initialZoneSize,
@@ -1160,7 +1157,6 @@
                     times: [0, 0, 0, 0],
                     totalTime: 0,
                     reticle: { x: 250, y: 175 },
-                    velocity: { x: 0, y: 0 },
                     zoneCenter: { x: 250, y: 175 },
                     zoneTargetCenter: { x: 250, y: 175 },
                     zoneSize: config.initialZoneSize,
@@ -1260,7 +1256,6 @@
             ['red', 'blue'].forEach(team => {
                 const teamState = state.teams[team];
                 teamState.reticle = { x: 250, y: 175 };
-                teamState.velocity = { x: 0, y: 0 };
                 teamState.zoneCenter = { x: 250, y: 175 };
                 teamState.zoneTargetCenter = { x: 250, y: 175 };
                 teamState.zoneSize = config.initialZoneSize;
@@ -1632,67 +1627,45 @@
         function updateReticlePhysics(team) {
             const teamState = state.teams[team];
             const keyMap = config.keyMap[team];
-            
+
             // Map actual keys to directions
             const directions = { up: false, down: false, left: false, right: false };
-            
+
+            // Check each pressed key and map to direction
             for (const key in teamState.keysPressed) {
-                if (teamState.keysPressed[key]) {
-                    const direction = keyMap[key.toLowerCase().replace('key', '')] || keyMap[key.toLowerCase()]; // Try to match by char or code
-                    
-                    // Fallback for code-based mapping in config
-                    for (const [k, dir] of Object.entries(keyMap)) {
-                        if (('Key' + k.toUpperCase()) === key || k === key) {
-                            directions[dir] = true;
-                        }
-                    }
+                if (teamState.keysPressed[key] && keyMap[key]) {
+                    directions[keyMap[key]] = true;
                 }
             }
 
-            // Apply keyboard input to velocity
+            // Direct movement at constant speed (no acceleration)
+            let moveX = 0;
+            let moveY = 0;
+
             if (directions.up) {
-                teamState.velocity.y -= config.reticleSpeed;
+                moveY -= config.reticleSpeed;
             }
             if (directions.down) {
-                teamState.velocity.y += config.reticleSpeed;
+                moveY += config.reticleSpeed;
             }
             if (directions.left) {
-                teamState.velocity.x -= config.reticleSpeed;
+                moveX -= config.reticleSpeed;
             }
             if (directions.right) {
-                teamState.velocity.x += config.reticleSpeed;
+                moveX += config.reticleSpeed;
             }
 
-            // Apply wind force (reduced impact)
-            teamState.velocity.x += teamState.windForce.x * 0.05;
-            teamState.velocity.y += teamState.windForce.y * 0.05;
+            // Apply wind force directly to movement
+            moveX += teamState.windForce.x * 0.05;
+            moveY += teamState.windForce.y * 0.05;
 
-            // Apply inertia (friction)
-            teamState.velocity.x *= config.reticleInertia;
-            teamState.velocity.y *= config.reticleInertia;
-
-            // Clamp velocity
-            const speed = Math.sqrt(teamState.velocity.x ** 2 + teamState.velocity.y ** 2);
-            if (speed > config.reticleMaxSpeed) {
-                teamState.velocity.x = (teamState.velocity.x / speed) * config.reticleMaxSpeed;
-                teamState.velocity.y = (teamState.velocity.y / speed) * config.reticleMaxSpeed;
-            }
-
-            // Update position
-            teamState.reticle.x += teamState.velocity.x;
-            teamState.reticle.y += teamState.velocity.y;
+            // Update position directly
+            teamState.reticle.x += moveX;
+            teamState.reticle.y += moveY;
 
             // Clamp to bounds (500x350 area)
             teamState.reticle.x = Math.max(20, Math.min(480, teamState.reticle.x));
             teamState.reticle.y = Math.max(20, Math.min(330, teamState.reticle.y));
-
-            // Bounce off walls
-            if (teamState.reticle.x <= 20 || teamState.reticle.x >= 480) {
-                teamState.velocity.x *= -0.5;
-            }
-            if (teamState.reticle.y <= 20 || teamState.reticle.y >= 330) {
-                teamState.velocity.y *= -0.5;
-            }
 
             updateReticle(team);
         }
@@ -1797,6 +1770,7 @@
         // Handle keyboard input
         function handleKeyDown(e) {
             const key = e.key.toLowerCase();
+            console.log('KEYDOWN:', key, 'keyCode:', e.keyCode, 'code:', e.code);
 
             ['red', 'blue'].forEach(team => {
                 const keys = config.keys[team];
@@ -1805,11 +1779,10 @@
                 // Check if this key belongs to this team
                 if (keys.includes(key)) {
                     e.preventDefault();
-                    // Store the key code directly (e.g. 'keyw', 'keyi') or the char if simpler
-                    // Using 'key' + char to match your config logic if needed, but config.keys has chars
-                    teamState.keysPressed['Key' + key.toUpperCase()] = true; 
-                    // Also store just the char for flexibility
+
+                    // Simply set the key as pressed (for LuaMacros physical pillows)
                     teamState.keysPressed[key] = true;
+                    console.log(`  → Set ${team} keysPressed['${key}'] = true`);
 
                     // Visual feedback - glow effect on player list keys
                     const keyEl = document.getElementById(`key-indicator-${key}`);
@@ -1823,14 +1796,16 @@
 
         function handleKeyUp(e) {
             const key = e.key.toLowerCase();
+            console.log('KEYUP:', key, 'keyCode:', e.keyCode, 'code:', e.code);
 
             ['red', 'blue'].forEach(team => {
                 const keys = config.keys[team];
                 const teamState = state.teams[team];
 
                 if (keys.includes(key)) {
-                    teamState.keysPressed['Key' + key.toUpperCase()] = false;
+                    // Clear the key pressed state
                     teamState.keysPressed[key] = false;
+                    console.log(`  → Set ${team} keysPressed['${key}'] = false`);
 
                     // Visual feedback
                     const keyEl = document.getElementById(`key-indicator-${key}`);
@@ -1972,7 +1947,6 @@
                 times: [0, 0],
                 totalTime: 0,
                 reticle: { x: 250, y: 175 },
-                velocity: { x: 0, y: 0 },
                 zoneCenter: { x: 250, y: 175 },
                 zoneTargetCenter: { x: 250, y: 175 },
                 zoneSize: config.initialZoneSize,
@@ -1989,7 +1963,6 @@
                 times: [0, 0],
                 totalTime: 0,
                 reticle: { x: 250, y: 175 },
-                velocity: { x: 0, y: 0 },
                 zoneCenter: { x: 250, y: 175 },
                 zoneTargetCenter: { x: 250, y: 175 },
                 zoneSize: config.initialZoneSize,
