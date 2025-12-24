@@ -860,6 +860,28 @@
             }
         });
 
+        // Listen for admin control changes from scoreboard.html
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'physicalTechTournament') {
+                const state = getState();
+
+                // Handle tournament reset
+                if (state.tournamentStarted === false) {
+                    console.log('Admin reset tournament');
+                    location.reload();
+                }
+
+                // Handle force refresh
+                if (state.lastRefresh) {
+                    console.log('Admin triggered force refresh');
+                    location.reload();
+                }
+
+                // Re-render to show updated state
+                init();
+            }
+        });
+
         // Initialize on load
         init();
     </script>

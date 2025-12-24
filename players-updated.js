@@ -102,14 +102,14 @@ const PLAYERS = {
     86: { id: 86, name: "Сувд-Эрдэнэ", team: 11, department: "Хуулийн алба", position: "Хууль, эрсдэлийн зөвлөх", company: "MCST", gender: "эм", sprite: "../pixel_art_no_bg/MCST/Suvd-erdene_sprite.png" },
     87: { id: 87, name: "Маралгоо", team: 11, department: "Хуулийн алба", position: "Хуулийн мэргэжилтэн", company: "Dekrit", gender: "эм", sprite: "../pixel_art_no_bg/Dekrit/Maralgoo_sprite.png" },
 
-    88: { id: 88, name: "Болор", team: 6, department: "Вертикал Грийн Харвэст", position: "Гүйцэтгэх захирал", company: "VH", gender: "эм", sprite: "../pixel_art_no_bg/VH/Bolor_sprite.png" },
-    89: { id: 89, name: "Жавзандулам", team: 6, department: "Вертикал Грийн Харвэст", position: "Хүлэмж хариуцсан албаны дарга", company: "VH", gender: "Unknown", sprite: "../pixel_art_no_bg/VH/Javzandulam_sprite.png" },
-    90: { id: 90, name: "Буяндэлгэр", team: 6, department: "Вертикал Грийн Харвэст", position: "Агрономич", company: "VH", gender: "Unknown", sprite: "../pixel_art_no_bg/VH/Buyandelger_sprite.png" },
-    91: { id: 91, name: "Уранчимэг", team: 6, department: "Вертикал Грийн Харвэст", position: "Агрономич", company: "VH", gender: "Unknown", sprite: "../pixel_art_no_bg/VH/Uranchimeg_sprite.png" },
-    92: { id: 92, name: "Хонгорзул", team: 6, department: "Вертикал Грийн Харвэст", position: "Агрономич", company: "VH", gender: "Unknown", sprite: "../pixel_art_no_bg/VH/Khongorzul_sprite.png" },
-    93: { id: 93, name: "Нямсүрэн", team: 6, department: "Вертикал Грийн Харвэст", position: "Ахлах нягтлан бодогч", company: "VH", gender: "Unknown", sprite: "../pixel_art_no_bg/VH/Nyamsuren_sprite.png" },
-    95: { id: 95, name: "Жамбалдорж", team: 6, department: "Вертикал Грийн Харвэст", position: "Агрономич", company: "VH", gender: "Unknown", sprite: "no-picture" },
-    96: { id: 96, name: "Рэнцэнлхам", team: 6, department: "Вертикал Грийн Харвэст", position: "Бизнес хөгжил хариуцсан захирал", company: "VH", gender: "Unknown", sprite: "no-picture" },
+    88: { id: 88, name: "Болор", team: 6, department: "Хүлэмж", position: "Гүйцэтгэх захирал", company: "VH", gender: "эм", sprite: "../pixel_art_no_bg/VH/Bolor_sprite.png" },
+    89: { id: 89, name: "Жавзандулам", team: 6, department: "Хүлэмж", position: "Хүлэмж хариуцсан албаны дарга", company: "VH", gender: "Unknown", sprite: "../pixel_art_no_bg/VH/Javzandulam_sprite.png" },
+    90: { id: 90, name: "Буяндэлгэр", team: 6, department: "Хүлэмж", position: "Агрономич", company: "VH", gender: "Unknown", sprite: "../pixel_art_no_bg/VH/Buyandelger_sprite.png" },
+    91: { id: 91, name: "Уранчимэг", team: 6, department: "Хүлэмж", position: "Агрономич", company: "VH", gender: "Unknown", sprite: "../pixel_art_no_bg/VH/Uranchimeg_sprite.png" },
+    92: { id: 92, name: "Хонгорзул", team: 6, department: "Хүлэмж", position: "Агрономич", company: "VH", gender: "Unknown", sprite: "../pixel_art_no_bg/VH/Khongorzul_sprite.png" },
+    93: { id: 93, name: "Нямсүрэн", team: 6, department: "Хүлэмж", position: "Ахлах нягтлан бодогч", company: "VH", gender: "Unknown", sprite: "../pixel_art_no_bg/VH/Nyamsuren_sprite.png" },
+    95: { id: 95, name: "Жамбалдорж", team: 6, department: "Хүлэмж", position: "Агрономич", company: "VH", gender: "Unknown", sprite: "no-picture" },
+    96: { id: 96, name: "Рэнцэнлхам", team: 6, department: "Хүлэмж", position: "Бизнес хөгжил хариуцсан захирал", company: "VH", gender: "Unknown", sprite: "no-picture" },
 
     97: { id: 97, name: "Халиун", team: 15, department: "Системийн зөвлөх", position: "Ахлах зөвлөх үйлчилгээний ажилтан", company: "EM", gender: "Unknown", sprite: "../pixel_art_no_bg/EM/Халиун_sprite.png" },
     98: { id: 98, name: "Болор-Эрдэнэ", team: 15, department: "Системийн зөвлөх", position: "Ахлах зөвлөх үйлчилгээний ажилтан", company: "EM", gender: "Unknown", sprite: "../pixel_art_no_bg/EM/Болорэрдэнэ_sprite.png" },
@@ -181,13 +181,13 @@ const TEAMS = {
 // New pairings based on new order: 1&2, 10&8, 9&4, 7&12, 5&11, 6&15, 16&14, 3&13
 const COMBINED_TEAMS = {
     1: { id: 1, name: "Ширээ 1&2", originalTeams: [1, 2], members: [...TEAMS[1].members, ...TEAMS[2].members] },
-    2: { id: 2, name: "Ширээ 10&9", originalTeams: [10, 9], members: [...TEAMS[10].members, ...TEAMS[9].members] },
-    3: { id: 3, name: "Ширээ 5&4", originalTeams: [5, 4], members: [...TEAMS[5].members, ...TEAMS[4].members] },
-    4: { id: 4, name: "Ширээ 7&8", originalTeams: [7, 8], members: [...TEAMS[7].members, ...TEAMS[8].members] },
-    5: { id: 5, name: "Ширээ 12&11", originalTeams: [12, 11], members: [...TEAMS[12].members, ...TEAMS[11].members] },
-    6: { id: 6, name: "Ширээ 6&3", originalTeams: [6, 3], members: [...TEAMS[6].members, ...TEAMS[3].members] },
-    7: { id: 7, name: "Ширээ 16&15", originalTeams: [16, 15], members: [...TEAMS[16].members, ...TEAMS[15].members] },
-    8: { id: 8, name: "Ширээ 14&13", originalTeams: [14, 13], members: [...TEAMS[14].members, ...TEAMS[13].members] }
+    2: { id: 2, name: "Ширээ 10&8", originalTeams: [10, 8], members: [...TEAMS[10].members, ...TEAMS[8].members] },
+    3: { id: 3, name: "Ширээ 9&4", originalTeams: [9, 4], members: [...TEAMS[9].members, ...TEAMS[4].members] },
+    4: { id: 4, name: "Ширээ 7&12", originalTeams: [7, 12], members: [...TEAMS[7].members, ...TEAMS[12].members] },
+    5: { id: 5, name: "Ширээ 5&11", originalTeams: [5, 11], members: [...TEAMS[5].members, ...TEAMS[11].members] },
+    6: { id: 6, name: "Ширээ 6&15", originalTeams: [6, 15], members: [...TEAMS[6].members, ...TEAMS[15].members] },
+    7: { id: 7, name: "Ширээ 16&14", originalTeams: [16, 14], members: [...TEAMS[16].members, ...TEAMS[14].members] },
+    8: { id: 8, name: "Ширээ 3&13", originalTeams: [3, 13], members: [...TEAMS[3].members, ...TEAMS[13].members] }
 };
 
 // Game configuration (unchanged)

@@ -977,7 +977,7 @@
             justify-content: center;
             gap: 0; /* Start touching */
             opacity: 0;
-            animation: splitReveal 0.1s forwards 4s, splitAction 1.5s cubic-bezier(0.1, 0.7, 0.1, 1) forwards 4.2s;
+            animation: splitReveal 0.1s forwards 3.2s, splitAction 1.5s cubic-bezier(0.1, 0.7, 0.1, 1) forwards 3.3s;
             position: relative;
         }
 
@@ -1010,7 +1010,7 @@
             position: absolute;
             z-index: 3;
             opacity: 0;
-            animation: iconBlast 0.5s ease-out forwards 4.2s;
+            animation: iconBlast 0.5s ease-out forwards 3.3s;
             text-shadow: 0 0 50px white;
         }
 
@@ -1022,7 +1022,7 @@
             opacity: 0;
             pointer-events: none;
             z-index: 100;
-            animation: screenFlash 0.5s ease-out forwards 4.2s;
+            animation: screenFlash 0.5s ease-out forwards 3.3s;
         }
 
         @keyframes splitReveal {
@@ -1045,6 +1045,11 @@
         @keyframes screenFlash {
             0% { opacity: 1; }
             100% { opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 
@@ -1203,9 +1208,11 @@
 
         // Play Game 4 Intro Animation
         function playGame4Intro() {
+            console.log('[SPLIT ANIM] Starting playGame4Intro at', Date.now());
+
             const state = getState();
             const combinedTeamId = state.bracket.game3Winner;
-            
+
             if (!combinedTeamId) {
                 showMatchups();
                 return;
@@ -1215,22 +1222,122 @@
             const redTeam = TEAMS[combinedTeam.originalTeams[0]];
             const blueTeam = TEAMS[combinedTeam.originalTeams[1]];
 
-            document.getElementById('splitCombinedName').textContent = combinedTeam.name;
-            document.getElementById('splitTeam1').textContent = redTeam.name;
-            document.getElementById('splitTeam2').textContent = blueTeam.name;
+            console.log('[SPLIT ANIM] Teams:', redTeam.name, 'vs', blueTeam.name);
 
+            // SOLUTION: Completely replace the split screen HTML to force animation restart
+            const splitScreen = document.getElementById('splitScreen');
+
+            // Save the original HTML template
+            const freshHTML = `
+                <div class="split-flash"></div>
+                <div class="split-container">
+                    <h1 class="split-title">GAME 3 WINNER</h1>
+                    <div class="split-combined-name" id="splitCombinedName">${combinedTeam.name}</div>
+                    <div class="split-message" id="splitMessage">FRIENDS BECOME ENEMIES</div>
+                    <div class="split-teams">
+                        <div class="split-team red" id="splitTeam1">${redTeam.name}</div>
+                        <div class="split-icon">⚡</div>
+                        <div class="split-team blue" id="splitTeam2">${blueTeam.name}</div>
+                    </div>
+                </div>
+            `;
+
+            // Replace entire content - this forces all CSS animations to restart
+            splitScreen.innerHTML = freshHTML;
+            console.log('[SPLIT ANIM] HTML replaced at', Date.now());
+
+            // Show screen immediately
             showScreen('splitScreen');
-            playSound(100, 'sawtooth', 0.5); // Intro drone
+            console.log('[SPLIT ANIM] Screen shown at', Date.now());
 
-            // Timeline
-            setTimeout(() => playSound(300, 'sine', 0.2), 1000); // Name appear
-            setTimeout(() => playSound(100, 'square', 0.3), 2500); // Warning pulse
-            setTimeout(() => playSound(50, 'sawtooth', 0.5), 4000); // Split sound (heavy)
-            
+            // Log each element's animation state
+            const title = document.querySelector('.split-title');
+            const name = document.querySelector('.split-combined-name');
+            const message = document.querySelector('.split-message');
+            const teams = document.querySelector('.split-teams');
+
+            function logElementState(label, el) {
+                const styles = window.getComputedStyle(el);
+                console.log(`[${label}] opacity: ${styles.opacity}, animation: ${styles.animation}, display: ${styles.display}`);
+            }
+
+            console.log('=== INITIAL STATE ===');
+            logElementState('TITLE', title);
+            logElementState('NAME', name);
+            logElementState('MESSAGE', message);
+            logElementState('TEAMS', teams);
+
+            // Log state at key animation moments
+            setTimeout(() => {
+                console.log('=== AT 0.5s (Title should be fading in) ===');
+                logElementState('TITLE', title);
+            }, 500);
+
+            setTimeout(() => {
+                console.log('=== AT 1.5s (Name should be visible, fading in) ===');
+                logElementState('TITLE', title);
+                logElementState('NAME', name);
+            }, 1500);
+
+            setTimeout(() => {
+                console.log('=== AT 3s (Message should be visible) ===');
+                logElementState('MESSAGE', message);
+            }, 3000);
+
+            setTimeout(() => {
+                console.log('=== AT 3.5s (Teams should be splitting) ===');
+                logElementState('TEAMS', teams);
+            }, 3500);
+
+            // Epic intro rumble
+            playSound(60, 'sawtooth', 0.8);
+            playSound(80, 'triangle', 0.6);
+
+            // Timeline with energetic sounds
+            setTimeout(() => {
+                // Team name reveal - rising power
+                playSound(150, 'square', 0.15);
+                setTimeout(() => playSound(200, 'square', 0.15), 50);
+                setTimeout(() => playSound(250, 'square', 0.15), 100);
+            }, 1000);
+
+            setTimeout(() => {
+                // Warning - ominous tension build
+                playSound(80, 'sawtooth', 0.4);
+                playSound(120, 'triangle', 0.3);
+                // Rising siren effect
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => playSound(200 + i * 50, 'sine', 0.1), i * 100);
+                }
+            }, 2500);
+
+            setTimeout(() => {
+                // EXPLOSIVE SPLIT - Thunder crack!
+                // Deep bass hit
+                playSound(40, 'sawtooth', 0.3);
+                setTimeout(() => playSound(50, 'square', 0.25), 20);
+
+                // Thunder rumble (noise-like effect with multiple frequencies)
+                setTimeout(() => {
+                    playSound(100, 'sawtooth', 0.2);
+                    playSound(150, 'square', 0.15);
+                    playSound(200, 'triangle', 0.1);
+                }, 50);
+
+                // High crack/zap
+                setTimeout(() => {
+                    playSound(800, 'sine', 0.08);
+                    playSound(1200, 'sine', 0.06);
+                }, 80);
+
+                // Echoing rumble
+                setTimeout(() => playSound(70, 'sawtooth', 0.15), 150);
+            }, 3300);
+
             // End animation and go to matchups
             setTimeout(() => {
                 showScreen('matchupScreen');
-            }, 7000);
+            }, 5500);
         }
 
         // Show matchups screen
@@ -1243,15 +1350,23 @@
             }
 
             // Game 4 Special Split Animation (after intro screen)
-            if (currentGame === 4 && !sessionStorage.getItem('game4SplitPlayed')) {
+            if (currentGame === 4) {
+                console.log('[GAME FLOW] Game 4 split animation path triggered at', Date.now());
                 // Ensure we have matchups generated first so we know who is fighting
-                if (currentMatchups.length === 0) currentMatchups = generateMatchups(currentGame);
+                if (currentMatchups.length === 0) {
+                    console.log('[GAME FLOW] Generating matchups at', Date.now());
+                    currentMatchups = generateMatchups(currentGame);
+                    console.log('[GAME FLOW] Matchups generated at', Date.now());
+                }
 
-                sessionStorage.setItem('game4SplitPlayed', 'true');
-                renderMatchups(); // Render in background
+                // Show split animation immediately, render matchups in background
                 playGame4Intro();
+
+                // Defer renderMatchups to avoid blocking the split animation
+                setTimeout(() => renderMatchups(), 100);
                 return;
             }
+
 
             renderMatchups();
             showScreen('matchupScreen');
@@ -1756,6 +1871,38 @@
             // Start typing after a short delay
             setTimeout(typeNextChar, 500);
         }
+
+        // Listen for admin control changes from scoreboard.html
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'physicalTechTournament') {
+                const state = getState();
+
+                // Handle forced match setup from admin
+                if (state.currentMatchSetup && state.currentMatchSetup.redTeam && state.currentMatchSetup.blueTeam) {
+                    // Check if this is an admin override (matchIndex 99)
+                    if (state.currentMatchSetup.matchIndex === 99) {
+                        console.log('Admin forced match detected:', state.currentMatchSetup);
+
+                        // Navigate to preview screen
+                        currentGame = state.currentMatchSetup.game || currentGame;
+                        showPreview();
+                    }
+                }
+
+                // Handle game phase changes
+                if (state.currentGame && state.currentGame !== currentGame) {
+                    console.log('Admin changed game phase to:', state.currentGame);
+                    currentGame = state.currentGame;
+                    loadGame();
+                }
+
+                // Handle force refresh
+                if (state.lastRefresh) {
+                    console.log('Admin triggered force refresh');
+                    location.reload();
+                }
+            }
+        });
 
         init();
     </script>

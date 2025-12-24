@@ -7,7 +7,7 @@ class AudioManager {
     constructor() {
         this.bgMusic = null;
         this.bgMusicVolume = 0.2;
-        this.sfxVolume = 0.5;
+        this.sfxVolume = 0.6;
         this.isMuted = false;
         this.audioContext = null;
 

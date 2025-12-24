@@ -1,6 +1,0 @@
-This should be a default avatar image.
-For now, use any 64x64 pixel PNG image as a placeholder.
-You can:
-1. Use a generic avatar icon
-2. Use a silhouette
-3. Use your company logo
