@@ -1,7 +1,58 @@
 // PHYSICAL: TECH Tournament - State Management
-// Handles all tournament state via localStorage
+// Handles all tournament state via localStorage and WebSocket sync
 
 const STORAGE_KEY = 'physicalTechTournament';
+
+// WebSocket connection for multi-device sync
+let ws = null;
+let wsReconnectTimeout = null;
+
+function initWebSocket() {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}`;
+
+    try {
+        ws = new WebSocket(wsUrl);
+
+        ws.onopen = () => {
+            console.log('✅ Connected to tournament server');
+        };
+
+        ws.onmessage = (event) => {
+            try {
+                const message = JSON.parse(event.data);
+                if (message.type === 'state' && message.data) {
+                    // Update local state from server
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(message.data));
+                    window.dispatchEvent(new CustomEvent('tournamentStateChanged', { detail: message.data }));
+                }
+            } catch (e) {
+                console.error('Error processing WebSocket message:', e);
+            }
+        };
+
+        ws.onclose = () => {
+            console.log('❌ Disconnected from tournament server. Reconnecting...');
+            // Attempt to reconnect after 3 seconds
+            if (wsReconnectTimeout) clearTimeout(wsReconnectTimeout);
+            wsReconnectTimeout = setTimeout(initWebSocket, 3000);
+        };
+
+        ws.onerror = (error) => {
+            console.error('WebSocket error:', error);
+        };
+    } catch (e) {
+        console.error('Failed to initialize WebSocket:', e);
+        // Retry connection
+        if (wsReconnectTimeout) clearTimeout(wsReconnectTimeout);
+        wsReconnectTimeout = setTimeout(initWebSocket, 3000);
+    }
+}
+
+// Initialize WebSocket connection
+if (typeof window !== 'undefined') {
+    initWebSocket();
+}
 
 // Default state structure
 function getDefaultState() {
@@ -18,8 +69,8 @@ function getDefaultState() {
             4: { unlocked: false, completed: false, currentMatch: 0 }
         },
 
-        // Track which players have participated (can't play again)
-        playedPlayers: [], // array of player IDs
+        // Track which players have participated (players can now play multiple times)
+        playedPlayers: [], // array of player IDs (kept for backwards compatibility, not enforced)
 
         // Match brackets for each game
         matchups: {
@@ -78,6 +129,14 @@ function saveState(state) {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
         // Dispatch event for other windows/tabs to sync
         window.dispatchEvent(new CustomEvent('tournamentStateChanged', { detail: state }));
+
+        // Sync to WebSocket server for multi-device support
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({
+                type: 'state-update',
+                data: state
+            }));
+        }
     } catch (e) {
         console.error('Failed to save state:', e);
     }
@@ -126,24 +185,21 @@ function startTournament() {
     });
 }
 
-// Check if a player has already participated
+// Check if a player has already participated (always returns false - players can play multiple times)
 function hasPlayerPlayed(playerId) {
-    const state = getState();
-    return state.playedPlayers.includes(playerId);
+    return false;
 }
 
-// Get available players for a combined team (not yet played)
+// Get available players for a combined team (returns all members - players can play multiple times)
 function getAvailablePlayers(combinedTeamId) {
-    const state = getState();
     const combinedTeam = COMBINED_TEAMS[combinedTeamId];
-    return combinedTeam.members.filter(id => !state.playedPlayers.includes(id));
+    return combinedTeam.members;
 }
 
-// Mark players as played
+// Mark players as played (no-op - players can play multiple times, kept for backwards compatibility)
 function markPlayersAsPlayed(playerIds) {
     const state = getState();
-    const newPlayedPlayers = [...new Set([...state.playedPlayers, ...playerIds])];
-    return updateState({ playedPlayers: newPlayedPlayers });
+    return state;
 }
 
 // Set matchups for a game (after shuffle)
@@ -310,9 +366,9 @@ function recordMatchResult(winner) {
         newResults[gameNumber] = [...newResults[gameNumber], result];
     }
 
-    // Mark players as played
+    // Mark players as played (no longer enforced - players can play multiple times)
     const allPlayers = [...setup.redPlayers, ...setup.bluePlayers];
-    const newPlayedPlayers = [...new Set([...state.playedPlayers, ...allPlayers])];
+    const newPlayedPlayers = state.playedPlayers; // Keep existing list without adding new players
 
     // Update bracket
     const newBracket = { ...state.bracket };

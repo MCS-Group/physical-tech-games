@@ -1535,8 +1535,8 @@
             const state = getState();
             container.innerHTML = '';
 
-            // For Game 4, everyone is eligible (friends become enemies), so we ignore the played list
-            const lockedPlayers = currentGame === 4 ? [] : state.playedPlayers;
+            // All players are always eligible to play
+            const lockedPlayers = [];
 
             if (isOriginalTeam) {
                 const section = createTeamSection(team.name, team.members, lockedPlayers);

@@ -1,0 +1,13 @@
+{
+  "name": "physical-tech-tournament",
+  "version": "1.0.0",
+  "description": "Tournament management system with multi-screen support",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "ws": "^8.14.2"
+  }
+}
